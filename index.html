@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f5f7">
+    <meta name="description" content="Box 3-rekentool — vermogensoverzicht">
+    <title>Box 3 | Vermogensoverzicht</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">B3</span><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
+        <span class="topbar-label">VERMOGENSOVERZICHT</span>
+      </header>
+
+      <main>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">DOSSIER · BOX 3</p>
+            <h1>Vermogensoverzicht</h1>
+          </div>
+          <label class="year-select" for="tax-year"><span>Belastingjaar</span>
+            <select id="tax-year" aria-label="Belastingjaar">
+              <option value="" selected>Selecteer jaar</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="panel preliminary-panel" id="preliminary-panel" aria-labelledby="preliminary-title" hidden>
+          <div class="panel-heading">
+            <div><p class="eyebrow">VOORVRAGEN · 2017–2020</p><h2 id="preliminary-title">Formele beoordeling</h2></div>
+            <span class="panel-index" id="preliminary-year"></span>
+          </div>
+
+          <div id="preliminary-form">
+            <fieldset class="question-group">
+              <legend>1. Is er een definitieve aanslag opgelegd?</legend>
+              <div class="choice-list">
+                <label class="choice"><input type="radio" name="assessment-issued" value="yes"><span>Ja</span></label>
+                <label class="choice"><input type="radio" name="assessment-issued" value="no"><span>Nee</span></label>
+              </div>
+            </fieldset>
+
+            <div class="conditional-question" id="assessment-date-question" hidden>
+              <label class="question-label" for="assessment-date">2. Dagtekening aanslag</label>
+              <input class="date-input" id="assessment-date" type="date">
+              <p class="assessment-date-display" id="assessment-date-display" hidden><strong>Dagtekening aanslag:</strong> <span id="assessment-date-text"></span></p>
+              <section class="objection-deadline" id="objection-deadline" aria-live="polite" hidden>
+                <p><strong>Termijn bezwaar tegen aanslag:</strong> 6 weken. Bij belastingaanslagen begint de bezwaartermijn in beginsel op de dag na de dagtekening van het aanslagbiljet (art. 22j AWR).</p>
+                <p class="objection-result"><strong>Uiterlijke datum bezwaar:</strong> <span id="objection-deadline-date"></span></p>
+                <p class="general-terms-note"><strong>Let op:</strong> Algemene termijnenwet.</p>
+              </section>
+            </div>
+
+            <section id="formal-law-questions" class="formal-law" aria-labelledby="formal-law-title" hidden>
+              <h3 id="formal-law-title">Formeel belastingrecht</h3>
+              <p class="law-note">Beoordeel de toepasselijke aanslagtermijn.</p>
+              <fieldset class="question-group">
+                <legend>Is de reguliere aanslagtermijn verstreken?</legend>
+                <p class="law-explanation">Art. 11 lid 3 AWR: de Belastingdienst heeft in beginsel drie jaar na afloop van het belastingjaar om een definitieve aanslag inkomstenbelasting op te leggen.</p>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="deadline-expired" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="deadline-expired" value="no"><span>Nee</span></label>
+                </div>
+              </fieldset>
+              <fieldset class="question-group">
+                <legend>Is er eventueel uitstel verleend?</legend>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="extension-granted" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="extension-granted" value="no"><span>Nee</span></label>
+                </div>
+              </fieldset>
+              <fieldset class="question-group">
+                <legend>Zijn er andere wettelijke omstandigheden waardoor een afwijkende termijn geldt?</legend>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="legal-exception" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="legal-exception" value="no"><span>Nee</span></label>
+                </div>
+              </fieldset>
+              <p class="legal-conclusion">Als er geen toepasselijke verlenging of uitzondering is, mag de Belastingdienst niet alsnog een reguliere definitieve aanslag opleggen.</p>
+            </section>
+
+            <p class="preliminary-error" id="preliminary-error" role="alert" hidden></p>
+            <button class="primary-button" id="continue-to-calculation" type="button" disabled>Naar berekening</button>
+          </div>
+
+          <div class="preliminary-complete" id="preliminary-complete" hidden>
+            <p>Voorvragen doorlopen voor belastingjaar <strong id="completed-year"></strong>.</p>
+            <button class="secondary-button" id="edit-preliminary" type="button">Voorvragen wijzigen</button>
+          </div>
+        </section>
+
+        <section class="summary-grid" aria-label="Vermogensbestanddelen">
+          <article class="panel asset-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">BEZITTINGEN</p><h2>Vermogensbestanddelen</h2></div>
+              <span class="panel-index">01</span>
+            </div>
+            <a class="asset-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
+              <span class="asset-name"><span class="asset-index">01</span><span><strong>Banktegoeden</strong><small>Rekeningen en saldi</small></span></span>
+              <strong class="asset-value" id="savings-total">€ 0,00</strong>
+              <span class="row-arrow" aria-hidden="true">→</span>
+            </a>
+            <div class="asset-row">
+              <label class="asset-name" for="investments"><span class="asset-index">02</span><span><strong>Overige bezittingen</strong><small>Beleggingen en overige activa</small></span></label>
+              <span class="money-input"><span>€</span><input id="investments" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Overige bezittingen in euro"></span>
+            </div>
+            <div class="asset-row">
+              <label class="asset-name" for="debts"><span class="asset-index">03</span><span><strong>Schulden</strong><small>Box 3-schulden</small></span></label>
+              <span class="money-input"><span>€</span><input id="debts" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Schulden in euro"></span>
+            </div>
+            <div class="asset-row">
+              <label class="asset-name" for="actual"><span class="asset-index">04</span><span><strong>Werkelijk rendement</strong><small>Invoer rendement</small></span></label>
+              <span class="money-input"><span>€</span><input id="actual" type="number" step="0.01" inputmode="decimal" aria-label="Werkelijk rendement in euro"></span>
+            </div>
+            <div class="asset-total"><span>Totaal banktegoeden</span><strong id="savings-total-footer">€ 0,00</strong></div>
+          </article>
+
+          <aside class="panel calculation-panel" id="calculation-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">BEREKENING</p><h2>Uitkomst</h2></div>
+              <span class="panel-index">02</span>
+            </div>
+            <div class="empty-state" aria-live="polite">
+              <span class="empty-state-mark" aria-hidden="true">—</span>
+              <p id="calculation-status">Rekenregels niet vastgesteld</p>
+            </div>
+            <dl class="calculation-list">
+              <div><dt>Rendementsgrondslag</dt><dd>—</dd></div>
+              <div><dt>Heffingvrij vermogen</dt><dd>—</dd></div>
+              <div><dt>Belastbaar rendement</dt><dd>—</dd></div>
+              <div class="calculation-total"><dt>Box 3-heffing</dt><dd>—</dd></div>
+            </dl>
+          </aside>
+        </section>
+
+        <p class="form-status" id="form-status" role="status" hidden></p>
+      </main>
+      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Belastingjaar 2017–2025</span></footer>
+    </div>
+  </body>
+</html>

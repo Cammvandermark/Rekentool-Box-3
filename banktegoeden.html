@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f5f7">
+    <title>Box 3 | Banktegoeden</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="banktegoeden.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">B3</span><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
+        <span class="topbar-label">BANKTEGOEDEN</span>
+      </header>
+
+      <main>
+        <nav class="breadcrumb" aria-label="Navigatiepad"><a href="index.html">Vermogensoverzicht</a><span aria-hidden="true">/</span><span>Banktegoeden</span></nav>
+        <div class="page-heading detail-heading">
+          <div><p class="eyebrow">VERMOGENSBESTANDDELEN · 01</p><h1>Banktegoeden</h1></div>
+          <div class="detail-controls">
+            <label class="year-select" for="tax-year"><span>Belastingjaar</span>
+              <select id="tax-year" aria-label="Belastingjaar">
+                <option value="">Selecteer jaar</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+              </select>
+            </label>
+            <a class="back-link" href="index.html">← Overzicht</a>
+          </div>
+        </div>
+
+        <section class="panel detail-panel" aria-labelledby="accounts-title">
+          <div class="panel-heading">
+            <div><p class="eyebrow">INVENTARISATIE</p><h2 id="accounts-title">Rekeningen</h2></div>
+            <span class="panel-index">SALDO OP 1 JANUARI</span>
+          </div>
+          <div class="account-table-wrap">
+            <table class="account-table">
+              <thead><tr><th scope="col">Rekening</th><th scope="col">Bank</th><th scope="col">Saldo (€)</th><th scope="col"><span class="visually-hidden">Actie</span></th></tr></thead>
+              <tbody id="account-rows"></tbody>
+              <tfoot><tr><th scope="row" colspan="2">Totaal banktegoeden</th><td id="account-total">€ 0,00</td><td></td></tr></tfoot>
+            </table>
+          </div>
+          <div class="detail-actions"><button class="secondary-button" id="add-account" type="button">+ Rekening toevoegen</button><span id="save-status" class="save-status" role="status" aria-live="polite"></span></div>
+        </section>
+
+        <section class="panel explanation-panel" aria-labelledby="explanation-title">
+          <div class="panel-heading"><div><p class="eyebrow">TOELICHTING</p><h2 id="explanation-title">Banktegoeden in box 3</h2></div></div>
+          <p>Leg per bankrekening het saldo vast op 1 januari van het geselecteerde belastingjaar.</p>
+        </section>
+        <p class="form-status" id="form-status" role="alert" hidden></p>
+      </main>
+      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Banktegoeden</span></footer>
+    </div>
+  </body>
+</html>
