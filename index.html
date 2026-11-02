@@ -45,24 +45,71 @@
           </div>
 
           <div id="preliminary-form">
-            <fieldset class="question-group">
-              <legend>1. Is er een definitieve aanslag opgelegd?</legend>
+            <div class="question-group inline-question" role="group" aria-labelledby="assessment-issued-label">
+              <p class="question-label" id="assessment-issued-label">1. Is er een definitieve aanslag opgelegd?</p>
               <div class="choice-list">
                 <label class="choice"><input type="radio" name="assessment-issued" value="yes"><span>Ja</span></label>
                 <label class="choice"><input type="radio" name="assessment-issued" value="no"><span>Nee</span></label>
               </div>
-            </fieldset>
+            </div>
 
             <div class="conditional-question" id="assessment-date-question" hidden>
-              <label class="question-label" for="assessment-date">2. Dagtekening aanslag</label>
-              <input class="date-input" id="assessment-date" type="date">
-              <p class="assessment-date-display" id="assessment-date-display" hidden><strong>Dagtekening aanslag:</strong> <span id="assessment-date-text"></span></p>
-              <section class="objection-deadline" id="objection-deadline" aria-live="polite" hidden>
+              <div class="inline-date-question">
+                <label class="question-label" for="assessment-date">2. Dagtekening aanslag</label>
+                <input class="date-input" id="assessment-date" type="date">
+                <span class="assessment-date-display" id="assessment-date-display" aria-live="polite" hidden>
+                  <span id="assessment-date-text"></span>
+                </span>
+              </div>
+            </div>
+
+            <section class="objection-deadline" id="objection-deadline" aria-live="polite" hidden>
                 <p><strong>Termijn bezwaar tegen aanslag:</strong> 6 weken. Bij belastingaanslagen begint de bezwaartermijn in beginsel op de dag na de dagtekening van het aanslagbiljet (art. 22j AWR).</p>
                 <p class="objection-result"><strong>Uiterlijke datum bezwaar:</strong> <span id="objection-deadline-date"></span></p>
-                <p class="general-terms-note"><strong>Let op:</strong> Algemene termijnenwet.</p>
-              </section>
+                <div class="general-terms-note">
+                  <strong>Let op: Algemene termijnenwet.</strong>
+                  <div class="terms-act-question" role="group" aria-labelledby="terms-act-question-label">
+                    <span id="terms-act-question-label">Weekend- of feestdag?</span>
+                    <div class="choice-list">
+                      <label class="choice"><input type="radio" name="terms-act-applies" value="yes"><span>Ja</span></label>
+                      <label class="choice"><input type="radio" name="terms-act-applies" value="no"><span>Nee</span></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="adjusted-deadline-field" id="adjusted-deadline-field" hidden>
+                  <label class="question-label" for="adjusted-deadline">Nieuwe uiterlijke bezwaar datum</label>
+                  <input class="date-input" id="adjusted-deadline" type="date">
+                  <p class="adjusted-deadline-result" id="adjusted-deadline-result" hidden><strong>Aangepaste uiterlijke bezwaar datum:</strong> <span id="adjusted-deadline-text"></span></p>
+                </div>
+            </section>
+
+            <div class="question-group conditional-question" id="objection-submitted-question" role="group" aria-labelledby="objection-submitted-label" hidden>
+              <p class="question-label" id="objection-submitted-label">3. Is er bezwaar ingediend?</p>
+              <div class="choice-list">
+                <label class="choice"><input type="radio" name="objection-submitted" value="yes"><span>Ja</span></label>
+                <label class="choice"><input type="radio" name="objection-submitted" value="no"><span>Nee</span></label>
+              </div>
             </div>
+
+            <fieldset class="question-group conditional-question" id="timely-objection-question" hidden>
+              <legend>4. Is het bezwaar tijdig ingediend?</legend>
+              <p class="law-explanation">Art. 6:9 Awb: een bezwaar is tijdig ingediend indien het vóór het einde van de termijn is ontvangen. Bij verzending per post geldt een bijzondere regel: het bezwaar is ook tijdig als het vóór het einde van de termijn ter post is bezorgd én uiterlijk een week na afloop van de termijn is ontvangen.</p>
+              <div class="choice-list">
+                <label class="choice"><input type="radio" name="objection-timely" value="yes"><span>Ja</span></label>
+                <label class="choice"><input type="radio" name="objection-timely" value="no"><span>Nee</span></label>
+              </div>
+            </fieldset>
+
+            <section class="finality-question conditional-question" id="finality-question" hidden>
+              <div class="question-group" role="group" aria-labelledby="finality-question-label">
+                <p class="question-label" id="finality-question-label">4. Stond de aanslag op 21 december 2021 al onherroepelijk vast?</p>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="appeal-open-2021" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="appeal-open-2021" value="no"><span>Nee</span></label>
+                </div>
+              </div>
+            </section>
+            <p class="access-result" id="access-result" aria-live="polite" hidden><span class="access-result-denial-word" id="access-result-denial-word" hidden>Geen </span><span id="access-result-message"></span></p>
 
             <section id="formal-law-questions" class="formal-law" aria-labelledby="formal-law-title" hidden>
               <h3 id="formal-law-title">Formeel belastingrecht</h3>

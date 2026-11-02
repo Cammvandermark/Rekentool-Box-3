@@ -96,6 +96,13 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .preliminary-panel .panel-heading { align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e9edf0; }
 .question-group { margin: 0; padding: 15px 0; border: 0; border-bottom: 1px solid #e9edf0; }
 .question-group legend, .question-label { display: block; margin-bottom: 9px; color: var(--ink); font-size: 12px; font-weight: 600; }
+.inline-question { display: flex; align-items: center; gap: 16px; }
+.inline-question .question-label { margin: 0; }
+.inline-question .choice-list { flex: 0 0 auto; }
+.inline-date-question { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.inline-date-question .question-label { margin: 0; }
+.inline-date-question .date-input { width: min(170px, 100%); flex: 0 1 170px; }
+.inline-date-question .assessment-date-display { margin: 0; color: #7040a0; font-size: 16px; font-weight: 700; line-height: 1.4; }
 .choice-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .choice { min-width: 76px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: white; cursor: pointer; font-size: 11px; }
 .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
@@ -105,8 +112,19 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .assessment-date-display { margin: 8px 0 0; color: var(--ink); font-size: 11px; }
 .objection-deadline { margin-top: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
 .objection-deadline p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
-.objection-deadline .objection-result { margin-top: 10px; color: var(--ink); }
-.objection-deadline .general-terms-note { margin-top: 7px; color: #745f3f; }
+.objection-deadline .objection-result { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; column-gap: 6px; margin-top: 10px; color: var(--ink); }
+.objection-result span { display: block; margin: 0; color: #7040a0; font-size: 16px; font-weight: 700; line-height: 1.4; }
+.objection-deadline .general-terms-note { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 10px; color: var(--ink); font-size: 11px; line-height: 1.6; }
+.terms-act-question { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.terms-act-question .choice-list { gap: 6px; }
+.terms-act-question .choice { min-width: 0; padding: 4px 8px; }
+.adjusted-deadline-field { padding-top: 4px; }
+.adjusted-deadline-result { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; column-gap: 6px; margin: 9px 0 0; color: var(--ink); font-size: 11px; line-height: 1.6; }
+.adjusted-deadline-result span { display: block; margin: 0; color: #7040a0; font-size: 16px; font-weight: 700; line-height: 1.4; }
+.finality-question { margin-top: 10px; }
+.access-result { margin: 12px 0 0; padding: 13px 14px; border-left: 4px solid; font-size: 16px; font-weight: 700; line-height: 1.4; }
+.access-result-denial-word { color: #b42318; }
+.access-result-granted { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .date-input:focus, .year-select select:focus-visible, .primary-button:focus-visible, .secondary-button:focus-visible { outline: 2px solid #739aae; outline-offset: 2px; }
 .formal-law { padding-top: 15px; }
 .formal-law h3 { margin: 0 0 5px; font-size: 12px; }
@@ -143,6 +161,12 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
   .money-input { width: 94px; }
   .asset-name { gap: 7px; }
   .asset-name small { font-size: 9px; }
+  .inline-question, .inline-date-question { flex-wrap: nowrap; gap: 8px; }
+  .inline-question .question-label { font-size: 11px; }
+  .inline-question .choice-list { gap: 4px; }
+  .inline-question .choice { min-width: 0; padding: 7px; }
+  .inline-date-question .question-label { font-size: 11px; }
+  .inline-date-question .date-input { min-width: 0; flex-basis: 145px; }
 }
 @media (max-width: 330px) {
   .app-shell { width: calc(100% - 16px); }
@@ -153,4 +177,5 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
   .money-input { width: 76px; padding: 0 5px; }
   .account-table th, .account-table td { padding-right: 4px; padding-left: 4px; }
   .detail-controls { flex-wrap: wrap; }
+  .inline-question, .inline-date-question { flex-wrap: wrap; }
 }
