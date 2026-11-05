@@ -573,7 +573,7 @@
               <p class="law-explanation">Het resterende deel wordt aan de fiscale partner toegerekend. De invoer is het aandeel in de gezamenlijke grondslag sparen en beleggen ná toepassing van het gezamenlijke heffingsvrije vermogen.</p>
             </div>
             <p class="form-status calculation-error" id="calculation-error" role="alert" hidden></p>
-            <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening afgerond op hele euro's. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
+            <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening op twee decimalen afgerond. Rendementspercentages van de oude methode worden, volgens de presentatie van de Belastingdienst om afrondingsverschillen te beperken, op drie decimalen afgerond en met die percentages berekend. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
             <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
           </section>
 
@@ -594,13 +594,14 @@
                   <dt class="calculation-term-with-info">
                     <span>Rendement schijf 1</span>
                     <details class="calculation-info">
-                      <summary aria-label="Toon de berekening van rendement schijf 1"></summary>
-                      <p>
-                        <span id="old-tier-1-range"></span><br>
-                        <span id="old-tier-1-allocation"></span><br>
-                        <span id="old-tier-1-explanation"></span>
-                      </p>
+                      <summary aria-label="Toon de berekening van rendement schijf 1" aria-controls="old-tier-1-details"></summary>
                     </details>
+                    <p class="calculation-info-text" id="old-tier-1-details">
+                      <span id="old-tier-1-range"></span><br>
+                      <span id="old-tier-1-allocation"></span><br>
+                      <span id="old-tier-1-explanation"></span><br>
+                      <span id="old-tier-1-calculation"></span>
+                    </p>
                   </dt>
                   <dd id="old-tier-1">—</dd>
                 </div>
@@ -608,13 +609,14 @@
                   <dt class="calculation-term-with-info">
                     <span>Rendement schijf 2</span>
                     <details class="calculation-info">
-                      <summary aria-label="Toon de berekening van rendement schijf 2"></summary>
-                      <p>
-                        <span id="old-tier-2-range"></span><br>
-                        <span id="old-tier-2-allocation"></span><br>
-                        <span id="old-tier-2-explanation"></span>
-                      </p>
+                      <summary aria-label="Toon de berekening van rendement schijf 2" aria-controls="old-tier-2-details"></summary>
                     </details>
+                    <p class="calculation-info-text" id="old-tier-2-details">
+                      <span id="old-tier-2-range"></span><br>
+                      <span id="old-tier-2-allocation"></span><br>
+                      <span id="old-tier-2-explanation"></span><br>
+                      <span id="old-tier-2-calculation"></span>
+                    </p>
                   </dt>
                   <dd id="old-tier-2">—</dd>
                 </div>
@@ -622,13 +624,14 @@
                   <dt class="calculation-term-with-info">
                     <span>Rendement schijf 3</span>
                     <details class="calculation-info">
-                      <summary aria-label="Toon de berekening van rendement schijf 3"></summary>
-                      <p>
-                        <span id="old-tier-3-range"></span><br>
-                        <span id="old-tier-3-allocation"></span><br>
-                        <span id="old-tier-3-explanation"></span>
-                      </p>
+                      <summary aria-label="Toon de berekening van rendement schijf 3" aria-controls="old-tier-3-details"></summary>
                     </details>
+                    <p class="calculation-info-text" id="old-tier-3-details">
+                      <span id="old-tier-3-range"></span><br>
+                      <span id="old-tier-3-allocation"></span><br>
+                      <span id="old-tier-3-explanation"></span><br>
+                      <span id="old-tier-3-calculation"></span>
+                    </p>
                   </dt>
                   <dd id="old-tier-3">—</dd>
                 </div>
@@ -644,18 +647,66 @@
                 <span class="panel-index" id="relief-calculation-year"></span>
               </div>
               <dl class="calculation-list detailed-calculation-list">
+                <div class="calculation-section-heading"><dt>De bezittingen uitsplitsen</dt></div>
+                <div><dt>Banktegoeden</dt><dd id="relief-bank-assets">—</dd></div>
+                <div class="calculation-double-divider"><dt>Overige bezittingen</dt><dd id="relief-other-assets">—</dd></div>
                 <div><dt>Totale bezittingen</dt><dd id="relief-assets">—</dd></div>
-                <div><dt id="relief-deductible-debts-label">Aftrekbare schulden na drempel</dt><dd id="relief-deductible-debts">—</dd></div>
+                <div class="calculation-double-divider"><dt id="relief-deductible-debts-label">Af: Aftrekbare schulden na drempel</dt><dd class="calculation-deduction-value"><span aria-hidden="true">−</span><span id="relief-deductible-debts">—</span></dd></div>
                 <div><dt>Rendementsgrondslag</dt><dd id="relief-net-assets">—</dd></div>
-                <div><dt>Heffingsvrij vermogen</dt><dd id="relief-exemption">—</dd></div>
-                <div><dt>Grondslag sparen en beleggen</dt><dd id="relief-taxable-base">—</dd></div>
+                <div class="calculation-double-divider"><dt>Af: Heffingsvrij vermogen</dt><dd class="calculation-deduction-value"><span aria-hidden="true">−</span><span id="relief-exemption">—</span></dd></div>
+                <div class="calculation-total calculation-strong-divider"><dt>Grondslag sparen en beleggen</dt><dd id="relief-taxable-base">—</dd></div>
                 <div id="relief-allocation-row" hidden><dt>Verdeling grondslag (belastingplichtige / partner)</dt><dd id="relief-allocation">—</dd></div>
-                <div><dt>Forfaitair rendement banktegoeden</dt><dd id="relief-savings-return">—</dd></div>
-                <div><dt>Forfaitair rendement overige bezittingen</dt><dd id="relief-investment-return">—</dd></div>
-                <div><dt>Aftrek forfaitair rendement schulden</dt><dd id="relief-debt-return">—</dd></div>
-                <div><dt>Totaal forfaitair rendement</dt><dd id="relief-total-return">—</dd></div>
-                <div><dt>Rendementspercentage</dt><dd id="relief-yield-rate">—</dd></div>
-                <div class="calculation-total"><dt id="relief-income-label">Box 3-inkomen Wet rechtsherstel</dt><dd id="relief-income">—</dd></div>
+                <div class="calculation-section-break">
+                  <dt class="calculation-term-with-info">
+                    <span>Fictief rendement banktegoeden</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van het fictieve rendement op banktegoeden" aria-controls="relief-savings-return-details"></summary>
+                    </details>
+                    <p class="calculation-info-text" id="relief-savings-return-details"><span id="relief-savings-return-explanation"></span></p>
+                  </dt>
+                  <dd id="relief-savings-return">—</dd>
+                </div>
+                <div>
+                  <dt class="calculation-term-with-info">
+                    <span>Fictief rendement overige bezittingen</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van het fictieve rendement op overige bezittingen" aria-controls="relief-investment-return-details"></summary>
+                    </details>
+                    <p class="calculation-info-text" id="relief-investment-return-details"><span id="relief-investment-return-explanation"></span></p>
+                  </dt>
+                  <dd id="relief-investment-return">—</dd>
+                </div>
+                <div>
+                  <dt class="calculation-term-with-info">
+                    <span>Af: Aftrekbare fictieve schulden</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van het fictieve rendement over aftrekbare schulden" aria-controls="relief-debt-return-details"></summary>
+                    </details>
+                    <p class="calculation-info-text" id="relief-debt-return-details"><span id="relief-debt-return-explanation"></span></p>
+                  </dt>
+                  <dd class="calculation-deduction-value"><span aria-hidden="true">−</span><span id="relief-debt-return">—</span></dd>
+                </div>
+                <div class="calculation-total calculation-double-divider"><dt>Totaal forfaitair rendement</dt><dd id="relief-total-return">—</dd></div>
+                <div class="calculation-section-break">
+                  <dt class="calculation-term-with-info">
+                    <span id="relief-yield-rate-label">Rendementspercentage</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van het rendementspercentage" aria-controls="relief-yield-rate-details"></summary>
+                    </details>
+                    <p class="calculation-info-text" id="relief-yield-rate-details"><span id="relief-yield-rate-explanation"></span></p>
+                  </dt>
+                  <dd id="relief-yield-rate">—</dd>
+                </div>
+                <div class="calculation-total">
+                  <dt class="calculation-term-with-info">
+                    <span>Belastbaar rendement</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van het belastbaar rendement" aria-controls="relief-income-details"></summary>
+                    </details>
+                    <p class="calculation-info-text" id="relief-income-details"><span id="relief-income-explanation"></span></p>
+                  </dt>
+                  <dd id="relief-income">—</dd>
+                </div>
                 <div class="calculation-total"><dt id="relief-tax-label">Box 3-belasting Wet rechtsherstel</dt><dd id="relief-tax">—</dd></div>
               </dl>
               <p class="calculation-method-note" id="relief-method-note"></p>

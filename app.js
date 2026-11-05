@@ -22,6 +22,7 @@ const BOX3_YEAR_DATA = {
     taxRate: 30,
     tier1: 75000,
     tier2: 975000,
+    oldTierRates: [2.871, 4.6, 5.39],
     exemption: 25000,
     debtThreshold: 3000,
     reliefSavingsRate: 0.25,
@@ -34,6 +35,7 @@ const BOX3_YEAR_DATA = {
     taxRate: 30,
     tier1: 70800,
     tier2: 978000,
+    oldTierRates: [2.017, 4.326, 5.38],
     exemption: 30000,
     debtThreshold: 3000,
     reliefSavingsRate: 0.12,
@@ -46,6 +48,7 @@ const BOX3_YEAR_DATA = {
     taxRate: 30,
     tier1: 71650,
     tier2: 989736,
+    oldTierRates: [1.931, 4.443, 5.59],
     exemption: 30360,
     debtThreshold: 3100,
     reliefSavingsRate: 0.08,
@@ -58,6 +61,7 @@ const BOX3_YEAR_DATA = {
     taxRate: 30,
     tier1: 72797,
     tier2: 1005572,
+    oldTierRates: [1.789, 4.185, 5.28],
     exemption: 30846,
     debtThreshold: 3100,
     reliefSavingsRate: 0.04,
@@ -70,6 +74,7 @@ const BOX3_YEAR_DATA = {
     taxRate: 31,
     tier1: 50000,
     tier2: 950000,
+    oldTierRates: [1.898, 4.501, 5.69],
     exemption: 50000,
     debtThreshold: 3200,
     reliefSavingsRate: 0.01,
@@ -82,11 +87,13 @@ const BOX3_YEAR_DATA = {
     taxRate: 31,
     tier1: 50650,
     tier2: 962350,
+    oldTierRates: [1.818, 4.366, 5.53],
     exemption: 50650,
     debtThreshold: 3200,
     reliefSavingsRate: 0,
     reliefInvestmentRate: 5.53,
     reliefDebtRate: 2.28,
+    taxableShareDecimals: 2,
   },
   2023: {
     taxRate: 32,
@@ -95,6 +102,7 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.92,
     reliefInvestmentRate: 6.17,
     reliefDebtRate: 2.46,
+    taxableShareDecimals: 2,
   },
   2024: {
     taxRate: 36,
@@ -103,6 +111,7 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 1.44,
     reliefInvestmentRate: 6.04,
     reliefDebtRate: 2.61,
+    taxableShareDecimals: 3,
   },
   2025: {
     taxRate: 36,
@@ -111,6 +120,7 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 1.37,
     reliefInvestmentRate: 5.88,
     reliefDebtRate: 2.70,
+    taxableShareDecimals: 2,
   },
   2026: {
     taxRate: 36,
@@ -119,6 +129,7 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 1.28,
     reliefInvestmentRate: 6.00,
     reliefDebtRate: 2.70,
+    taxableShareDecimals: 2,
   },
 };
 
@@ -254,9 +265,14 @@ const calculationOutputIds = [
   "old-tier-1",
   "old-tier-2",
   "old-tier-3",
+  "old-tier-1-calculation",
+  "old-tier-2-calculation",
+  "old-tier-3-calculation",
   "old-income",
   "old-tax",
   "relief-assets",
+  "relief-bank-assets",
+  "relief-other-assets",
   "relief-deductible-debts",
   "relief-net-assets",
   "relief-exemption",
@@ -269,6 +285,11 @@ const calculationOutputIds = [
   "relief-yield-rate",
   "relief-income",
   "relief-tax",
+  "relief-savings-return-explanation",
+  "relief-investment-return-explanation",
+  "relief-debt-return-explanation",
+  "relief-yield-rate-explanation",
+  "relief-income-explanation",
   "comparison-old-income",
   "comparison-relief-income",
   "comparison-old-tax",
@@ -295,8 +316,13 @@ let preliminaryByYear = {};
 let loadedCalculationYear = "";
 let calculationStorageError = false;
 
-function roundToWholeEuro(value) {
-  return Math.round(value);
+function roundToTwoDecimals(value) {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+function roundToDecimals(value, decimals) {
+  const factor = 10 ** decimals;
+  return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
 function formatCalculationEuro(value) {
@@ -313,6 +339,13 @@ function formatCalculationEuroWhole(value) {
 
 function formatCalculationRate(value) {
   return `${percentage.format(value)}%`;
+}
+
+function formatOldYieldRate(value) {
+  return `${new Intl.NumberFormat("nl-NL", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  }).format(value)}%`;
 }
 
 function setCalculationText(id, value) {
@@ -345,7 +378,7 @@ function readNonNegativeAmount(input, label) {
   if (!Number.isFinite(value) || value < 0) {
     throw new Error(`${label}: vul een geldig bedrag van nul of hoger in.`);
   }
-  return roundToWholeEuro(value);
+  return roundToTwoDecimals(value);
 }
 
 function getBankTotal(year) {
@@ -361,7 +394,7 @@ function getBankTotal(year) {
   ) {
     throw new Error("De opgeslagen banktegoeden zijn ongeldig. Controleer de rekeninggegevens.");
   }
-  return roundToWholeEuro(
+  return roundToTwoDecimals(
     accounts.reduce((sum, account) => sum + account.balance, 0),
   );
 }
@@ -396,7 +429,7 @@ function getOtherAssetsTotal(year) {
     ) {
       throw new Error("De opgeslagen overige bezittingen zijn ongeldig. Controleer de bezittingen.");
     }
-    return roundToWholeEuro(
+    return roundToTwoDecimals(
       assets.reduce((sum, asset) => sum + asset.value, 0),
     );
   }
@@ -416,7 +449,7 @@ function getOtherAssetsTotal(year) {
   if (!Number.isFinite(legacyValue) || legacyValue < 0) {
     throw new Error("De opgeslagen overige bezittingen zijn ongeldig.");
   }
-  return roundToWholeEuro(legacyValue);
+  return roundToTwoDecimals(legacyValue);
 }
 
 function loadCalculationInputs(year) {
@@ -483,19 +516,24 @@ function updatePartnerAllocation() {
     `Partner: ${Number.isFinite(share) ? 100 - share : "—"}%`;
 }
 
-function calculateOldYield(taxableBase, data) {
-  const tierAmounts = [
+function calculateOldTierAmounts(taxableBase, data) {
+  return [
     Math.min(taxableBase, data.tier1),
     Math.min(Math.max(0, taxableBase - data.tier1), data.tier2 - data.tier1),
     Math.max(0, taxableBase - data.tier2),
   ];
-  const savingsShareByTier = [0.67, 0.21, 0];
-  const investmentShareByTier = [0.33, 0.79, 1];
+}
+
+function calculateOldTierRates(data) {
+  return data.oldTierRates || [0, 0, 0];
+}
+
+function calculateOldYield(taxableBase, data) {
+  const tierAmounts = calculateOldTierAmounts(taxableBase, data);
+  const tierRates = calculateOldTierRates(data);
   return tierAmounts.map((amount, index) =>
-    amount *
-    (
-      savingsShareByTier[index] * data.savingsRate / 100 +
-      investmentShareByTier[index] * data.investmentRate / 100
+    roundToTwoDecimals(
+      amount * tierRates[index] / 100,
     ),
   );
 }
@@ -522,10 +560,8 @@ function renderCalculation() {
     yearUsesOldMethodComparison ? "BEREKENING B" : "BEREKENING";
   calculationRoundingNote.hidden = !yearUsesOldMethodComparison;
   overbruggingswetNote.hidden = yearUsesOldMethodComparison;
-  document.querySelector("#relief-income-label").textContent =
-    `Box 3-inkomen ${yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet"}`;
   document.querySelector("#relief-tax-label").textContent =
-    `Box 3-belasting ${yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet"}`;
+    `Box 3-belasting ${yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet"} (${data.taxRate}%)`;
   otherAssetsLink.href =
     `overige-bezittingen.html?year=${encodeURIComponent(year)}`;
   updatePartnerAllocation();
@@ -541,7 +577,7 @@ function renderCalculation() {
       : 100;
     const householdCount = fiscalPartner ? 2 : 1;
     document.querySelector("#relief-deductible-debts-label").textContent =
-      `Aftrekbare schulden na drempel (${formatCalculationEuroWhole(data.debtThreshold * householdCount)})`;
+      `Af: Aftrekbare schulden na drempel (${formatCalculationEuroWhole(data.debtThreshold * householdCount)})`;
     if (
       fiscalPartner &&
       (partnerAllocation.value === "" ||
@@ -561,15 +597,21 @@ function renderCalculation() {
         allocationPercent < 0 || allocationPercent > 100)),
     );
 
-    const assets = bank + investments;
+    const assets = roundToTwoDecimals(bank + investments);
     const debtThreshold = data.debtThreshold * householdCount;
-    const deductibleDebts = Math.max(0, debts - debtThreshold);
-    const netAssets = Math.max(0, assets - deductibleDebts);
-    const exemption = data.exemption * householdCount;
-    const taxableBase = Math.max(0, netAssets - exemption);
+    const deductibleDebts = roundToTwoDecimals(
+      Math.max(0, debts - debtThreshold),
+    );
+    const netAssets = roundToTwoDecimals(
+      Math.max(0, assets - deductibleDebts),
+    );
+    const exemption = roundToTwoDecimals(data.exemption * householdCount);
+    const taxableBase = roundToTwoDecimals(
+      Math.max(0, netAssets - exemption),
+    );
 
     const firstPartnerBase = fiscalPartner
-      ? roundToWholeEuro(taxableBase * allocationPercent / 100)
+      ? roundToTwoDecimals(taxableBase * allocationPercent / 100)
       : taxableBase;
     const secondPartnerBase = taxableBase - firstPartnerBase;
     const firstPartnerTiers = yearUsesOldMethodComparison
@@ -578,44 +620,131 @@ function renderCalculation() {
     const secondPartnerTiers = fiscalPartner && yearUsesOldMethodComparison
       ? calculateOldYield(secondPartnerBase, data)
       : [0, 0, 0];
+    const firstPartnerTierAmounts = calculateOldTierAmounts(firstPartnerBase, data);
+    const secondPartnerTierAmounts = fiscalPartner
+      ? calculateOldTierAmounts(secondPartnerBase, data)
+      : [0, 0, 0];
+    const oldTierRates = calculateOldTierRates(data);
     const oldTierReturns = firstPartnerTiers.map(
-      (value, index) => value + secondPartnerTiers[index],
+      (value, index) =>
+        roundToTwoDecimals(value + secondPartnerTiers[index]),
     );
-    const firstPartnerIncome = roundToWholeEuro(
+    const oldTierCalculations = oldTierReturns.map((total, index) => {
+      const partnerAmounts = [
+        firstPartnerTierAmounts[index],
+        secondPartnerTierAmounts[index],
+      ];
+      const multiplier = formatOldYieldRate(oldTierRates[index]);
+      const calculationParts = partnerAmounts
+        .filter((amount) => amount > 0)
+        .map((amount) => ({
+          amount: formatCalculationEuro(amount),
+          result: formatCalculationEuro(
+            roundToTwoDecimals(amount * oldTierRates[index] / 100),
+          ),
+        }));
+      if (calculationParts.length === 0) {
+        return `${formatCalculationEuro(0)} × ${multiplier} = ${formatCalculationEuro(total)}`;
+      }
+      if (calculationParts.length === 1) {
+        return `${calculationParts[0].amount} × ${multiplier} = ${formatCalculationEuro(total)}`;
+      }
+      return `${calculationParts.map(({ amount, result }) =>
+        `(${amount} × ${multiplier} = ${result})`,
+      ).join(" + ")} = ${formatCalculationEuro(total)}`;
+    });
+    const firstPartnerIncome = roundToTwoDecimals(
       firstPartnerTiers.reduce((sum, value) => sum + value, 0),
     );
     const secondPartnerIncome = fiscalPartner
-      ? roundToWholeEuro(
+      ? roundToTwoDecimals(
         secondPartnerTiers.reduce((sum, value) => sum + value, 0),
       )
       : 0;
-    const oldIncome = firstPartnerIncome + secondPartnerIncome;
-    const oldTax =
-      roundToWholeEuro(firstPartnerIncome * data.taxRate / 100) +
-      roundToWholeEuro(secondPartnerIncome * data.taxRate / 100);
+    const oldIncome = roundToTwoDecimals(
+      firstPartnerIncome + secondPartnerIncome,
+    );
+    const oldTax = roundToTwoDecimals(
+      roundToTwoDecimals(firstPartnerIncome * data.taxRate / 100) +
+      roundToTwoDecimals(secondPartnerIncome * data.taxRate / 100),
+    );
 
     const reliefSavingsReturn = bank * data.reliefSavingsRate / 100;
     const reliefInvestmentReturn = investments * data.reliefInvestmentRate / 100;
     const reliefDebtReturn = deductibleDebts * data.reliefDebtRate / 100;
-    const roundedReliefSavingsReturn = roundToWholeEuro(reliefSavingsReturn);
-    const roundedReliefInvestmentReturn = roundToWholeEuro(reliefInvestmentReturn);
-    const roundedReliefDebtReturn = roundToWholeEuro(reliefDebtReturn);
-    const reliefTotalReturn = roundedReliefSavingsReturn +
-      roundedReliefInvestmentReturn - roundedReliefDebtReturn;
+    const roundedReliefSavingsReturn = roundToTwoDecimals(reliefSavingsReturn);
+    const roundedReliefInvestmentReturn = roundToTwoDecimals(reliefInvestmentReturn);
+    const roundedReliefDebtReturn = roundToTwoDecimals(reliefDebtReturn);
+    const reliefTotalReturn = roundToTwoDecimals(
+      roundedReliefSavingsReturn + roundedReliefInvestmentReturn -
+      roundedReliefDebtReturn,
+    );
+    const usesTaxableBaseShare = Number(year) >= 2022;
     const reliefYieldRate =
       netAssets > 0 ? reliefTotalReturn / netAssets : 0;
-    const firstPartnerReliefIncome = roundToWholeEuro(
-      Math.max(0, reliefYieldRate * firstPartnerBase),
-    );
+    const appliedYieldRate = roundToTwoDecimals(reliefYieldRate * 100) / 100;
+    const shareDecimals = data.taxableShareDecimals ?? 2;
+    const formatPercentage = (value, fractionDigits) =>
+      new Intl.NumberFormat("nl-NL", {
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
+      }).format(value);
+    const firstPartnerShare = netAssets > 0
+      ? roundToDecimals(firstPartnerBase / netAssets * 100, shareDecimals)
+      : 0;
+    const secondPartnerShare = netAssets > 0
+      ? roundToDecimals(secondPartnerBase / netAssets * 100, shareDecimals)
+      : 0;
+    const formattedYieldRate = usesTaxableBaseShare
+      ? fiscalPartner
+        ? `${formatPercentage(firstPartnerShare, shareDecimals)}% / ${formatPercentage(secondPartnerShare, shareDecimals)}%`
+        : `${formatPercentage(firstPartnerShare, shareDecimals)}%`
+      : `${formatPercentage(reliefYieldRate * 100, 2)}%`;
+    const firstPartnerShareCalculation = `${formatCalculationEuro(firstPartnerBase)} / ${formatCalculationEuro(netAssets)} × 100 = ${formatPercentage(firstPartnerShare, shareDecimals)}%`;
+    const secondPartnerShareCalculation = `${formatCalculationEuro(secondPartnerBase)} / ${formatCalculationEuro(netAssets)} × 100 = ${formatPercentage(secondPartnerShare, shareDecimals)}%`;
+    const yieldRateExplanation = usesTaxableBaseShare
+      ? netAssets > 0
+        ? fiscalPartner
+          ? `${firstPartnerShareCalculation}\n${secondPartnerShareCalculation}`
+          : firstPartnerShareCalculation
+        : "Geen rendementsgrondslag; aandeel 0%"
+      : netAssets > 0
+        ? `${formatCalculationEuro(reliefTotalReturn)} / ${formatCalculationEuro(netAssets)} × 100% = ${formattedYieldRate}`
+        : `Geen rendementsgrondslag; rendementspercentage ${formattedYieldRate}`;
+    const firstPartnerReliefIncome = roundToTwoDecimals(Math.max(
+      0,
+      usesTaxableBaseShare
+        ? reliefTotalReturn * firstPartnerShare / 100
+        : appliedYieldRate * firstPartnerBase,
+    ));
     const secondPartnerReliefIncome = fiscalPartner
-      ? roundToWholeEuro(
-        Math.max(0, reliefYieldRate * secondPartnerBase),
+      ? roundToTwoDecimals(
+        Math.max(
+          0,
+          usesTaxableBaseShare
+            ? reliefTotalReturn * secondPartnerShare / 100
+            : appliedYieldRate * secondPartnerBase,
+        ),
       )
       : 0;
-    const reliefIncome = firstPartnerReliefIncome + secondPartnerReliefIncome;
-    const reliefTax =
-      roundToWholeEuro(firstPartnerReliefIncome * data.taxRate / 100) +
-      roundToWholeEuro(secondPartnerReliefIncome * data.taxRate / 100);
+    const reliefIncome = roundToTwoDecimals(
+      firstPartnerReliefIncome + secondPartnerReliefIncome,
+    );
+    const reliefIncomeCalculation = usesTaxableBaseShare
+      ? netAssets > 0
+        ? fiscalPartner
+          ? `(${formatCalculationEuro(reliefTotalReturn)} × ${formatPercentage(firstPartnerShare, shareDecimals)}%) + (${formatCalculationEuro(reliefTotalReturn)} × ${formatPercentage(secondPartnerShare, shareDecimals)}%) = ${formatCalculationEuro(reliefIncome)}`
+          : `(${formatCalculationEuro(reliefTotalReturn)} × ${formatPercentage(firstPartnerShare, shareDecimals)}%) = ${formatCalculationEuro(reliefIncome)}`
+        : `Geen rendementsgrondslag = ${formatCalculationEuro(reliefIncome)}`
+      : netAssets > 0
+        ? fiscalPartner
+          ? `(${formattedYieldRate} × ${formatCalculationEuro(firstPartnerBase)}) + (${formattedYieldRate} × ${formatCalculationEuro(secondPartnerBase)}) = ${formatCalculationEuro(reliefIncome)}`
+          : `(${formattedYieldRate} × ${formatCalculationEuro(firstPartnerBase)}) = ${formatCalculationEuro(reliefIncome)}`
+        : `Geen rendementsgrondslag = ${formatCalculationEuro(reliefIncome)}`;
+    const reliefTax = roundToTwoDecimals(
+      roundToTwoDecimals(firstPartnerReliefIncome * data.taxRate / 100) +
+      roundToTwoDecimals(secondPartnerReliefIncome * data.taxRate / 100),
+    );
 
     const values = {
       "old-assets": formatCalculationEuro(assets),
@@ -626,12 +755,14 @@ function renderCalculation() {
       "old-allocation": fiscalPartner
         ? `${formatCalculationEuro(firstPartnerBase)} / ${formatCalculationEuro(secondPartnerBase)}`
         : "Geen fiscale partner",
-      "old-tier-1": formatCalculationEuro(roundToWholeEuro(oldTierReturns[0])),
-      "old-tier-2": formatCalculationEuro(roundToWholeEuro(oldTierReturns[1])),
-      "old-tier-3": formatCalculationEuro(roundToWholeEuro(oldTierReturns[2])),
+      "old-tier-1": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[0])),
+      "old-tier-2": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[1])),
+      "old-tier-3": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[2])),
       "old-income": formatCalculationEuro(oldIncome),
       "old-tax": formatCalculationEuro(oldTax),
       "relief-assets": formatCalculationEuro(assets),
+      "relief-bank-assets": formatCalculationEuro(bank),
+      "relief-other-assets": formatCalculationEuro(investments),
       "relief-deductible-debts": formatCalculationEuro(deductibleDebts),
       "relief-net-assets": formatCalculationEuro(netAssets),
       "relief-exemption": formatCalculationEuro(exemption),
@@ -642,11 +773,8 @@ function renderCalculation() {
       "relief-savings-return": formatCalculationEuro(roundedReliefSavingsReturn),
       "relief-investment-return": formatCalculationEuro(roundedReliefInvestmentReturn),
       "relief-debt-return": formatCalculationEuro(roundedReliefDebtReturn),
-      "relief-total-return": formatCalculationEuro(roundToWholeEuro(reliefTotalReturn)),
-      "relief-yield-rate": `${new Intl.NumberFormat("nl-NL", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(reliefYieldRate * 100)}%`,
+      "relief-total-return": formatCalculationEuro(roundToTwoDecimals(reliefTotalReturn)),
+      "relief-yield-rate": formattedYieldRate,
       "relief-income": formatCalculationEuro(reliefIncome),
       "relief-tax": formatCalculationEuro(reliefTax),
       "comparison-old-income": formatCalculationEuro(oldIncome),
@@ -671,27 +799,46 @@ function renderCalculation() {
     document.querySelector("#old-tier-1-allocation").textContent =
       "Sparen / Beleggen = 67% / 33%";
     document.querySelector("#old-tier-1-explanation").textContent =
-      `(67% × ${formatCalculationRate(data.savingsRate)}) + (33% × ${formatCalculationRate(data.investmentRate)}) = ${new Intl.NumberFormat("nl-NL", {
-        minimumFractionDigits: 3,
-        maximumFractionDigits: 3,
-      }).format((67 * data.savingsRate + 33 * data.investmentRate) / 100)}%`;
+      `(67% × ${formatCalculationRate(data.savingsRate)}) + (33% × ${formatCalculationRate(data.investmentRate)}) = ${formatOldYieldRate(oldTierRates[0])}`;
+    document.querySelector("#old-tier-1-calculation").textContent =
+      oldTierCalculations[0];
     document.querySelector("#old-tier-2-range").textContent =
       `${formatCalculationEuroWhole(data.tier1)} - ${formatCalculationEuroWhole(data.tier2)}`;
     document.querySelector("#old-tier-2-allocation").textContent =
       "Sparen / Beleggen = 21% / 79%";
     document.querySelector("#old-tier-2-explanation").textContent =
-      `(21% × ${formatCalculationRate(data.savingsRate)}) + (79% × ${formatCalculationRate(data.investmentRate)}) = ${new Intl.NumberFormat("nl-NL", {
-        minimumFractionDigits: 3,
-        maximumFractionDigits: 3,
-      }).format((21 * data.savingsRate + 79 * data.investmentRate) / 100)}%`;
+      `(21% × ${formatCalculationRate(data.savingsRate)}) + (79% × ${formatCalculationRate(data.investmentRate)}) = ${formatOldYieldRate(oldTierRates[1])}`;
+    document.querySelector("#old-tier-2-calculation").textContent =
+      oldTierCalculations[1];
     document.querySelector("#old-tier-3-range").textContent =
       `${formatCalculationEuroWhole(data.tier2)} en hoger`;
     document.querySelector("#old-tier-3-allocation").textContent =
       "Sparen / Beleggen = 0% / 100%";
     document.querySelector("#old-tier-3-explanation").textContent =
-      `(100% × ${formatCalculationRate(data.investmentRate)}) = ${formatCalculationRate(data.investmentRate)}`;
+      `(100% × ${formatCalculationRate(data.investmentRate)}) = ${formatOldYieldRate(oldTierRates[2])}`;
+    document.querySelector("#old-tier-3-calculation").textContent =
+      oldTierCalculations[2];
     document.querySelector("#relief-method-note").textContent =
-      `Forfait banktegoeden ${formatCalculationRate(data.reliefSavingsRate)}, overige bezittingen ${formatCalculationRate(data.reliefInvestmentRate)} en schulden ${formatCalculationRate(data.reliefDebtRate)}; belastingtarief ${data.taxRate}%.${year === "2026" ? " De percentages voor banktegoeden en schulden zijn voorlopig; de Belastingdienst stelt deze definitief vast in 2027." : ""}`;
+      `Forfait banktegoeden ${formatCalculationRate(data.reliefSavingsRate)}\nForfait overige bezittingen ${formatCalculationRate(data.reliefInvestmentRate)}\nForfait schulden ${formatCalculationRate(data.reliefDebtRate)}${year === "2026" ? "\nDe percentages voor banktegoeden en schulden zijn voorlopig; de Belastingdienst stelt deze definitief vast in 2027." : ""}`;
+    const yieldRateLabel = usesTaxableBaseShare
+      ? "Aandeel in rendementsgrondslag"
+      : "Rendementspercentage";
+    document.querySelector("#relief-yield-rate-label").textContent =
+      yieldRateLabel;
+    document.querySelector(
+      'summary[aria-controls="relief-yield-rate-details"]',
+    )
+      .setAttribute("aria-label", `Toon de berekening van ${yieldRateLabel.toLowerCase()}`);
+    document.querySelector("#relief-savings-return-explanation").textContent =
+      `${formatCalculationEuro(bank)} × ${formatCalculationRate(data.reliefSavingsRate)} = ${formatCalculationEuro(roundedReliefSavingsReturn)}`;
+    document.querySelector("#relief-investment-return-explanation").textContent =
+      `${formatCalculationEuro(investments)} × ${formatCalculationRate(data.reliefInvestmentRate)} = ${formatCalculationEuro(roundedReliefInvestmentReturn)}`;
+    document.querySelector("#relief-debt-return-explanation").textContent =
+      `${formatCalculationEuro(deductibleDebts)} × ${formatCalculationRate(data.reliefDebtRate)} = ${formatCalculationEuro(roundedReliefDebtReturn)}`;
+    document.querySelector("#relief-yield-rate-explanation").textContent =
+      yieldRateExplanation;
+    document.querySelector("#relief-income-explanation").textContent =
+      reliefIncomeCalculation;
 
     comparisonResult.className = "comparison-result";
     for (const id of [
