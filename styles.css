@@ -17,11 +17,13 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-size: 13px;
 a { color: inherit; }
 button, input, select { font: inherit; }
 .app-shell { width: min(1120px, calc(100% - 64px)); margin: 0 auto; }
-.topbar { height: 62px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+.topbar { height: 62px; display: flex; justify-content: flex-start; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: .75px; }
-.brand-mark { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 4px; color: white; background: #294d60; font-size: 11px; letter-spacing: -.5px; }
 .brand-divider { margin: 0 4px; color: #a0a9b2; font-weight: 400; }
+.topbar-year-select { display: flex; align-items: center; gap: 10px; margin: 14px 0 0; }
+.topbar-year-select select { min-width: 150px; }
 .topbar-label, .footer { color: var(--muted); font-size: 10px; letter-spacing: .65px; }
+.topbar-label { margin-left: auto; }
 .page-heading { display: flex; justify-content: space-between; align-items: end; margin: 37px 0 20px; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 1px; }
 h1, h2, p { margin-top: 0; }
@@ -41,7 +43,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .account-table th, .account-table td { padding: 11px 9px; border-top: 1px solid #e9edf0; }
 .account-table thead th { color: var(--muted); font-size: 9px; font-weight: 600; }
 .account-table tbody td { height: 52px; }
-.account-table td input { width: 100%; min-width: 90px; height: 31px; padding: 0 8px; border: 1px solid var(--line); border-radius: 4px; outline: 0; color: var(--ink); background: white; font-size: 11px; }
+.account-table td input, .account-table td select { width: 100%; min-width: 90px; height: 31px; padding: 0 8px; border: 1px solid var(--line); border-radius: 4px; outline: 0; color: var(--ink); background: white; font-size: 11px; }
 .account-table td input:focus { border-color: var(--accent); }
 .account-table td input[type="number"] { text-align: right; font-variant-numeric: tabular-nums; }
 .account-table tbody td:last-child { width: 90px; text-align: right; }
@@ -53,6 +55,23 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .secondary-button { min-height: 32px; padding: 0 11px; border: 1px solid #b9c9d1; border-radius: 4px; color: var(--accent); background: white; cursor: pointer; font-size: 11px; }
 .secondary-button:hover { background: var(--accent-soft); }
 .secondary-button:disabled { color: #98a2aa; background: #f3f5f7; cursor: not-allowed; }
+.asset-category-guide { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
+.asset-category-guide h3 { margin: 0 0 12px; font-size: 12px; font-weight: 600; }
+.asset-category-guide ul { margin: 0; padding-left: 18px; list-style: disc; }
+.asset-category-guide li { padding: 9px 0; border-top: 1px solid #edf0f2; }
+.asset-category-guide li strong { font-size: 11px; font-weight: 600; }
+.asset-category-guide li span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.asset-valuation-guide { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
+.asset-valuation-guide h3 { margin: 0 0 10px; font-size: 12px; font-weight: 600; }
+.asset-valuation-guide p { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.asset-valuation-guide .valuation-intro { margin-bottom: 12px; }
+.valuation-table { width: 100%; border-collapse: collapse; text-align: left; }
+.valuation-table th, .valuation-table td { padding: 9px; border-top: 1px solid #e9edf0; vertical-align: top; }
+.valuation-table thead th { color: var(--muted); font-size: 9px; font-weight: 600; }
+.valuation-table tbody th { width: 230px; font-size: 10px; font-weight: 600; }
+.valuation-table tbody td { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.valuation-table a { color: var(--accent); }
+.asset-valuation-guide .valuation-warning { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid #c9a35a; background: #faf8f2; }
 .save-status { color: var(--muted); font-size: 10px; }
 .explanation-panel { margin-top: 14px; padding: 17px 21px; }
 .explanation-panel .panel-heading { padding-bottom: 10px; }
@@ -90,10 +109,65 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .calculation-list dt { color: var(--muted); }
 .calculation-list dd { margin: 0; font-variant-numeric: tabular-nums; }
 .calculation-list .calculation-total { margin-top: 5px; border: 0; color: var(--ink); font-weight: 700; }
+.calculation-workspace { display: grid; gap: 16px; margin-top: 20px; }
+.calculation-input-panel, .calculation-result-panel, .comparison-panel, .counterproof-placeholder { padding: 20px 21px; }
+.calculation-input-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.calculation-input-row { min-width: 0; min-height: 67px; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e9edf0; border-radius: 4px; color: var(--ink); text-decoration: none; }
+.calculation-input-row > span:first-child { min-width: 0; display: grid; gap: 5px; }
+.calculation-input-row strong { font-size: 11px; font-weight: 600; }
+.calculation-input-row small { color: var(--muted); font-size: 10px; }
+.calculation-input-row .asset-value { flex: 0 0 auto; }
+.calculation-input-row .money-input { flex: 0 0 112px; }
+.calculation-input-row.asset-link:hover { background: #f8fafb; }
+.calculation-input-row.asset-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.calculation-partner-question { display: flex; align-items: center; gap: 18px; margin-top: 5px; padding-bottom: 10px; border-bottom: 0; }
+.calculation-partner-question legend { float: left; margin: 0; }
+.calculation-partner-question .choice-list { margin: 0; }
+.partner-allocation-field { max-width: 560px; padding: 0 0 8px; }
+.partner-allocation-control { display: flex; align-items: center; gap: 12px; }
+.partner-allocation-control input { width: 110px; height: 32px; }
+.partner-allocation-control input[aria-invalid="true"], .money-input:has(input[aria-invalid="true"]) { border-color: #b94a48; }
+.partner-allocation-control span { color: var(--muted); font-size: 11px; }
+.partner-allocation-field .law-explanation { margin-top: 7px; }
+.calculation-rounding-note, .calculation-method-note { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.calculation-method-note { white-space: pre-line; }
+.calculation-error { margin-top: 10px; }
+.calculation-results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.calculation-results-grid.is-single-column { grid-template-columns: minmax(0, 1fr); }
+.detailed-calculation-list > div { min-height: 35px; }
+.detailed-calculation-list dt { line-height: 1.4; }
+.detailed-calculation-list dd { flex: 0 0 auto; text-align: right; }
+.calculation-term-with-info { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 7px; }
+.calculation-info { flex: 0 0 auto; }
+.calculation-info summary { width: 14px; height: 14px; position: relative; list-style: none; cursor: pointer; }
+.calculation-info summary::-webkit-details-marker { display: none; }
+.calculation-info summary::before { content: ""; width: 6px; height: 6px; position: absolute; top: 2px; left: 3px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transition: transform 120ms ease; }
+.calculation-info[open] summary::before { top: 5px; transform: rotate(225deg); }
+.calculation-info summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.calculation-info[open] { flex-basis: 100%; }
+.calculation-info p { max-width: 430px; margin: 5px 0; color: var(--ink); font-size: 10px; font-style: italic; font-weight: 400; line-height: 1.5; }
+.comparison-table-wrap { overflow-x: auto; }
+.comparison-table { width: 100%; border-collapse: collapse; text-align: left; }
+.comparison-table th, .comparison-table td { padding: 11px 9px; border-top: 1px solid #e9edf0; font-size: 11px; }
+.comparison-table thead th { color: var(--muted); font-size: 10px; font-weight: 600; }
+.comparison-table tbody th { font-weight: 600; }
+.comparison-table td { font-variant-numeric: tabular-nums; }
+.comparison-table td.is-favorable, .detailed-calculation-list dd.is-favorable { color: #285d3d; background: #f0f7f2; font-weight: 700; }
+.comparison-result { margin: 15px 0 0; padding: 12px 14px; border-left: 3px solid var(--line); background: #f8fafb; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.comparison-result.is-old-favorable, .comparison-result.is-relief-favorable, .comparison-result.is-equal { border-left-color: #3a8057; color: #285d3d; background: #f0f7f2; }
+.comparison-difference { margin: 11px 0 0; color: var(--muted); font-size: 11px; }
+.comparison-difference strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.counterproof-placeholder p { margin: 0; color: var(--muted); font-size: 11px; }
 .form-status { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e6c6c6; border-radius: 4px; color: #812d2d; background: #fff8f8; font-size: 11px; }
 .preliminary-panel { margin-bottom: 16px; padding: 20px 21px; }
 .preliminary-panel[hidden], [hidden] { display: none !important; }
 .preliminary-panel .panel-heading { align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e9edf0; }
+.assessment-disclosure > summary { list-style: none; cursor: pointer; }
+.assessment-disclosure > summary::-webkit-details-marker { display: none; }
+.assessment-disclosure > summary::after { content: "+"; margin-left: 12px; color: var(--muted); font-size: 18px; font-weight: 400; line-height: 1; }
+.assessment-disclosure[open] > summary::after { content: "−"; }
+.assessment-disclosure > summary:focus-visible { outline: 2px solid #739aae; outline-offset: 3px; }
+.assessment-disclosure-content { padding-top: 12px; }
 .question-group { margin: 0; padding: 15px 0; border: 0; border-bottom: 1px solid #e9edf0; }
 .question-group legend, .question-label { display: block; margin-bottom: 9px; color: var(--ink); font-size: 12px; font-weight: 600; }
 .inline-question { display: flex; align-items: center; gap: 16px; }
@@ -112,39 +186,85 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .assessment-date-display { margin: 8px 0 0; color: var(--ink); font-size: 11px; }
 .objection-deadline { margin-top: 14px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
 .objection-deadline p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.objection-deadline-date { color: #7040a0; font-size: 17px; font-weight: 700; line-height: 1.4; }
+.general-terms-question { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.general-terms-question .question-label { margin: 0; font-weight: 400; }
+.general-terms-question .choice-list { gap: 6px; }
+.general-terms-question .choice { min-width: 0; padding: 4px 8px; }
 .objection-deadline .objection-result { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; column-gap: 6px; margin-top: 10px; color: var(--ink); }
 .objection-result span { display: block; margin: 0; color: #7040a0; font-size: 16px; font-weight: 700; line-height: 1.4; }
+.objection-deadline.has-adjusted-deadline .objection-result span { font-size: 13px; font-weight: 400; }
+.adjusted-deadline-result span { font-size: 16px; font-weight: 700; }
 .objection-deadline .general-terms-note { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 10px; color: var(--ink); font-size: 11px; line-height: 1.6; }
 .terms-act-question { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .terms-act-question .choice-list { gap: 6px; }
 .terms-act-question .choice { min-width: 0; padding: 4px 8px; }
 .adjusted-deadline-field { padding-top: 4px; }
+.adjusted-deadline-error { margin: 7px 0 0; }
 .adjusted-deadline-result { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; column-gap: 6px; margin: 9px 0 0; color: var(--ink); font-size: 11px; line-height: 1.6; }
-.adjusted-deadline-result span { display: block; margin: 0; color: #7040a0; font-size: 16px; font-weight: 700; line-height: 1.4; }
-.finality-question { margin-top: 10px; }
-.access-result { margin: 12px 0 0; padding: 13px 14px; border-left: 4px solid; font-size: 16px; font-weight: 700; line-height: 1.4; }
-.access-result-denial-word { color: #b42318; }
-.access-result-granted { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.adjusted-deadline-result span { display: block; margin: 0; color: #7040a0; line-height: 1.4; }
+.question-four { margin-top: 0; padding-top: 8px; }
+.question-four .question-group { padding-top: 0; padding-bottom: 0; border-bottom: 0; }
+.question-four-prompt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.question-four-prompt .question-label { margin: 0; }
+.question-four-prompt .law-explanation { flex: 1 1 500px; margin: 0; }
+.question-four .question-group > .choice-list { margin-top: 9px; }
+.objection-submission-date { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 10px; }
+.objection-submission-date .question-label { margin: 0; }
+.objection-submission-date .date-input { flex: 0 1 170px; }
+.date-status-row { display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; width: max-content; max-width: 100%; }
+.date-status-row .date-input { width: min(170px, 100%); flex: 0 1 170px; }
+.admissibility-badge { padding: 5px 9px; border: 1px solid #247a43; border-radius: 4px; color: #247a43; background: #edf7f0; font-size: 11px; font-weight: 700; line-height: 1.4; }
+.admissibility-badge-negative { border-color: #b42318; color: #b42318; background: #fff1f0; }
+.excusable-delay-question { flex-basis: 100%; display: grid; gap: 8px; margin-top: 6px; }
+.excusable-delay-question .question-label, .excusable-delay-question .law-explanation { margin: 0; }
+.access-result { margin: 12px 0 0; padding: 13px 14px; border-left: 4px solid var(--accent); color: var(--ink); background: var(--accent-soft); font-size: 16px; font-weight: 700; line-height: 1.4; }
+.access-result-positive { border-color: #247a43; color: #247a43; background: #edf7f0; }
+.access-result-negative { border-color: #b42318; color: #b42318; background: #fff1f0; }
+.access-result-review { border-color: #bd7800; color: #835400; background: #fff7e8; }
+.access-result-explanation { margin: 0; padding: 0 14px 13px 18px; border-left: 4px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.6; }
+.access-result-explanation a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.procedure-questions, .relief-next-step { margin-top: 8px; }
+.procedure-questions .question-group, .relief-next-step .question-group { padding: 13px 0; }
+.procedure-date-field { display: grid; gap: 6px; margin-top: 10px; color: var(--muted); font-size: 10px; }
+.procedure-date-field .date-input { width: min(250px, 100%); }
+.procedure-select { width: min(410px, 100%); min-height: 34px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: white; }
+.procedure-select:focus, .date-input:focus { outline: 2px solid #739aae; outline-offset: 2px; }
+.law-explanation { margin-top: 8px; }
+.law-detail { margin-top: 7px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+.law-detail summary { width: fit-content; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.law-detail .law-explanation { margin: 6px 0 8px; }
+.calculated-deadline { margin: 8px 0 0; padding: 9px 10px; border-radius: 4px; color: var(--ink); background: #f5f7f8; font-size: 10px; line-height: 1.55; }
+.calculated-deadline.deadline-conflict { color: #835400; background: #fff7e8; }
+.procedure-notice { margin: 10px 0 0; padding: 11px 12px; border: 1px solid; border-radius: 4px; font-size: 11px; line-height: 1.55; }
+.procedure-notice-info { border-color: #b9d1df; color: #31596f; background: #eff6fa; }
+.procedure-notice-warning { border-color: #e8c98f; color: #835400; background: #fff7e8; }
+.procedure-other-reason { display: grid; gap: 6px; margin-top: 9px; color: var(--muted); font-size: 10px; }
+.relief-next-step { padding-top: 7px; border-top: 1px solid #e9edf0; }
 .date-input:focus, .year-select select:focus-visible, .primary-button:focus-visible, .secondary-button:focus-visible { outline: 2px solid #739aae; outline-offset: 2px; }
 .formal-law { padding-top: 15px; }
-.formal-law h3 { margin: 0 0 5px; font-size: 12px; }
 .law-note, .law-explanation { margin: 0 0 8px; color: var(--muted); font-size: 10px; line-height: 1.55; }
 .formal-law .question-group { padding: 11px 0; }
+.formal-law .question-group + .question-group { margin-top: 15px; }
 .formal-law .question-group legend { margin-bottom: 5px; }
+.extension-answer-row, .extension-date-field { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.extension-date-field { margin: 0; }
+.extension-date-field .question-label { margin: 0; }
+.extension-date-field .date-input { flex: 0 1 170px; }
 .legal-conclusion { margin: 13px 0 0; padding: 11px 12px; border-left: 3px solid var(--accent); color: var(--ink); background: var(--accent-soft); font-size: 11px; line-height: 1.55; }
 .legal-conclusion-strong { font-weight: 700; }
+.preliminary-error { margin: 12px 0 0; color: #812d2d; font-size: 11px; }
 .primary-button { min-height: 34px; margin-top: 15px; padding: 0 13px; border: 1px solid #294d60; border-radius: 4px; color: white; background: #294d60; cursor: pointer; font-size: 11px; font-weight: 600; }
 .primary-button:hover:not(:disabled) { background: #1d4052; }
 .primary-button:disabled { border-color: #ccd4da; color: #89939d; background: #edf0f2; cursor: not-allowed; }
-.preliminary-error { margin: 12px 0 0; color: #812d2d; font-size: 11px; }
-.preliminary-complete { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 13px; }
-.preliminary-complete p { margin: 0; color: var(--muted); font-size: 11px; }
 .footer { display: flex; justify-content: space-between; margin-top: 28px; padding: 13px 0 18px; border-top: 1px solid var(--line); }
 .footer span:first-child { font-weight: 700; }
 
 @media (max-width: 720px) {
   .app-shell { width: min(100% - 36px, 560px); }
   .summary-grid { grid-template-columns: minmax(0, 1fr); }
+  .calculation-input-grid { grid-template-columns: minmax(0, 1fr); }
+  .calculation-results-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 450px) {
   .app-shell { width: calc(100% - 28px); }
@@ -157,6 +277,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
   .detail-controls { align-items: end; gap: 8px; }
   .detail-controls .year-select select { min-width: 110px; }
   .asset-panel, .calculation-panel { padding: 16px 13px; }
+  .calculation-input-panel, .calculation-result-panel, .comparison-panel, .counterproof-placeholder { padding: 16px 13px; }
   .asset-row { grid-template-columns: minmax(0, 1fr) 94px 15px; gap: 6px; }
   .money-input { width: 94px; }
   .asset-name { gap: 7px; }

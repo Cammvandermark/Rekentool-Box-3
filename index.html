@@ -5,46 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f3f5f7">
     <meta name="description" content="Box 3-rekentool — vermogensoverzicht">
-    <title>Box 3 | Vermogensoverzicht</title>
+    <title>Box 3 | Stappenplan</title>
     <link rel="stylesheet" href="styles.css">
     <script src="app.js" defer></script>
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="index.html"><span class="brand-mark">B3</span><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
-        <span class="topbar-label">VERMOGENSOVERZICHT</span>
+        <a class="brand" href="index.html"><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
+        <span class="topbar-label">STAPPENPLAN</span>
       </header>
+
+      <label class="year-select topbar-year-select" for="tax-year"><span>Belastingjaar</span>
+        <select id="tax-year" aria-label="Belastingjaar">
+            <option value="" selected>Selecteer jaar</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+        </select>
+      </label>
 
       <main>
         <div class="page-heading">
           <div>
-            <p class="eyebrow">DOSSIER · BOX 3</p>
-            <h1>Vermogensoverzicht</h1>
+            <h1>Stappenplan</h1>
           </div>
-          <label class="year-select" for="tax-year"><span>Belastingjaar</span>
-            <select id="tax-year" aria-label="Belastingjaar">
-              <option value="" selected>Selecteer jaar</option>
-              <option value="2017">2017</option>
-              <option value="2018">2018</option>
-              <option value="2019">2019</option>
-              <option value="2020">2020</option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
-          </label>
         </div>
 
         <section class="panel preliminary-panel" id="preliminary-panel" aria-labelledby="preliminary-title" hidden>
-          <div class="panel-heading">
-            <div><p class="eyebrow">VOORVRAGEN · 2017–2020</p><h2 id="preliminary-title">Formele beoordeling</h2></div>
-            <span class="panel-index" id="preliminary-year"></span>
-          </div>
+          <details class="assessment-disclosure">
+            <summary class="panel-heading">
+              <div><h2 id="preliminary-title">Formele beoordeling</h2></div>
+              <span class="panel-index" id="preliminary-year"></span>
+            </summary>
 
-          <div id="preliminary-form">
+          <div class="assessment-disclosure-content" id="preliminary-form">
             <div class="question-group inline-question" role="group" aria-labelledby="assessment-issued-label">
               <p class="question-label" id="assessment-issued-label">1. Is er een definitieve aanslag opgelegd?</p>
               <div class="choice-list">
@@ -64,23 +66,18 @@
             </div>
 
             <section class="objection-deadline" id="objection-deadline" aria-live="polite" hidden>
-                <p><strong>Termijn bezwaar tegen aanslag:</strong> 6 weken. Bij belastingaanslagen begint de bezwaartermijn in beginsel op de dag na de dagtekening van het aanslagbiljet (art. 22j AWR).</p>
-                <p class="objection-result"><strong>Uiterlijke datum bezwaar:</strong> <span id="objection-deadline-date"></span></p>
-                <div class="general-terms-note">
-                  <strong>Let op: Algemene termijnenwet.</strong>
-                  <div class="terms-act-question" role="group" aria-labelledby="terms-act-question-label">
-                    <span id="terms-act-question-label">Weekend- of feestdag?</span>
-                    <div class="choice-list">
-                      <label class="choice"><input type="radio" name="terms-act-applies" value="yes"><span>Ja</span></label>
-                      <label class="choice"><input type="radio" name="terms-act-applies" value="no"><span>Nee</span></label>
-                    </div>
+                <p>Uiterlijke dag indiening bezwaar (6 weken na dagtekening): <strong class="objection-deadline-date" id="objection-deadline-date"></strong></p>
+                <div class="general-terms-question" role="group" aria-label="Algemene termijnenwet van toepassing?">
+                  <span class="question-label">Algemene termijnenwet van toepassing?</span>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="general-terms-law" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="general-terms-law" value="no"><span>Nee</span></label>
                   </div>
                 </div>
-                <div class="adjusted-deadline-field" id="adjusted-deadline-field" hidden>
-                  <label class="question-label" for="adjusted-deadline">Nieuwe uiterlijke bezwaar datum</label>
-                  <input class="date-input" id="adjusted-deadline" type="date">
-                  <p class="adjusted-deadline-result" id="adjusted-deadline-result" hidden><strong>Aangepaste uiterlijke bezwaar datum:</strong> <span id="adjusted-deadline-text"></span></p>
-                </div>
+                <label class="procedure-date-field" id="general-terms-law-date-field" hidden>
+                  <span>Uiterlijke datum indiening bezwaar rekening houdend met Algemene termijnenwet</span>
+                  <input class="date-input" id="general-terms-law-date" type="date">
+                </label>
             </section>
 
             <div class="question-group conditional-question" id="objection-submitted-question" role="group" aria-labelledby="objection-submitted-label" hidden>
@@ -91,31 +88,226 @@
               </div>
             </div>
 
-            <fieldset class="question-group conditional-question" id="timely-objection-question" hidden>
-              <legend>4. Is het bezwaar tijdig ingediend?</legend>
-              <p class="law-explanation">Art. 6:9 Awb: een bezwaar is tijdig ingediend indien het vóór het einde van de termijn is ontvangen. Bij verzending per post geldt een bijzondere regel: het bezwaar is ook tijdig als het vóór het einde van de termijn ter post is bezorgd én uiterlijk een week na afloop van de termijn is ontvangen.</p>
-              <div class="choice-list">
-                <label class="choice"><input type="radio" name="objection-timely" value="yes"><span>Ja</span></label>
-                <label class="choice"><input type="radio" name="objection-timely" value="no"><span>Nee</span></label>
+            <section class="question-four conditional-question" id="timely-objection-question" hidden>
+              <div class="question-group" role="group" aria-labelledby="timely-objection-label">
+                <div class="question-four-prompt">
+                  <p class="question-label" id="timely-objection-label">4. Is het bezwaar tijdig ingediend?</p>
+                  <p class="law-explanation"><a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=6:9" target="_blank" rel="noopener">Artikel 6:9 Awb</a>: een bezwaar is tijdig ingediend indien het vóór het einde van de termijn is ontvangen. Bij verzending per post geldt een bijzondere regel: het bezwaar is ook tijdig als het vóór het einde van de termijn ter post is bezorgd én uiterlijk een week na afloop van de termijn is ontvangen.</p>
+                </div>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="objection-timely" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="objection-timely" value="no"><span>Nee</span></label>
+                </div>
+                <div class="objection-submission-date" id="objection-submission-date-field" hidden>
+                  <label class="question-label" for="objection-submission-date">Datum waarop het bezwaar is ingediend</label>
+                  <div class="date-status-row">
+                    <input class="date-input" id="objection-submission-date" type="date">
+                    <span class="admissibility-badge" id="objection-admissibility-badge" hidden>Ontvankelijk</span>
+                  </div>
+                  <div class="excusable-delay-question" id="excusable-delay-question" role="group" aria-labelledby="excusable-delay-label" hidden>
+                    <p class="question-label" id="excusable-delay-label">Is de termijnoverschrijding verschoonbaar op grond van artikel 6:11 Awb?</p>
+                    <div class="choice-list">
+                      <label class="choice"><input type="radio" name="excusable-delay" value="yes"><span>Ja</span></label>
+                      <label class="choice"><input type="radio" name="excusable-delay" value="no"><span>Nee</span></label>
+                      <span class="admissibility-badge" id="objection-late-admissibility-badge" hidden></span>
+                    </div>
+                    <p class="law-explanation">Op grond van <a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=6:11" target="_blank" rel="noopener">artikel 6:11 Awb</a> blijft niet-ontvankelijkverklaring achterwege <strong>indien redelijkerwijs niet kan worden geoordeeld dat u in verzuim bent geweest</strong>. Bijvoorbeeld bij ziekte, onjuiste informatie of een fout van de overheid.</p>
+                  </div>
+                </div>
               </div>
-            </fieldset>
+            </section>
 
-            <section class="finality-question conditional-question" id="finality-question" hidden>
+            <section class="question-four finality-question conditional-question" id="finality-question" hidden>
               <div class="question-group" role="group" aria-labelledby="finality-question-label">
-                <p class="question-label" id="finality-question-label">4. Stond de aanslag op 21 december 2021 al onherroepelijk vast?</p>
+                <p class="question-label" id="finality-question-label">5. Stond de aanslag op 24 december 2021 al onherroepelijk vast?</p>
                 <div class="choice-list">
                   <label class="choice"><input type="radio" name="appeal-open-2021" value="yes"><span>Ja</span></label>
                   <label class="choice"><input type="radio" name="appeal-open-2021" value="no"><span>Nee</span></label>
                 </div>
               </div>
             </section>
-            <p class="access-result" id="access-result" aria-live="polite" hidden><span class="access-result-denial-word" id="access-result-denial-word" hidden>Geen </span><span id="access-result-message"></span></p>
-
-            <section id="formal-law-questions" class="formal-law" aria-labelledby="formal-law-title" hidden>
-              <h3 id="formal-law-title">Formeel belastingrecht</h3>
-              <p class="law-note">Beoordeel de toepasselijke aanslagtermijn.</p>
+            <p class="procedure-notice procedure-notice-warning" id="finality-review-notice" hidden>Nader juridisch onderzoek noodzakelijk. De datum of tijdigheid van het beroep moet eerst worden opgehelderd.</p>
+            <section class="procedure-questions" id="procedure-questions" hidden>
               <fieldset class="question-group">
-                <legend>Is de reguliere aanslagtermijn verstreken?</legend>
+                <legend>5. Is er uitspraak op bezwaar gedaan?</legend>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="objection-decision" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="objection-decision" value="no"><span>Nee</span></label>
+                </div>
+              </fieldset>
+
+              <div id="no-objection-decision-questions" hidden>
+                <fieldset class="question-group">
+                  <legend>5A. Is het bezwaar op 24 december 2021 nog in behandeling?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="objection-in-progress" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="objection-in-progress" value="no"><span>Nee</span></label>
+                    <label class="choice"><input type="radio" name="objection-in-progress" value="unknown"><span>Onbekend</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="question-group">
+                  <legend>5B. Is de wettelijke beslistermijn verstreken?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="objection-decision-deadline-passed" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="objection-decision-deadline-passed" value="no"><span>Nee</span></label>
+                  </div>
+                  <label class="procedure-date-field">
+                    <span>Is een adviescommissie als bedoeld in artikel 7:13 Awb ingeschakeld?</span>
+                    <select class="procedure-select" id="objection-advisory-committee">
+                      <option value="unknown">Onbekend</option>
+                      <option value="no">Nee</option>
+                      <option value="yes">Ja</option>
+                    </select>
+                  </label>
+                  <label class="procedure-date-field">
+                    <span>Is het bezwaar aangewezen als massaal bezwaar (artikel 25c AWR)?</span>
+                    <select class="procedure-select" id="objection-massal-status">
+                      <option value="unknown">Onbekend</option>
+                      <option value="no">Nee</option>
+                      <option value="yes">Ja</option>
+                    </select>
+                  </label>
+                  <p class="law-explanation">Volgens <a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=7:10" target="_blank" rel="noopener">artikel 7:10 Awb</a> geldt in beginsel zes weken vanaf de dag na het einde van de bezwaartermijn, of twaalf weken als een commissie als bedoeld in artikel 7:13 Awb adviseert. De beslistermijn kan eenmaal met maximaal zes weken worden verdaagd; verder uitstel kent aanvullende voorwaarden. Bij aangewezen massaal bezwaar wordt de beslistermijn opgeschort en geldt afdeling 7.2 Awb niet (<a href="https://wetten.overheid.nl/jci1.3:c:BWBR0002320&amp;artikel=25c" target="_blank" rel="noopener">artikel 25c AWR</a>). De indicatieve datum houdt geen rekening met verdaging, verder uitstel, opschorting of bijzondere dossieromstandigheden; controleer deze voordat u de termijn als verstreken aanmerkt.</p>
+                  <p class="calculated-deadline" id="objection-decision-deadline-display" hidden></p>
+                </fieldset>
+                <fieldset class="question-group">
+                  <legend>5C. Wat is de reden dat nog geen uitspraak is gedaan?</legend>
+                  <label class="visually-hidden" for="objection-pending-reason">Reden dat nog geen uitspraak is gedaan</label>
+                  <select class="procedure-select" id="objection-pending-reason">
+                    <option value="">Selecteer een reden</option>
+                    <option value="substantive">Bezwaar wordt inhoudelijk behandeld.</option>
+                    <option value="box3">Bezwaar is aangehouden in verband met box 3-procedures.</option>
+                    <option value="information">Aanvullende informatie nodig.</option>
+                    <option value="unknown">Reden onbekend.</option>
+                    <option value="other">Anders.</option>
+                  </select>
+                  <label class="procedure-other-reason" id="objection-pending-other-field" hidden>
+                    <span>Omschrijf de reden</span>
+                    <input class="date-input" id="objection-pending-other" type="text">
+                  </label>
+                </fieldset>
+                <p class="procedure-notice procedure-notice-info" id="objection-open-notice" hidden>Het bezwaar staat nog open. Controleer de beslistermijn, eventuele aanhouding en de verdere inhoudelijke behandeling van het bezwaar.</p>
+              </div>
+
+              <div id="yes-objection-decision-questions" hidden>
+                <fieldset class="question-group">
+                  <legend>5D. Wat is de dagtekening van de uitspraak op bezwaar?</legend>
+                  <label class="procedure-date-field">
+                    <span>Dagtekening uitspraak</span>
+                    <input class="date-input" id="objection-decision-date" type="date">
+                  </label>
+                  <label class="procedure-date-field">
+                    <span>Datum van juridisch relevante bekendmaking</span>
+                    <input class="date-input" id="objection-announcement-date" type="date" aria-describedby="announcement-date-note">
+                  </label>
+                  <p class="law-explanation" id="announcement-date-note">Voor belastingzaken vangt de beroepstermijn in beginsel aan op de dag na de dagtekening, tenzij die dagtekening vóór de bekendmaking ligt; dan geldt de dag na de bekendmaking (<a href="https://wetten.overheid.nl/jci1.3:c:BWBR0002320&amp;artikel=26c" target="_blank" rel="noopener">artikel 26c AWR</a>). Vul beide datums in; de tool rekent vanaf de juridisch bepalende datum.</p>
+                </fieldset>
+                <fieldset class="question-group">
+                  <legend>5E. Wat is de uitkomst van de uitspraak op bezwaar?</legend>
+                  <label class="visually-hidden" for="objection-decision-outcome">Uitkomst uitspraak op bezwaar</label>
+                  <select class="procedure-select" id="objection-decision-outcome">
+                    <option value="">Selecteer de uitkomst</option>
+                    <option value="upheld">Gegrond</option>
+                    <option value="rejected">Ongegrond</option>
+                    <option value="inadmissible">Niet-ontvankelijk</option>
+                    <option value="partially-upheld">Gedeeltelijk gegrond</option>
+                  </select>
+                </fieldset>
+                <fieldset class="question-group">
+                  <legend>5F. Is beroep ingesteld tegen de uitspraak op bezwaar?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="tax-appeal-filed" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="tax-appeal-filed" value="no"><span>Nee</span></label>
+                  </div>
+                </fieldset>
+                <div id="tax-appeal-questions" hidden>
+                  <fieldset class="question-group">
+                    <legend>6. Is het beroep tijdig ingesteld?</legend>
+                    <p class="calculated-deadline" id="appeal-deadline-display" hidden></p>
+                    <label class="procedure-date-field">
+                      <span>Datum waarop beroep is ingesteld</span>
+                      <input class="date-input" id="tax-appeal-date" type="date">
+                    </label>
+                    <div class="choice-list">
+                      <label class="choice"><input type="radio" name="tax-appeal-timely" value="yes"><span>Ja</span></label>
+                      <label class="choice"><input type="radio" name="tax-appeal-timely" value="no"><span>Nee</span></label>
+                      <label class="choice"><input type="radio" name="tax-appeal-timely" value="pending"><span>Nog niet bekend</span></label>
+                    </div>
+                    <p class="law-explanation">De beroepstermijn bedraagt in beginsel zes weken (<a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=6:7" target="_blank" rel="noopener">artikel 6:7 Awb</a>). Voor belastingzaken bepaalt <a href="https://wetten.overheid.nl/jci1.3:c:BWBR0002320&amp;artikel=26c" target="_blank" rel="noopener">artikel 26c AWR</a> vanaf welke datum die termijn aanvangt.</p>
+                  </fieldset>
+                  <fieldset class="question-group">
+                    <legend>7. Waarop heeft het beroep betrekking?</legend>
+                    <label class="visually-hidden" for="tax-appeal-subject">Onderwerp van het beroep</label>
+                    <select class="procedure-select" id="tax-appeal-subject">
+                      <option value="">Selecteer het onderwerp</option>
+                      <option value="admissibility">Ontvankelijkheid van het bezwaar.</option>
+                      <option value="substance">Inhoudelijke box 3-heffing.</option>
+                      <option value="both">Beide.</option>
+                      <option value="other">Anders.</option>
+                    </select>
+                  </fieldset>
+                  <fieldset class="question-group">
+                    <legend>8. Wat is de huidige status van het beroep?</legend>
+                    <label class="visually-hidden" for="tax-appeal-status">Huidige status van het beroep</label>
+                    <select class="procedure-select" id="tax-appeal-status">
+                      <option value="">Selecteer de status</option>
+                      <option value="ongoing">Beroep loopt nog.</option>
+                      <option value="court-decided">Rechtbank heeft uitspraak gedaan.</option>
+                      <option value="higher-appeal">Hoger beroep loopt.</option>
+                      <option value="cassation">Cassatie loopt.</option>
+                      <option value="completed">Procedure is definitief afgerond.</option>
+                    </select>
+                  </fieldset>
+                  <label class="procedure-date-field" id="appeal-stage-date-field" hidden>
+                    <span>Datum waarop hoger beroep of cassatie is ingesteld</span>
+                    <input class="date-input" id="tax-appeal-stage-date" type="date">
+                  </label>
+                  <fieldset class="question-group" id="appeal-final-outcome-fieldset" hidden>
+                    <legend>Wat was de uitkomst van de definitief afgeronde beroepsprocedure?</legend>
+                    <label class="visually-hidden" for="tax-appeal-final-outcome">Uitkomst definitieve beroepsprocedure</label>
+                    <select class="procedure-select" id="tax-appeal-final-outcome">
+                      <option value="">Selecteer de uitkomst</option>
+                      <option value="upheld">Gegrond</option>
+                      <option value="rejected">Ongegrond</option>
+                      <option value="inadmissible">Niet-ontvankelijk</option>
+                      <option value="partially-upheld">Gedeeltelijk gegrond</option>
+                      <option value="other">Anders / onduidelijk</option>
+                    </select>
+                  </fieldset>
+                  <label class="procedure-date-field" id="appeal-ending-field" hidden>
+                    <span>Hoe is de procedure definitief geëindigd?</span>
+                    <select class="procedure-select" id="tax-appeal-ending">
+                      <option value="">Selecteer hoe de procedure is geëindigd</option>
+                      <option value="supreme-court-final">Definitieve uitspraak Hoge Raad zonder verwijzing.</option>
+                      <option value="district-no-appeal">Uitspraak rechtbank, geen hoger beroep ingesteld.</option>
+                      <option value="appeals-court-no-cassation">Uitspraak gerechtshof, geen cassatie ingesteld.</option>
+                      <option value="withdrawn">Rechtsmiddel ingetrokken.</option>
+                      <option value="supreme-court-referral">Hoge Raad heeft verwezen; verwijzingsprocedure loopt.</option>
+                      <option value="other">Anders / nader onderzoek noodzakelijk.</option>
+                    </select>
+                  </label>
+                  <label class="procedure-date-field" id="appeal-final-decision-date-field" hidden>
+                    <span id="appeal-final-date-label">Datum uitspraak / beëindiging van de procedure</span>
+                    <input class="date-input" id="tax-appeal-final-decision-date" type="date">
+                  </label>
+                  <p class="procedure-notice procedure-notice-warning" id="appeal-pending-notice" hidden>Er loopt nog een rechtsmiddel. Controleer de inhoud van het geschil en de actuele processtatus voordat een definitieve conclusie wordt getrokken.</p>
+                  <p class="procedure-notice procedure-notice-warning" id="court-decision-notice" hidden>De rechtbank heeft uitspraak gedaan. Controleer of hoger beroep is ingesteld en of de uitspraak definitief is voordat u een conclusie trekt.</p>
+                </div>
+                <div id="no-tax-appeal-questions" hidden>
+                  <p class="calculated-deadline" id="no-appeal-deadline-display" hidden></p>
+                  <p class="procedure-notice procedure-notice-warning" id="appeal-time-running-notice" hidden>De beroepstermijn is nog niet verstreken. De uitspraak op bezwaar staat nog niet onherroepelijk vast.</p>
+                  <p class="procedure-notice procedure-notice-info" id="appeal-time-expired-notice" hidden>De uitspraak op bezwaar staat in beginsel onherroepelijk vast. Controleer of rechtsherstel al is verleend en of een afzonderlijke wettelijke mogelijkheid tot vermindering bestaat.</p>
+                </div>
+              </div>
+            </section>
+            <p class="access-result" id="access-result" aria-live="polite" hidden></p>
+            <p class="procedure-notice procedure-notice-info" id="access-result-procedure-note" hidden></p>
+            <p class="access-result-explanation" id="access-result-explanation" hidden>
+              Inzake verzoek ambtshalve vermindering: Op 8 mei 2026 heeft de advocaat-generaal bij de Hoge Raad (de AG) aangegeven dat niet-bezwaarmakers geen recht hebben op teruggave van box 3-heffing voor de jaren 2017–2020 (<a href="https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:PHR:2026:463">ECLI:NL:PHR:2026:463</a>, <a href="https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:PHR:2026:456">ECLI:NL:PHR:2026:456</a> en <a href="https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:PHR:2026:457">ECLI:NL:PHR:2026:457</a>); zie ook <a href="https://www.hogeraad.nl/actueel/nieuwsoverzicht/2026/mei/advies-ag-hoge-raad-bezwaarmakers-recht-teruggave-box-3-heffing-jaren/">de samenvatting van het advies</a>. De Hoge Raad heeft op 25 juni 2026 (<a href="https://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2026:907">ECLI:NL:HR:2026:907</a>) laten weten het met de AG eens te zijn; de deur is daarmee definitief dicht. De staatssecretaris heeft op 17 juli 2026 bepaald dat alle als massaal bezwaar aangewezen verzoeken om ambtshalve vermindering ongegrond worden verklaard (<a href="https://zoek.officielebekendmakingen.nl/stcrt-2026-25867.html">Staatscourant 2026, nr. 25867</a>).
+            </p>
+            <section id="formal-law-questions" class="formal-law" hidden>
+              <fieldset class="question-group">
+                <legend>2. Is de reguliere aanslagtermijn verstreken?</legend>
                 <p class="law-explanation">Art. 11 lid 3 AWR: de Belastingdienst heeft in beginsel drie jaar na afloop van het belastingjaar om een definitieve aanslag inkomstenbelasting op te leggen.</p>
                 <div class="choice-list">
                   <label class="choice"><input type="radio" name="deadline-expired" value="yes"><span>Ja</span></label>
@@ -123,79 +315,383 @@
                 </div>
               </fieldset>
               <fieldset class="question-group">
-                <legend>Is er eventueel uitstel verleend?</legend>
-                <div class="choice-list">
-                  <label class="choice"><input type="radio" name="extension-granted" value="yes"><span>Ja</span></label>
-                  <label class="choice"><input type="radio" name="extension-granted" value="no"><span>Nee</span></label>
+                <legend>3. Is er uitstel verleend?</legend>
+                <div class="extension-answer-row">
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="extension-granted" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="extension-granted" value="no"><span>Nee</span></label>
+                  </div>
+                  <div class="extension-date-field" id="extension-date-field" hidden>
+                    <label class="question-label" for="extension-until">Tot wanneer is uitstel verleend?</label>
+                    <input class="date-input" id="extension-until" type="date">
+                  </div>
                 </div>
               </fieldset>
               <fieldset class="question-group">
-                <legend>Zijn er andere wettelijke omstandigheden waardoor een afwijkende termijn geldt?</legend>
+                <legend>4. Zijn er andere wettelijke omstandigheden waardoor een afwijkende termijn geldt?</legend>
                 <div class="choice-list">
                   <label class="choice"><input type="radio" name="legal-exception" value="yes"><span>Ja</span></label>
                   <label class="choice"><input type="radio" name="legal-exception" value="no"><span>Nee</span></label>
                 </div>
               </fieldset>
-              <p class="legal-conclusion">Als er geen toepasselijke verlenging of uitzondering is, mag de Belastingdienst niet alsnog een reguliere definitieve aanslag opleggen.</p>
             </section>
+            <p class="legal-conclusion" hidden>Als er geen toepasselijke verlenging of uitzondering is, mag de Belastingdienst niet alsnog een reguliere definitieve aanslag opleggen.</p>
 
             <p class="preliminary-error" id="preliminary-error" role="alert" hidden></p>
-            <button class="primary-button" id="continue-to-calculation" type="button" disabled>Naar berekening</button>
           </div>
-
-          <div class="preliminary-complete" id="preliminary-complete" hidden>
-            <p>Voorvragen doorlopen voor belastingjaar <strong id="completed-year"></strong>.</p>
-            <button class="secondary-button" id="edit-preliminary" type="button">Voorvragen wijzigen</button>
-          </div>
+          </details>
         </section>
 
-        <section class="summary-grid" aria-label="Vermogensbestanddelen">
-          <article class="panel asset-panel">
-            <div class="panel-heading">
-              <div><p class="eyebrow">BEZITTINGEN</p><h2>Vermogensbestanddelen</h2></div>
-              <span class="panel-index">01</span>
+        <section class="panel preliminary-panel" id="modern-preliminary-panel" aria-labelledby="modern-preliminary-title" hidden>
+          <details class="assessment-disclosure">
+            <summary class="panel-heading">
+              <div><h2 id="modern-preliminary-title">Formele beoordeling</h2></div>
+              <span class="panel-index" id="modern-preliminary-year"></span>
+            </summary>
+          <div class="assessment-disclosure-content">
+          <fieldset class="question-group">
+            <legend>1. Is er een definitieve aanslag opgelegd?</legend>
+            <div class="choice-list">
+              <label class="choice"><input type="radio" name="modern-assessment-issued" value="yes"><span>Ja</span></label>
+              <label class="choice"><input type="radio" name="modern-assessment-issued" value="no"><span>Nee</span></label>
+              <label class="choice"><input type="radio" name="modern-assessment-issued" value="unknown"><span>Onbekend</span></label>
             </div>
-            <a class="asset-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
-              <span class="asset-name"><span class="asset-index">01</span><span><strong>Banktegoeden</strong><small>Rekeningen en saldi</small></span></span>
-              <strong class="asset-value" id="savings-total">€ 0,00</strong>
-              <span class="row-arrow" aria-hidden="true">→</span>
-            </a>
-            <div class="asset-row">
-              <label class="asset-name" for="investments"><span class="asset-index">02</span><span><strong>Overige bezittingen</strong><small>Beleggingen en overige activa</small></span></label>
-              <span class="money-input"><span>€</span><input id="investments" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Overige bezittingen in euro"></span>
+          </fieldset>
+          <div id="modern-assessment-not-issued" hidden>
+            <p class="calculated-deadline" id="modern-assessment-statutory-deadline"></p>
+            <fieldset class="question-group">
+              <legend>Is uitstel verleend of geldt een andere bijzondere aanslagtermijn?</legend>
+              <div class="choice-list">
+                <label class="choice"><input type="radio" name="modern-extension-status" value="yes"><span>Ja</span></label>
+                <label class="choice"><input type="radio" name="modern-extension-status" value="no"><span>Nee</span></label>
+                <label class="choice"><input type="radio" name="modern-extension-status" value="unknown"><span>Onbekend</span></label>
+              </div>
+            </fieldset>
+            <label class="procedure-date-field" id="modern-extension-date-field" hidden>
+              <span>Tot wanneer is de verlengde aanslagtermijn vastgesteld?</span>
+              <input class="date-input" id="modern-extension-date" type="date">
+            </label>
+          </div>
+          <div id="modern-assessment-issued-fields" hidden>
+            <label class="procedure-date-field">
+              <span>Dagtekening definitieve aanslag</span>
+              <input class="date-input" id="modern-assessment-date" type="date">
+            </label>
+            <section class="objection-deadline" id="modern-assessment-date-deadline" hidden>
+              <p>Uiterlijke dag indiening bezwaar (6 weken na dagtekening): <strong class="objection-deadline-date" id="modern-objection-deadline-date"></strong></p>
+              <div class="general-terms-question" role="group" aria-label="Algemene termijnenwet van toepassing?">
+                <span class="question-label">Algemene termijnenwet van toepassing?</span>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="modern-general-terms-law" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="modern-general-terms-law" value="no"><span>Nee</span></label>
+                </div>
+              </div>
+              <label class="procedure-date-field" id="modern-general-terms-law-date-field" hidden>
+                <span>Uiterlijke datum indiening bezwaar rekening houdend met Algemene termijnenwet</span>
+                <input class="date-input" id="modern-general-terms-law-date" type="date">
+              </label>
+            </section>
+            <div id="modern-relief-fields" hidden>
+              <fieldset class="question-group">
+                <legend>2. Is de Wet rechtsherstel box 3 toegepast op de aanslag of een latere verminderingsbeschikking?</legend>
+                <div class="choice-list">
+                  <label class="choice"><input type="radio" name="modern-relief-applied" value="yes"><span>Ja</span></label>
+                  <label class="choice"><input type="radio" name="modern-relief-applied" value="no"><span>Nee</span></label>
+                  <label class="choice"><input type="radio" name="modern-relief-applied" value="unknown"><span>Onbekend</span></label>
+                </div>
+              </fieldset>
+              <section id="modern-procedure-fields" hidden>
+                <p class="law-explanation">De vergelijking hieronder is een indicatie. Ook als de Wet rechtsherstel een lagere uitkomst geeft, hangt vermindering af van de toepasselijke procedure en wettelijke voorwaarden. De vijfjaarstermijn voor een verzoek om ambtshalve vermindering is geen automatische garantie.</p>
+                <fieldset class="question-group">
+                  <legend>3. Is bezwaar ingediend tegen de definitieve aanslag?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="modern-objection-status" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="modern-objection-status" value="no"><span>Nee</span></label>
+                    <label class="choice"><input type="radio" name="modern-objection-status" value="unknown"><span>Onbekend</span></label>
+                  </div>
+                </fieldset>
+                <label class="procedure-date-field" id="modern-objection-date-field" hidden>
+                  <span>Datum waarop bezwaar is ontvangen (of ter post bezorgd)</span>
+                  <div class="date-status-row">
+                    <input class="date-input" id="modern-objection-date" type="date">
+                    <span class="admissibility-badge" id="modern-objection-admissibility-badge" hidden>Ontvankelijk</span>
+                  </div>
+                </label>
+                <fieldset class="question-group" id="modern-late-objection-fields" hidden>
+                  <legend>Is de termijnoverschrijding verschoonbaar?</legend>
+                  <details class="law-detail">
+                    <summary>Uitleg over verschoonbaarheid en de postregel</summary>
+                    <p class="law-explanation"><a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=6:11" target="_blank" rel="noopener">Artikel 6:11 Awb</a>: een te laat bezwaar kan toch ontvankelijk zijn als redelijkerwijs niet kan worden geoordeeld dat de indiener in verzuim is geweest. Controleer bij verzending per post ook <a href="https://wetten.overheid.nl/jci1.3:c:BWBR0005537&amp;artikel=6:9" target="_blank" rel="noopener">artikel 6:9 Awb</a>: terpostbezorging vóór het einde van de termijn en ontvangst uiterlijk een week daarna kan tijdig zijn. Vul bij twijfel de ontvangstdatum in en kies ‘Nog niet vastgesteld’.</p>
+                  </details>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="modern-late-objection" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="modern-late-objection" value="no"><span>Nee</span></label>
+                    <span class="admissibility-badge" id="modern-late-admissibility-badge" hidden></span>
+                    <label class="choice"><input type="radio" name="modern-late-objection" value="unknown"><span>Nog niet vastgesteld</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="question-group" id="modern-finality-question" hidden>
+                  <legend>5. Stond de aanslag op 24 december 2021 al onherroepelijk vast?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="modern-finality-status" value="yes"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="modern-finality-status" value="no"><span>Nee</span></label>
+                  </div>
+                </fieldset>
+                <div hidden>
+                <fieldset class="question-group" id="modern-objection-decision-fields" hidden>
+                  <legend>4. Is uitspraak op bezwaar gedaan?</legend>
+                  <div class="choice-list">
+                    <label class="choice"><input type="radio" name="modern-objection-outcome" value="pending"><span>Nee, bezwaar loopt nog</span></label>
+                    <label class="choice"><input type="radio" name="modern-objection-outcome" value="decided"><span>Ja</span></label>
+                    <label class="choice"><input type="radio" name="modern-objection-outcome" value="unknown"><span>Onbekend</span></label>
+                  </div>
+                </fieldset>
+                <div id="modern-objection-ruling-fields" hidden>
+                  <label class="procedure-date-field">
+                    <span>Datum bekendmaking uitspraak op bezwaar</span>
+                    <input class="date-input" id="modern-objection-announcement-date" type="date">
+                  </label>
+                  <fieldset class="question-group">
+                    <legend>5. Is tijdig beroep ingesteld?</legend>
+                    <div class="choice-list">
+                      <label class="choice"><input type="radio" name="modern-appeal-status" value="yes"><span>Ja</span></label>
+                      <label class="choice"><input type="radio" name="modern-appeal-status" value="no"><span>Nee</span></label>
+                      <label class="choice"><input type="radio" name="modern-appeal-status" value="unknown"><span>Onbekend</span></label>
+                    </div>
+                  </fieldset>
+                  <label class="procedure-date-field" id="modern-appeal-date-field" hidden>
+                    <span>Datum waarop beroep is ingesteld</span>
+                    <input class="date-input" id="modern-appeal-date" type="date">
+                  </label>
+                  <div id="modern-appeal-procedure-fields" hidden>
+                    <label class="procedure-date-field">
+                      <span>Huidige status van de procedure</span>
+                      <select class="procedure-select" id="modern-appeal-procedure-status">
+                        <option value="">Selecteer de status</option>
+                        <option value="ongoing">Procedure loopt nog</option>
+                        <option value="district">Rechtbank heeft uitspraak gedaan</option>
+                        <option value="court-of-appeal">Gerechtshof heeft uitspraak gedaan</option>
+                        <option value="supreme-court">Hoge Raad heeft uitspraak gedaan</option>
+                        <option value="referred">Hoge Raad heeft verwezen; procedure loopt verder</option>
+                        <option value="withdrawn">Rechtsmiddel ingetrokken</option>
+                        <option value="other">Anders / nader onderzoek</option>
+                      </select>
+                    </label>
+                    <div id="modern-appeal-final-fields" hidden>
+                      <label class="procedure-date-field">
+                        <span>Datum laatste uitspraak of beëindiging</span>
+                        <input class="date-input" id="modern-appeal-final-date" type="date">
+                      </label>
+                      <label class="procedure-date-field">
+                        <span>Laatste instantie</span>
+                        <select class="procedure-select" id="modern-appeal-final-instance">
+                          <option value="">Selecteer de instantie</option>
+                          <option value="district">Rechtbank</option>
+                          <option value="court-of-appeal">Gerechtshof</option>
+                          <option value="supreme-court">Hoge Raad</option>
+                        </select>
+                      </label>
+                      <label class="procedure-date-field">
+                        <span>Hoe is de procedure geëindigd?</span>
+                        <select class="procedure-select" id="modern-appeal-final-ending">
+                          <option value="">Selecteer de beëindiging</option>
+                          <option value="no-further-remedy">Geen gewoon rechtsmiddel meer mogelijk</option>
+                          <option value="no-appeal">Geen hoger beroep of cassatie ingesteld</option>
+                          <option value="withdrawn">Rechtsmiddel ingetrokken</option>
+                          <option value="referred">Verwijzing / procedure loopt verder</option>
+                          <option value="other">Anders / nader onderzoek</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <section id="modern-aav-fields" class="relief-next-step" hidden>
+                  <p class="procedure-notice procedure-notice-warning" id="modern-late-objection-notice" hidden>Het bezwaar is niet-ontvankelijk wegens termijnoverschrijding. Onderzoek of het bezwaarschrift tevens als verzoek om ambtshalve vermindering moet worden behandeld.</p>
+                  <p class="procedure-notice procedure-notice-info" id="modern-no-objection-notice" hidden>De bezwaartermijn is verstreken en er is geen bezwaar opgegeven. De aanslag staat in beginsel onherroepelijk vast; beoordeel nu afzonderlijk of ambtshalve vermindering mogelijk is.</p>
+                  <p class="law-explanation">Een niet-ontvankelijk bezwaar en een verzoek om ambtshalve vermindering zijn afzonderlijke routes. De reguliere verzoektermijn loopt in beginsel tot vijf jaar na afloop van het belastingjaar: voor <span id="modern-aav-year"></span> tot en met <strong id="modern-aav-deadline"></strong>. De datum hieronder is de datum waarop het verzoek bij de Belastingdienst is ontvangen. Als het bezwaarschrift tevens als verzoek wordt behandeld, moet de juridisch relevante ontvangstdatum van dat geschrift worden gebruikt. Controleer artikel 9.6 Wet IB 2001 en artikel 45aa Uitvoeringsregeling IB 2001; wettelijke uitzonderingen, de beperkingen van ambtshalve vermindering en de box 3-regels kunnen de uitkomst beïnvloeden. Deze datumcontrole geeft op zichzelf geen recht op vermindering.</p>
+                  <label class="procedure-date-field" id="modern-aav-request-date-field">
+                    <span>Datum waarop het verzoek om ambtshalve vermindering is (of wordt) ontvangen</span>
+                    <input class="date-input" id="modern-aav-request-date" type="date">
+                  </label>
+                  <p class="calculated-deadline" id="modern-aav-date-status" hidden></p>
+                  <fieldset class="question-group" id="modern-aav-reason-field" hidden>
+                    <legend>Wordt vermindering gevraagd omdat het werkelijke rendement lager is dan het forfaitaire rendement?</legend>
+                    <p class="law-explanation">Dit is een afzonderlijke beoordeling onder de Wet tegenbewijsregeling box 3. De huidige berekeningsmodule berekent geen werkelijk rendement; daarvoor zijn aanvullende gegevens en een inhoudelijke toets nodig.</p>
+                    <div class="choice-list">
+                      <label class="choice"><input type="radio" name="modern-aav-counterproof" value="yes"><span>Ja</span></label>
+                      <label class="choice"><input type="radio" name="modern-aav-counterproof" value="no"><span>Nee</span></label>
+                      <label class="choice"><input type="radio" name="modern-aav-counterproof" value="unknown"><span>Onbekend</span></label>
+                    </div>
+                  </fieldset>
+                </section>
+              </section>
             </div>
-            <div class="asset-row">
-              <label class="asset-name" for="debts"><span class="asset-index">03</span><span><strong>Schulden</strong><small>Box 3-schulden</small></span></label>
-              <span class="money-input"><span>€</span><input id="debts" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Schulden in euro"></span>
-            </div>
-            <div class="asset-row">
-              <label class="asset-name" for="actual"><span class="asset-index">04</span><span><strong>Werkelijk rendement</strong><small>Invoer rendement</small></span></label>
-              <span class="money-input"><span>€</span><input id="actual" type="number" step="0.01" inputmode="decimal" aria-label="Werkelijk rendement in euro"></span>
-            </div>
-            <div class="asset-total"><span>Totaal banktegoeden</span><strong id="savings-total-footer">€ 0,00</strong></div>
-          </article>
+          </div>
+          <p class="access-result" id="modern-assessment-result" aria-live="polite" hidden></p>
+          <p class="procedure-notice procedure-notice-info" id="modern-assessment-note" hidden></p>
+          <p class="preliminary-error" id="modern-preliminary-error" role="alert" hidden></p>
+          </div>
+          </details>
+        </section>
 
-          <aside class="panel calculation-panel" id="calculation-panel">
+        <section class="calculation-workspace" id="calculation-section" aria-label="Berekening box 3" hidden>
+          <section class="panel calculation-input-panel" aria-labelledby="calculation-input-title">
             <div class="panel-heading">
-              <div><p class="eyebrow">BEREKENING</p><h2>Uitkomst</h2></div>
-              <span class="panel-index">02</span>
+              <div><p class="eyebrow">VERMOGENSGEGEVENS</p><h2 id="calculation-input-title">Gezamenlijke invoer</h2></div>
+              <span class="panel-index" id="calculation-year"></span>
             </div>
-            <div class="empty-state" aria-live="polite">
-              <span class="empty-state-mark" aria-hidden="true">—</span>
-              <p id="calculation-status">Rekenregels niet vastgesteld</p>
+            <div class="calculation-input-grid">
+              <a class="calculation-input-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
+                <span><strong>Banktegoeden op 1 januari</strong><small>Beheer rekeningen en saldi</small></span>
+                <strong class="asset-value" id="savings-total">€ 0,00</strong>
+                <span class="row-arrow" aria-hidden="true">→</span>
+              </a>
+              <a class="calculation-input-row asset-link" id="other-assets-link" href="overige-bezittingen.html">
+                <span><strong>Overige bezittingen op 1 januari</strong><small>Beheer je bezittingen en waarden</small></span>
+                <strong class="asset-value" id="other-assets-total">€ 0,00</strong>
+                <span class="row-arrow" aria-hidden="true">→</span>
+              </a>
+              <label class="calculation-input-row" for="debts">
+                <span><strong>Schulden op 1 januari</strong><small>Box 3-schulden</small></span>
+                <span class="money-input"><span>€</span><input id="debts" type="number" min="0" step="0.01" inputmode="decimal" aria-label="Schulden op 1 januari in euro"></span>
+              </label>
             </div>
-            <dl class="calculation-list">
-              <div><dt>Rendementsgrondslag</dt><dd>—</dd></div>
-              <div><dt>Heffingvrij vermogen</dt><dd>—</dd></div>
-              <div><dt>Belastbaar rendement</dt><dd>—</dd></div>
-              <div class="calculation-total"><dt>Box 3-heffing</dt><dd>—</dd></div>
-            </dl>
-          </aside>
+            <fieldset class="question-group calculation-partner-question">
+              <legend>Fiscale partner?</legend>
+              <div class="choice-list">
+                <label class="choice"><input type="radio" name="calculation-fiscal-partner" value="no" checked><span>Nee</span></label>
+                <label class="choice"><input type="radio" name="calculation-fiscal-partner" value="yes"><span>Ja</span></label>
+              </div>
+            </fieldset>
+            <div class="partner-allocation-field" id="partner-allocation-field" hidden>
+              <label class="question-label" for="partner-allocation">Aandeel gezamenlijke grondslag toegewezen aan belastingplichtige (%)</label>
+              <div class="partner-allocation-control">
+                <input class="date-input" id="partner-allocation" type="number" min="0" max="100" step="1" value="50" inputmode="numeric">
+                <span id="partner-allocation-summary">Partner: 50%</span>
+              </div>
+              <p class="law-explanation">Het resterende deel wordt aan de fiscale partner toegerekend. De invoer is het aandeel in de gezamenlijke grondslag sparen en beleggen ná toepassing van het gezamenlijke heffingsvrije vermogen.</p>
+            </div>
+            <p class="form-status calculation-error" id="calculation-error" role="alert" hidden></p>
+            <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening afgerond op hele euro's. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
+            <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
+          </section>
+
+          <div class="summary-grid calculation-results-grid">
+            <article class="panel calculation-result-panel" id="old-calculation-panel">
+              <div class="panel-heading">
+                <div><p class="eyebrow">BEREKENING A</p><h2>A. Oude box 3-berekening</h2></div>
+                <span class="panel-index" id="old-calculation-year"></span>
+              </div>
+              <dl class="calculation-list detailed-calculation-list">
+                <div><dt>Totale bezittingen</dt><dd id="old-assets">—</dd></div>
+                <div><dt>Aftrekbare schulden na drempel</dt><dd id="old-deductible-debts">—</dd></div>
+                <div><dt>Rendementsgrondslag</dt><dd id="old-net-assets">—</dd></div>
+                <div><dt>Heffingsvrij vermogen</dt><dd id="old-exemption">—</dd></div>
+                <div><dt>Grondslag sparen en beleggen</dt><dd id="old-taxable-base">—</dd></div>
+                <div id="old-allocation-row" hidden><dt>Verdeling grondslag (belastingplichtige / partner)</dt><dd id="old-allocation">—</dd></div>
+                <div>
+                  <dt class="calculation-term-with-info">
+                    <span>Rendement schijf 1</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van rendement schijf 1"></summary>
+                      <p>
+                        <span id="old-tier-1-range"></span><br>
+                        <span id="old-tier-1-allocation"></span><br>
+                        <span id="old-tier-1-explanation"></span>
+                      </p>
+                    </details>
+                  </dt>
+                  <dd id="old-tier-1">—</dd>
+                </div>
+                <div>
+                  <dt class="calculation-term-with-info">
+                    <span>Rendement schijf 2</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van rendement schijf 2"></summary>
+                      <p>
+                        <span id="old-tier-2-range"></span><br>
+                        <span id="old-tier-2-allocation"></span><br>
+                        <span id="old-tier-2-explanation"></span>
+                      </p>
+                    </details>
+                  </dt>
+                  <dd id="old-tier-2">—</dd>
+                </div>
+                <div>
+                  <dt class="calculation-term-with-info">
+                    <span>Rendement schijf 3</span>
+                    <details class="calculation-info">
+                      <summary aria-label="Toon de berekening van rendement schijf 3"></summary>
+                      <p>
+                        <span id="old-tier-3-range"></span><br>
+                        <span id="old-tier-3-allocation"></span><br>
+                        <span id="old-tier-3-explanation"></span>
+                      </p>
+                    </details>
+                  </dt>
+                  <dd id="old-tier-3">—</dd>
+                </div>
+                <div class="calculation-total"><dt>Box 3-inkomen oude methode</dt><dd id="old-income">—</dd></div>
+                <div class="calculation-total"><dt id="old-tax-label">Box 3-belasting oude methode</dt><dd id="old-tax">—</dd></div>
+              </dl>
+              <p class="calculation-method-note" id="old-method-note"></p>
+            </article>
+
+            <article class="panel calculation-result-panel">
+              <div class="panel-heading">
+                <div><p class="eyebrow" id="relief-calculation-eyebrow">BEREKENING B</p><h2 id="relief-calculation-title">B. Wet rechtsherstel box 3</h2></div>
+                <span class="panel-index" id="relief-calculation-year"></span>
+              </div>
+              <dl class="calculation-list detailed-calculation-list">
+                <div><dt>Totale bezittingen</dt><dd id="relief-assets">—</dd></div>
+                <div><dt id="relief-deductible-debts-label">Aftrekbare schulden na drempel</dt><dd id="relief-deductible-debts">—</dd></div>
+                <div><dt>Rendementsgrondslag</dt><dd id="relief-net-assets">—</dd></div>
+                <div><dt>Heffingsvrij vermogen</dt><dd id="relief-exemption">—</dd></div>
+                <div><dt>Grondslag sparen en beleggen</dt><dd id="relief-taxable-base">—</dd></div>
+                <div id="relief-allocation-row" hidden><dt>Verdeling grondslag (belastingplichtige / partner)</dt><dd id="relief-allocation">—</dd></div>
+                <div><dt>Forfaitair rendement banktegoeden</dt><dd id="relief-savings-return">—</dd></div>
+                <div><dt>Forfaitair rendement overige bezittingen</dt><dd id="relief-investment-return">—</dd></div>
+                <div><dt>Aftrek forfaitair rendement schulden</dt><dd id="relief-debt-return">—</dd></div>
+                <div><dt>Totaal forfaitair rendement</dt><dd id="relief-total-return">—</dd></div>
+                <div><dt>Rendementspercentage</dt><dd id="relief-yield-rate">—</dd></div>
+                <div class="calculation-total"><dt id="relief-income-label">Box 3-inkomen Wet rechtsherstel</dt><dd id="relief-income">—</dd></div>
+                <div class="calculation-total"><dt id="relief-tax-label">Box 3-belasting Wet rechtsherstel</dt><dd id="relief-tax">—</dd></div>
+              </dl>
+              <p class="calculation-method-note" id="relief-method-note"></p>
+            </article>
+          </div>
+
+          <section class="panel comparison-panel" id="comparison-panel" aria-labelledby="comparison-title">
+            <div class="panel-heading">
+              <div><p class="eyebrow">AUTOMATISCHE VERGELIJKING</p><h2 id="comparison-title">Vergelijking box 3-berekeningen</h2></div>
+              <span class="panel-index">RESULTAAT</span>
+            </div>
+            <div class="comparison-table-wrap">
+              <table class="comparison-table">
+                <thead><tr><th>Onderdeel</th><th>Oude methode</th><th>Wet rechtsherstel</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Box 3-inkomen</th><td id="comparison-old-income">—</td><td id="comparison-relief-income">—</td></tr>
+                  <tr><th scope="row">Box 3-belasting</th><td id="comparison-old-tax">—</td><td id="comparison-relief-tax">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="comparison-result" id="comparison-result" aria-live="polite">Vul de vermogensgegevens in om de berekeningen te vergelijken.</p>
+            <p class="comparison-difference">Verschil in box 3-belasting: <strong id="comparison-difference">—</strong></p>
+          </section>
+
+          <section class="panel counterproof-placeholder" aria-labelledby="counterproof-title">
+            <div class="panel-heading">
+              <div><p class="eyebrow">VOLGENDE ONDERDEEL</p><h2 id="counterproof-title">C. Tegenbewijsregeling — Werkelijk rendement</h2></div>
+              <span class="panel-index">C</span>
+            </div>
+            <p>Dit onderdeel wordt later uitgewerkt.</p>
+          </section>
         </section>
 
         <p class="form-status" id="form-status" role="status" hidden></p>
       </main>
-      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Belastingjaar 2017–2025</span></footer>
+      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Belastingjaar 2017–2026</span></footer>
     </div>
   </body>
 </html>

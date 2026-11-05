@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f5f7">
+    <title>Box 3 | Overige bezittingen</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="overige-bezittingen.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
+        <span class="topbar-label">OVERIGE BEZITTINGEN</span>
+      </header>
+
+      <main>
+        <nav class="breadcrumb" aria-label="Navigatiepad"><a href="index.html">Stappenplan</a><span aria-hidden="true">/</span><span>Overige bezittingen</span></nav>
+        <div class="page-heading detail-heading">
+          <div><p class="eyebrow">VERMOGENSBESTANDDELEN · 02</p><h1>Overige bezittingen</h1></div>
+          <div class="detail-controls">
+            <label class="year-select" for="tax-year"><span>Belastingjaar</span>
+              <select id="tax-year" aria-label="Belastingjaar">
+                <option value="">Selecteer jaar</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+              </select>
+            </label>
+            <a class="back-link" href="index.html">← Overzicht</a>
+          </div>
+        </div>
+
+        <section class="panel detail-panel" aria-labelledby="assets-title">
+          <div class="panel-heading">
+            <div><p class="eyebrow">INVENTARISATIE</p><h2 id="assets-title">Bezittingen</h2></div>
+            <span class="panel-index">WAARDE OP 1 JANUARI</span>
+          </div>
+          <p>Voor elke categorie staat alvast een invoerregel klaar. Vul de omschrijving en waarde in; gebruik <strong>+ Bezitting toevoegen</strong> voor extra bezittingen binnen een categorie. Hieronder staan de categorieën met voorbeelden.</p>
+          <div class="account-table-wrap">
+            <table class="account-table">
+              <thead><tr><th scope="col">Omschrijving</th><th scope="col">Soort bezitting</th><th scope="col">Waarde (€)</th><th scope="col"><span class="visually-hidden">Actie</span></th></tr></thead>
+              <tbody id="asset-rows"></tbody>
+              <tfoot><tr><th scope="row" colspan="2">Totaal overige bezittingen</th><td id="asset-total">€ 0,00</td><td></td></tr></tfoot>
+            </table>
+          </div>
+          <div class="detail-actions"><button class="secondary-button" id="add-asset" type="button">+ Bezitting toevoegen</button><span id="save-status" class="save-status" role="status" aria-live="polite"></span></div>
+          <section class="asset-category-guide" aria-labelledby="asset-category-title">
+            <h3 id="asset-category-title">Categorieën overige bezittingen</h3>
+            <ul>
+              <li><strong>Aandelen, obligaties, winstbewijzen en opties:</strong> <span>Beleggingen die niet bij een aanmerkelijk belang horen, waaronder het niet-vrijgestelde deel van groene en maatschappelijke beleggingen.</span></li>
+              <li><strong>Vorderingen, uitgeleend geld of contant geld:</strong> <span>Geld dat u aan iemand hebt uitgeleend of contant geld. Bank- en spaartegoeden vult u apart in bij Banktegoeden.</span></li>
+              <li><strong>2e woning, zoals een vakantiewoning:</strong> <span>De waarde van een tweede woning op 1 januari.</span></li>
+              <li><strong>Overige onroerende zaken:</strong> <span>Bijvoorbeeld een verhuurde woning of een garage die niet direct naast uw woning ligt.</span></li>
+              <li><strong>Niet-vrijgesteld deel kapitaalverzekeringen:</strong> <span>Het deel van een kapitaalverzekering dat niet is vrijgesteld.</span></li>
+              <li><strong>Rechten op periodieke uitkeringen:</strong> <span>Rechten die niet in box 1 worden belast en volgens de regels in box 3 horen.</span></li>
+              <li><strong>Vruchtgebruik of blote eigendom:</strong> <span>De waarde van uw recht op vruchtgebruik of uw blote eigendom van vermogen.</span></li>
+              <li><strong>Roerende zaken als belegging of verhuurd:</strong> <span>Bijvoorbeeld waardevolle spullen die u verhuurt of als belegging aanhoudt, en rechten daarop.</span></li>
+              <li><strong>Cryptovaluta:</strong> <span>Zoals bitcoins en andere virtuele betaalmiddelen; gebruik de waarde in het economisch verkeer op 1 januari.</span></li>
+              <li><strong>Vorderingen uit crowdfunding:</strong> <span>Bedragen die u via crowdfunding hebt uitgeleend.</span></li>
+              <li><strong>Nabetalingen van toeslagen:</strong> <span>Deze geeft u aan als overige vordering.</span></li>
+              <li><strong>Overige bezittingen of rechten:</strong> <span>Bezittingen die niet onder een van de andere categorieën vallen, bijvoorbeeld een lot waarop een prijs is gevallen.</span></li>
+            </ul>
+          </section>
+          <section class="asset-valuation-guide" aria-labelledby="asset-valuation-title">
+            <h3 id="asset-valuation-title">Hoe stelt u de waarde vast?</h3>
+            <p class="valuation-intro">Voor belastingjaren 2017–2020 gaat het in beginsel om de waarde op 1 januari van het gekozen belastingjaar. Voor Nederlands onroerend goed gebruikt u meestal de WOZ-beschikking met waardepeildatum 1 januari van het voorafgaande jaar.</p>
+            <div class="account-table-wrap">
+              <table class="valuation-table">
+                <thead><tr><th scope="col">Soort bezitting</th><th scope="col">Waardering en aandachtspunten</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Aandelen, obligaties, winstbewijzen en opties</th><td>Gebruik voor aan Euronext Amsterdam genoteerde effecten de slotwaarde uit de Officiële Prijscourant; op 1 januari is dat de slotwaarde van het voorafgaande jaar. Voor niet-genoteerde effecten gebruikt u de waarde in het economisch verkeer op de peildatum. Voor groene beleggingen kunnen aparte vrijstellingen gelden. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/aandelen_obligaties_winstbewijzen_en_dergelijke" target="_blank" rel="noopener noreferrer">Belastingdienst: aandelen en dergelijke</a>.</td></tr>
+                  <tr><th scope="row">Vorderingen, uitgeleend geld of contant geld</th><td>Waardeer een vordering op de peildatum; houd rekening met de voorwaarden en de waardeerbaarheid/inbaarheid. Contant geld telt mee tegen de nominale waarde, maar kende in 2017–2020 een afzonderlijke vrijstelling. Die vrijstelling wordt in deze rekentool niet apart toegepast. Bank- en spaartegoeden vult u apart in.</td></tr>
+                  <tr><th scope="row">2e woning, zoals een vakantiewoning</th><td>Voor een woning in Nederland gebruikt u de WOZ-waarde met waardepeildatum 1 januari van het voorafgaande jaar. Voor belastingjaar 2017 is dat 1 januari 2016; voor 2018: 1 januari 2017; voor 2019: 1 januari 2018; voor 2020: 1 januari 2019. Een verhuurde woning hoort niet zonder meer in deze categorie: zie <em>Overige onroerende zaken</em>. Voor een woning buiten Nederland geldt in beginsel de waarde in het economisch verkeer in onbewoonde staat op de voorgeschreven peildatum. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/2e_woning" target="_blank" rel="noopener noreferrer">Belastingdienst: 2e woning</a>.</td></tr>
+                  <tr><th scope="row">Overige onroerende zaken</th><td>Voor een Nederlandse woning gebruikt u in beginsel de WOZ-waarde met peildatum 1 januari van het voorafgaande jaar. Is de woning verhuurd en heeft de huurder huurbescherming, dan kan voor langdurige verhuur de leegwaarderatio gelden: een percentage van de WOZ-waarde, bepaald aan de hand van de jaarhuur en de tabel die voor het betreffende belastingjaar geldt. Voor verhuur aan een gelieerde partij onder niet-zakelijke voorwaarden gold tot en met 2022 een bijzondere waardering van 62%. Zonder toepasselijke vermindering kan de volle WOZ-waarde gelden. Verhuur, tijdelijke verhuur, erfpacht, pacht en verhuur van een deel van een woning kennen voorwaarden en uitzonderingen; gebruik niet de huidige tabel zonder te controleren of deze voor het historische jaar geldt. Andere onroerende zaken, zoals grond, waardeert u doorgaans op de waarde in het economisch verkeer op de toepasselijke peildatum. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/overige_onroerende_zaken/overige_onroerende_zaken" target="_blank" rel="noopener noreferrer">Belastingdienst: overige onroerende zaken</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/overige_onroerende_zaken/waarde_verhuurde_woning_als_overige_onroerende_zaak/waarde-verhuurde-woning-als-overige-onroerende-zaak" target="_blank" rel="noopener noreferrer">waardering verhuurde woning</a>.</td></tr>
+                  <tr><th scope="row">Niet-vrijgesteld deel kapitaalverzekeringen</th><td>Vraag de verzekeraar om de waarde op de peildatum en controleer eerst of de polis geheel of gedeeltelijk is vrijgesteld of onder box 1 valt. De rekentool berekent polisvrijstellingen niet.</td></tr>
+                  <tr><th scope="row">Rechten op periodieke uitkeringen</th><td>De waarde hangt af van onder meer de soort uitkering, looptijd, hoogte en voorwaarden. Hiervoor gelden wettelijke waarderingsregels en tabellen; neem niet zonder meer de totale toekomstige uitkeringen als waarde. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/rechten_op_periodieke_uitkeringen" target="_blank" rel="noopener noreferrer">Belastingdienst: periodieke uitkeringen</a>.</td></tr>
+                  <tr><th scope="row">Vruchtgebruik of blote eigendom</th><td>Waardeer volgens de wettelijke tabellen en regels, aan de hand van onder andere de volle waarde van het vermogen, de aard/duur van het recht en de toepasselijke leeftijds- of rentegegevens. Een eigen schatting of vast percentage is niet altijd juist. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/berekening_waarde_periodieke_uitkeringen_vruchtgebruik_of_blote_eigendom/waarde-periodieke-uitkeringen-vruchtgebruik-blote-eigendom" target="_blank" rel="noopener noreferrer">Belastingdienst: waardering periodieke uitkeringen, vruchtgebruik en blote eigendom</a>.</td></tr>
+                  <tr><th scope="row">Roerende zaken als belegging of verhuurd</th><td>Neem de waarde in het economisch verkeer op de peildatum. Roerende zaken voor eigen gebruik of gezinsgebruik, zoals de gewone inboedel, vallen doorgaans niet in box 3; voor kunst en andere bijzondere bezittingen kunnen uitzonderingen gelden. Bewaar zo nodig een taxatie of onderbouwing van de verkoopwaarde.</td></tr>
+                  <tr><th scope="row">Cryptovaluta</th><td>Gebruik de waarde in het economisch verkeer op 1 januari, doorgaans de koers van het platform dat u gebruikt. Leg platform, tijdstip/koers en eventuele omrekening naar euro's vast.</td></tr>
+                  <tr><th scope="row">Vorderingen uit crowdfunding</th><td>Is het geld op de peildatum nog beschikbaar op een rekening, waardeer het dan als banktegoed. Is het uitgeleend, waardeer de vordering op de peildatum. Aandelen die u in ruil kreeg, vallen onder effecten. Voorkom dat hetzelfde bedrag dubbel wordt ingevoerd. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/crowdfunding-ontvangen-en-uitlenen" target="_blank" rel="noopener noreferrer">Belastingdienst: crowdfunding</a>.</td></tr>
+                  <tr><th scope="row">Nabetalingen van toeslagen</th><td>Neem de vordering op die op de peildatum bestaat en onderbouw het bedrag met de beschikking of correspondentie van de uitvoerder.</td></tr>
+                  <tr><th scope="row">Overige bezittingen of rechten</th><td>Waardeer op de peildatum volgens de regels die bij het specifieke bezit of recht horen. Bijvoorbeeld: bij een lot waarop een prijs is gevallen, geldt de waarde van de prijs. Bij een complex of onzeker recht kan specialistisch advies nodig zijn.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="valuation-warning">Dit overzicht is een praktische samenvatting, geen individuele fiscale beoordeling. De regels kunnen afhangen van de exacte feiten en van het gekozen belastingjaar. De invoerpagina registreert de opgegeven bedragen, maar past geen leegwaarderatio, vrijstelling voor contant geld of andere bijzondere waarderingsregel automatisch toe. Controleer bij verhuur en bijzondere rechten altijd de officiële regels voor het juiste jaar.</p>
+          </section>
+        </section>
+
+        <section class="panel explanation-panel" aria-labelledby="explanation-title">
+          <div class="panel-heading"><div><p class="eyebrow">TOELICHTING</p><h2 id="explanation-title">Overige bezittingen in box 3</h2></div></div>
+          <p>Leg per bezitting de omschrijving, soort en waarde op 1 januari van het geselecteerde belastingjaar vast. De categorieën sluiten aan op de <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/" target="_blank" rel="noopener noreferrer">indeling van bezittingen door de Belastingdienst</a>. De categorie is alleen voor de inventarisatie; deze rekentool past geen bijzondere vrijstellingen of waarderingsregels per categorie toe. Het totaal wordt gebruikt in de box 3-berekeningen.</p>
+        </section>
+        <p class="form-status" id="form-status" role="alert" hidden></p>
+      </main>
+      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Overige bezittingen</span></footer>
+    </div>
+  </body>
+</html>
