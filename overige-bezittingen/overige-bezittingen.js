@@ -100,26 +100,6 @@ function readAssets() {
       const match = /^bezitting-(\d+)$/.exec(asset.id);
       return match ? Math.max(highest, Number(match[1]) + 1) : highest;
     }, 1);
-    const seedKey = initializedKey();
-    if (localStorage.getItem(seedKey) !== "true") {
-      const existingTypes = new Set(assets.map((asset) => asset.type));
-      for (const [type] of assetTypes) {
-        if (existingTypes.has(type)) continue;
-        assets.push({
-          id: `bezitting-${nextId++}`,
-          name: "",
-          type,
-          value: 0,
-        });
-      }
-      if (saveAssets()) {
-        try {
-          localStorage.setItem(seedKey, "true");
-        } catch (error) {
-          showError(`De categorie-initialisatie kon niet worden opgeslagen: ${error.message}`);
-        }
-      }
-    }
   } catch (error) {
     showError(`Bezittingen konden niet worden geladen: ${error.message}`);
     assets = [];
@@ -168,6 +148,13 @@ function render() {
 
     const type = document.createElement("select");
     type.setAttribute("aria-label", "Soort bezitting");
+    
+    // Add empty default option
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Kies bezitting";
+    type.append(defaultOption);
+    
     for (const [value, label] of assetTypes) {
       const option = document.createElement("option");
       option.value = value;
@@ -229,7 +216,7 @@ addAssetButton.addEventListener("click", () => {
   assets.push({
     id: `bezitting-${nextId++}`,
     name: "",
-    type: "other",
+    type: "",
     value: 0,
   });
   render();
