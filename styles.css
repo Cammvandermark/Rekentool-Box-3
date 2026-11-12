@@ -181,7 +181,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .form-status { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e6c6c6; border-radius: 4px; color: #812d2d; background: #fff8f8; font-size: 11px; }
 .preliminary-panel { margin-bottom: 20px; padding: 10px 21px 10px 21px; }
 .preliminary-panel[hidden], [hidden] { display: none !important; }
-.preliminary-panel .panel-heading { align-items: center; padding-bottom: 17px; }
+.preliminary-panel .panel-heading { align-items: center; padding-bottom: 0; }
 .assessment-disclosure > summary { list-style: none; cursor: pointer; }
 .assessment-disclosure > summary::-webkit-details-marker { display: none; }
 .assessment-disclosure > summary::after { content: "+"; margin-left: 12px; color: var(--muted); font-size: 18px; font-weight: 400; line-height: 1; }
