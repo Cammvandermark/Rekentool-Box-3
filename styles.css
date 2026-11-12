@@ -40,7 +40,7 @@ button, input, select { font: inherit; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 1px; }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: 25px; font-weight: 600; letter-spacing: -.55px; }
-.section-heading { margin-top: 0; margin-bottom: 0; font-size: 25px; font-weight: 600; letter-spacing: -.55px; margin: 37px 0 20px; }
+.section-heading { margin-top: 0; margin-bottom: 20px; font-size: 25px; font-weight: 600; letter-spacing: -.55px; margin-top: 37px; }
 h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .year-select { display: grid; gap: 5px; color: var(--muted); font-size: 10px; }
 .year-select select { min-width: 150px; height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: white; }
