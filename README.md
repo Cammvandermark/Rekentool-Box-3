@@ -6,6 +6,18 @@ Zakelijke rekentool voor het vastleggen en beoordelen van Box 3-gegevens per bel
 
 Open `index.html` in een moderne browser en selecteer een belastingjaar van 2017 tot en met 2026. De formele beoordeling en historische berekeningen zijn beschikbaar voor 2017–2022. De berekening volgens de Overbruggingswet box 3 is beschikbaar voor 2023–2026. De invoer en dossiergegevens worden lokaal in de browser opgeslagen; er is geen server of buildstap nodig.
 
+## Indeling van de code
+
+- `formele-beoordeling/`: vragen, formele beoordeling en conclusies; de specifieke route voor 2021–2022 staat in een apart bestand.
+- `berekeningen/oude-methode/`: oude schijfberekening en toelichtingen.
+- `berekeningen/rechtsherstel/`: berekening met het rendementspercentage voor 2017–2021.
+- `berekeningen/overbruggingswet/`: berekening met het aandeel in de rendementsgrondslag vanaf 2022. Deze methode wordt ook gebruikt voor rechtsherstel in 2022.
+- `berekeningen/gedeeld/`: gezamenlijke invoer, presentatie, vergelijking en het forfaitaire rendement dat beide methoden gebruiken.
+- `banktegoeden/` en `overige-bezittingen/`: logica voor de bijbehorende invoerpagina's.
+- `gedeeld/`: jaargegevens, opslagsleutels en het starten van het dashboard.
+
+De HTML voor het dashboard en de gezamenlijke vormgeving blijven in `index.html` en `styles.css`. De detailpagina's blijven op hun bestaande adressen staan, zodat bestaande links en lokaal opgeslagen gegevens behouden blijven. De klassieke scripts worden in de volgorde van `index.html` geladen; behoud die volgorde bij wijzigingen. Open `tests/berekeningen.html` rechtstreeks in de browser om de berekeningstests uit te voeren. Deze tests gebruiken geen opgeslagen dossiergegevens.
+
 ## Stappenplan
 
 Het overzicht bevat banktegoeden, overige bezittingen, schulden en werkelijk rendement. Voor belastingjaren 2017–2020 bevat het dashboard de bestaande formele beoordeling. Voor 2021–2022 gebruikt het een afzonderlijke, kortere beoordeling zonder de peildatumvraag van 24 december 2021. De Wet rechtsherstelberekeningen zijn beschikbaar voor 2017–2022, ook voordat de formele beoordeling is afgerond. Voor 2023–2026 is er een afzonderlijke berekening volgens de Overbruggingswet box 3.
@@ -72,9 +84,9 @@ De antwoorden op de voorvragen worden per belastingjaar bewaard in de browserses
 ## Bestanden
 
 - `index.html` — vermogensoverzicht en voorvragen.
-- `app.js` — jaarselectie, voorvragen, datumindicatie en banktegoedentotaal.
-- `banktegoeden.html` en `banktegoeden.js` — invoer en opslag van bankrekeningen per jaar.
-- `overige-bezittingen.html` en `overige-bezittingen.js` — invoer en opslag van overige bezittingen per jaar.
+- `gedeeld/dashboard.js` en `gedeeld/dashboard-start.js` — dashboard en jaarselectie.
+- `banktegoeden.html` en `banktegoeden/banktegoeden.js` — invoer en opslag van bankrekeningen per jaar.
+- `overige-bezittingen.html` en `overige-bezittingen/overige-bezittingen.js` — invoer en opslag van overige bezittingen per jaar.
 - `styles.css` — gedeelde vormgeving.
 
 ## Status berekening
