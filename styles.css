@@ -178,7 +178,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .comparison-difference strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .counterproof-placeholder p { margin: 0; color: var(--muted); font-size: 11px; }
 .form-status { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e6c6c6; border-radius: 4px; color: #812d2d; background: #fff8f8; font-size: 11px; }
-.preliminary-panel { margin-bottom: 16px; padding: 20px 21px; }
+.preliminary-panel { margin-bottom: 20px; padding: 20px 21px; }
 .preliminary-panel[hidden], [hidden] { display: none !important; }
 .preliminary-panel .panel-heading { align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e9edf0; }
 .assessment-disclosure > summary { list-style: none; cursor: pointer; }
