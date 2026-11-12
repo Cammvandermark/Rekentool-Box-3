@@ -119,6 +119,11 @@ taxYearSelect.addEventListener("change", () => {
     if (heading) {
       heading.hidden = false;
     }
+    // Show the materiele beoordeling section heading
+    const materieleHeading = document.getElementById("materiele-heading");
+    if (materieleHeading) {
+      materieleHeading.hidden = false;
+    }
   }
   const event = new Event("change", { bubbles: true });
   taxYearSelect.dispatchEvent(event);
