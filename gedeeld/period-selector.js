@@ -223,10 +223,6 @@ taxYearSelect.addEventListener("change", () => {
     
     // Update h2 titles OUTSIDE the panels (with year)
     // Only show the title that corresponds to the selected year's panel
-    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
-    const overbruggingHeading2023 = document.getElementById("overbrugging-heading-with-year-2023");
-    const overbruggingHeading2025 = document.getElementById("overbrugging-heading-with-year-2025");
-    
     if (["2017", "2018", "2019", "2020"].includes(year)) {
       if (preliminaryHeadingWithYear) {
         preliminaryHeadingWithYear.hidden = false;
