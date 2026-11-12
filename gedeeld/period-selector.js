@@ -113,6 +113,13 @@ periodBlocks.forEach(block => {
 
 // When year is selected, trigger the normal flow
 taxYearSelect.addEventListener("change", () => {
+  if (taxYearSelect.value) {
+    // Show the h1 when a year is selected
+    const heading = document.getElementById("main-heading");
+    if (heading) {
+      heading.hidden = false;
+    }
+  }
   const event = new Event("change", { bubbles: true });
   taxYearSelect.dispatchEvent(event);
 });
