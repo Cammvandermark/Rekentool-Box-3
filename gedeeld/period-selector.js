@@ -127,6 +127,16 @@ function showPeriodDetails(period) {
   if (preliminaryHeadingWithYear) {
     preliminaryHeadingWithYear.hidden = true;
   }
+
+  const overbruggingHeading2023 = document.getElementById("overbrugging-heading-with-year-2023");
+  if (overbruggingHeading2023) {
+    overbruggingHeading2023.hidden = true;
+  }
+
+  const overbruggingHeading2025 = document.getElementById("overbrugging-heading-with-year-2025");
+  if (overbruggingHeading2025) {
+    overbruggingHeading2025.hidden = true;
+  }
   
   const materieleHeading = document.getElementById("materiele-heading");
   if (materieleHeading) {
@@ -175,22 +185,34 @@ taxYearSelect.addEventListener("change", () => {
     const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
     const overbrugging2023Panel = document.getElementById("overbrugging-preliminary-panel-2023");
     const overbrugging2025Panel = document.getElementById("overbrugging-preliminary-panel-2025");
-    
-    // Hide all panels first
+
+    // Hide all panels AND their corresponding heading elements first
     if (preliminaryPanel) preliminaryPanel.hidden = true;
     if (modernPreliminaryPanel) modernPreliminaryPanel.hidden = true;
     if (overbrugging2023Panel) overbrugging2023Panel.hidden = true;
     if (overbrugging2025Panel) overbrugging2025Panel.hidden = true;
+
+    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
+    const overbruggingHeading2023 = document.getElementById("overbrugging-heading-with-year-2023");
+    const overbruggingHeading2025 = document.getElementById("overbrugging-heading-with-year-2025");
     
-    // Show the appropriate panel based on year
+    if (preliminaryHeadingWithYear) preliminaryHeadingWithYear.hidden = true;
+    if (overbruggingHeading2023) overbruggingHeading2023.hidden = true;
+    if (overbruggingHeading2025) overbruggingHeading2025.hidden = true;
+    
+    // Show the appropriate panel AND its heading based on year
     if (["2017", "2018", "2019", "2020"].includes(year)) {
       if (preliminaryPanel) preliminaryPanel.hidden = false;
+      if (preliminaryHeadingWithYear) preliminaryHeadingWithYear.hidden = false;
     } else if (["2021", "2022"].includes(year)) {
       if (modernPreliminaryPanel) modernPreliminaryPanel.hidden = false;
+      if (preliminaryHeadingWithYear) preliminaryHeadingWithYear.hidden = false;
     } else if (["2023", "2024"].includes(year)) {
       if (overbrugging2023Panel) overbrugging2023Panel.hidden = false;
+      if (overbruggingHeading2023) overbruggingHeading2023.hidden = false;
     } else if (["2025", "2026"].includes(year)) {
       if (overbrugging2025Panel) overbrugging2025Panel.hidden = false;
+      if (overbruggingHeading2025) overbruggingHeading2025.hidden = false;
     }
     
     // SHOW calculation section
@@ -200,10 +222,31 @@ taxYearSelect.addEventListener("change", () => {
     }
     
     // Update h2 titles OUTSIDE the panels (with year)
+    // Only show the title that corresponds to the selected year's panel
     const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
-    if (preliminaryHeadingWithYear) {
-      preliminaryHeadingWithYear.hidden = false;
-      preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
+    const overbruggingHeading2023 = document.getElementById("overbrugging-heading-with-year-2023");
+    const overbruggingHeading2025 = document.getElementById("overbrugging-heading-with-year-2025");
+    
+    if (["2017", "2018", "2019", "2020"].includes(year)) {
+      if (preliminaryHeadingWithYear) {
+        preliminaryHeadingWithYear.hidden = false;
+        preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
+      }
+    } else if (["2021", "2022"].includes(year)) {
+      if (preliminaryHeadingWithYear) {
+        preliminaryHeadingWithYear.hidden = false;
+        preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
+      }
+    } else if (["2023", "2024"].includes(year)) {
+      if (overbruggingHeading2023) {
+        overbruggingHeading2023.hidden = false;
+        overbruggingHeading2023.textContent = `Formele beoordeling ${year}`;
+      }
+    } else if (["2025", "2026"].includes(year)) {
+      if (overbruggingHeading2025) {
+        overbruggingHeading2025.hidden = false;
+        overbruggingHeading2025.textContent = `Formele beoordeling ${year}`;
+      }
     }
     
     // Show and update the materiele beoordeling section heading
@@ -294,6 +337,16 @@ taxYearSelect.addEventListener("change", () => {
     const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
     if (preliminaryHeadingWithYear) {
       preliminaryHeadingWithYear.hidden = true;
+    }
+
+    const overbruggingHeading2023 = document.getElementById("overbrugging-heading-with-year-2023");
+    if (overbruggingHeading2023) {
+      overbruggingHeading2023.hidden = true;
+    }
+
+    const overbruggingHeading2025 = document.getElementById("overbrugging-heading-with-year-2025");
+    if (overbruggingHeading2025) {
+      overbruggingHeading2025.hidden = true;
     }
     
     const materieleHeading = document.getElementById("materiele-heading");
