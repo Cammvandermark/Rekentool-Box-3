@@ -79,6 +79,27 @@ function showPeriodDetails(period) {
   updateYearOptions(period);
   taxYearSelect.value = "";
   
+  // HIDE content panels when switching to a new period (before year is selected)
+  const preliminaryPanel = document.getElementById("preliminary-panel");
+  if (preliminaryPanel) {
+    preliminaryPanel.hidden = true;
+  }
+  
+  const calculationSection = document.getElementById("calculation-section");
+  if (calculationSection) {
+    calculationSection.hidden = true;
+  }
+  
+  const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
+  if (preliminaryHeadingWithYear) {
+    preliminaryHeadingWithYear.hidden = true;
+  }
+  
+  const materieleHeading = document.getElementById("materiele-heading");
+  if (materieleHeading) {
+    materieleHeading.hidden = true;
+  }
+  
   // Scroll to details
   periodDetails.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
