@@ -11,12 +11,12 @@ const periodData = {
     explanation: `
       <strong>Oude berekeningsmethode + Wet rechtsherstel box 3</strong>
       <ul>
-        <li>Oude methode: Forfaitaire berekening van <u>totale</u> box 3 vermogen</li>
         <li>Check formele toegang: stond de aanslag al onherroepelijk vast op 24 december 2021 (Kerstarrest)</li>
         <li>Zo ja: geen toegang tot Wet rechtsherstel box 3</li>
         <li>Nog niet onherroepelijk: wel toegang tot Wet rechtsherstel box 3 + Tegenbewijsregeling</li>
       </ul>
-      <strong>Wet rechtsherstel box 3:</strong> onderscheid vermogen tussen spaargeld, beleggingen en andere bezittingen en schulden.
+      <p style="margin: 12px 0 4px;"><strong>Oude methode:</strong> Forfaitaire berekening van <u>totale</u> box 3 vermogen</p>
+      <p style="margin: 12px 0 0;"><strong>Wet rechtsherstel box 3:</strong> onderscheid vermogen tussen spaargeld, beleggingen en andere bezittingen en schulden.</p>
     `
   },
   "2021-2022": {
