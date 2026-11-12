@@ -125,6 +125,4 @@ taxYearSelect.addEventListener("change", () => {
       materieleHeading.hidden = false;
     }
   }
-  const event = new Event("change", { bubbles: true });
-  taxYearSelect.dispatchEvent(event);
 });
