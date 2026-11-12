@@ -9,12 +9,12 @@ const periodData = {
   "2017-2020": {
     years: ["2017", "2018", "2019", "2020"],
     explanation: `
-      <strong>Oude berekeningsmethode</strong>
+      <strong>Oude berekeningsmethode + Wet rechtsherstel box 3</strong>
       <ul>
-        <li>Forfaitaire berekening van totale box 3 vermogen</li>
+        <li>Oude methode: Forfaitaire berekening van <u>totale</u> box 3 vermogen</li>
         <li>Check formele toegang: stond de aanslag al onherroepelijk vast op 24 december 2021 (Kerstarrest)</li>
         <li>Zo ja: geen toegang tot Wet rechtsherstel box 3</li>
-        <li>Nog niet onherroepelijk: wel toegang tot Wet rechtsherstel + Tegenbewijsregeling</li>
+        <li>Nog niet onherroepelijk: wel toegang tot Wet rechtsherstel box 3 + Tegenbewijsregeling</li>
       </ul>
       <strong>Wet rechtsherstel box 3:</strong> onderscheid vermogen tussen spaargeld, beleggingen en andere bezittingen en schulden.
     `
