@@ -275,7 +275,7 @@ taxYearSelect.addEventListener("change", () => {
     
     const calculationInputTitle = document.getElementById("calculation-input-title");
     if (calculationInputTitle) {
-      calculationInputTitle.textContent = "Vermogensgegevens";
+      calculationInputTitle.textContent = "A. Vermogensgegevens";
     }
     
     // Hide the year indicators in the panel-index spans
