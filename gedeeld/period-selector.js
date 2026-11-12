@@ -90,16 +90,28 @@ function showPeriodDetails(period) {
     modernPreliminaryPanel.hidden = true;
   }
   
+  const overbrugging2023Panel = document.getElementById("overbrugging-preliminary-panel-2023");
+  if (overbrugging2023Panel) {
+    overbrugging2023Panel.hidden = true;
+  }
+  
+  const overbrugging2025Panel = document.getElementById("overbrugging-preliminary-panel-2025");
+  if (overbrugging2025Panel) {
+    overbrugging2025Panel.hidden = true;
+  }
+  
   const calculationSection = document.getElementById("calculation-section");
   if (calculationSection) {
     calculationSection.hidden = true;
   }
   
   // CLOSE any open <details> elements to hide their content
-  const assessmentDetails = document.querySelector(".assessment-disclosure");
-  if (assessmentDetails && assessmentDetails.open) {
-    assessmentDetails.open = false;
-  }
+  const assessmentDetails = document.querySelectorAll(".assessment-disclosure");
+  assessmentDetails.forEach(details => {
+    if (details && details.open) {
+      details.open = false;
+    }
+  });
   
   const assetDetails = document.querySelector(".asset-disclosure");
   if (assetDetails && assetDetails.open) {
@@ -158,17 +170,30 @@ taxYearSelect.addEventListener("change", () => {
   if (taxYearSelect.value) {
     const year = taxYearSelect.value;
     
-    // SHOW main content panels
+    // Determine which panels to show based on year
     const preliminaryPanel = document.getElementById("preliminary-panel");
-    if (preliminaryPanel) {
-      preliminaryPanel.hidden = false;
-    }
-    
     const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
-    if (modernPreliminaryPanel) {
-      modernPreliminaryPanel.hidden = false;
+    const overbrugging2023Panel = document.getElementById("overbrugging-preliminary-panel-2023");
+    const overbrugging2025Panel = document.getElementById("overbrugging-preliminary-panel-2025");
+    
+    // Hide all panels first
+    if (preliminaryPanel) preliminaryPanel.hidden = true;
+    if (modernPreliminaryPanel) modernPreliminaryPanel.hidden = true;
+    if (overbrugging2023Panel) overbrugging2023Panel.hidden = true;
+    if (overbrugging2025Panel) overbrugging2025Panel.hidden = true;
+    
+    // Show the appropriate panel based on year
+    if (["2017", "2018", "2019", "2020"].includes(year)) {
+      if (preliminaryPanel) preliminaryPanel.hidden = false;
+    } else if (["2021", "2022"].includes(year)) {
+      if (modernPreliminaryPanel) modernPreliminaryPanel.hidden = false;
+    } else if (["2023", "2024"].includes(year)) {
+      if (overbrugging2023Panel) overbrugging2023Panel.hidden = false;
+    } else if (["2025", "2026"].includes(year)) {
+      if (overbrugging2025Panel) overbrugging2025Panel.hidden = false;
     }
     
+    // SHOW calculation section
     const calculationSection = document.getElementById("calculation-section");
     if (calculationSection) {
       calculationSection.hidden = false;
@@ -188,7 +213,7 @@ taxYearSelect.addEventListener("change", () => {
       materieleHeading.textContent = `Materiële beoordeling ${year}`;
     }
     
-    // Keep h2 titles INSIDE the panels (without year)
+    // Update all panel titles (without year)
     const preliminaryTitle = document.getElementById("preliminary-title");
     if (preliminaryTitle) {
       preliminaryTitle.textContent = "Formele beoordeling";
@@ -197,6 +222,16 @@ taxYearSelect.addEventListener("change", () => {
     const modernPreliminaryTitle = document.getElementById("modern-preliminary-title");
     if (modernPreliminaryTitle) {
       modernPreliminaryTitle.textContent = "Formele beoordeling";
+    }
+    
+    const overbruggingTitle2023 = document.getElementById("overbrugging-preliminary-title-2023");
+    if (overbruggingTitle2023) {
+      overbruggingTitle2023.textContent = "Formele beoordeling";
+    }
+    
+    const overbruggingTitle2025 = document.getElementById("overbrugging-preliminary-title-2025");
+    if (overbruggingTitle2025) {
+      overbruggingTitle2025.textContent = "Formele beoordeling";
     }
     
     const calculationInputTitle = document.getElementById("calculation-input-title");
@@ -215,6 +250,16 @@ taxYearSelect.addEventListener("change", () => {
       modernPreliminaryYear.hidden = true;
     }
     
+    const overbruggingYear2023 = document.getElementById("overbrugging-preliminary-year-2023");
+    if (overbruggingYear2023) {
+      overbruggingYear2023.hidden = true;
+    }
+    
+    const overbruggingYear2025 = document.getElementById("overbrugging-preliminary-year-2025");
+    if (overbruggingYear2025) {
+      overbruggingYear2025.hidden = true;
+    }
+    
     const calculationYear = document.getElementById("calculation-year");
     if (calculationYear) {
       calculationYear.hidden = true;
@@ -229,6 +274,16 @@ taxYearSelect.addEventListener("change", () => {
     const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
     if (modernPreliminaryPanel) {
       modernPreliminaryPanel.hidden = true;
+    }
+    
+    const overbrugging2023Panel = document.getElementById("overbrugging-preliminary-panel-2023");
+    if (overbrugging2023Panel) {
+      overbrugging2023Panel.hidden = true;
+    }
+    
+    const overbrugging2025Panel = document.getElementById("overbrugging-preliminary-panel-2025");
+    if (overbrugging2025Panel) {
+      overbrugging2025Panel.hidden = true;
     }
     
     const calculationSection = document.getElementById("calculation-section");
