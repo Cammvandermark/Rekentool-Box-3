@@ -240,6 +240,18 @@ function updateBackLink() {
 
 updateBackLink();
 
+function updatePageTitle() {
+  const h1 = document.querySelector("h1");
+  if (h1) {
+    const baseTitle = "Overige bezittingen";
+    h1.textContent = yearSelect.value 
+      ? `${baseTitle} ${yearSelect.value}` 
+      : baseTitle;
+  }
+}
+
+updatePageTitle();
+
 // Auto-cleanup: migrate old localStorage data (remove pre-populated category rows)
 function cleanupOldAssets() {
   const years = ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
@@ -275,6 +287,7 @@ yearSelect.addEventListener("change", () => {
   else url.searchParams.delete("year");
   window.history.replaceState({}, "", url);
   updateBackLink();
+  updatePageTitle();
   readAssets();
   render();
 });
