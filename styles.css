@@ -49,7 +49,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .breadcrumb a { color: var(--accent); text-decoration: none; }
 .detail-heading { margin-top: 26px; }
 .back-link { padding-bottom: 8px; color: var(--accent); font-size: 11px; text-decoration: none; }
-.detail-panel { padding: 20px 21px 16px; }
+.detail-panel { padding: 20px 21px 16px; margin-bottom: 30px; }
 .detail-panel .panel-heading { align-items: center; }
 .account-table-wrap { overflow-x: auto; }
 .account-table { width: 100%; border-collapse: collapse; text-align: left; }
