@@ -182,6 +182,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .preliminary-panel { margin-bottom: 20px; padding: 10px 21px 10px 21px; }
 .preliminary-panel[hidden], [hidden] { display: none !important; }
 .preliminary-panel .panel-heading { align-items: center; min-height: 40px; padding-bottom: 0; }
+.asset-disclosure > summary.panel-heading, .calculation-disclosure > summary.panel-heading { align-items: center; min-height: 40px; padding-bottom: 0; }
 .assessment-disclosure > summary { list-style: none; cursor: pointer; }
 .assessment-disclosure > summary::-webkit-details-marker { display: none; }
 .assessment-disclosure > summary::after { content: "+"; margin-left: 12px; color: var(--muted); font-size: 18px; font-weight: 400; line-height: 1; }
