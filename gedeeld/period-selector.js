@@ -114,15 +114,45 @@ periodBlocks.forEach(block => {
 // When year is selected, trigger the normal flow
 taxYearSelect.addEventListener("change", () => {
   if (taxYearSelect.value) {
+    const year = taxYearSelect.value;
+    
     // Show the h1 when a year is selected
     const heading = document.getElementById("main-heading");
     if (heading) {
       heading.hidden = false;
     }
+    
     // Show the materiele beoordeling section heading
     const materieleHeading = document.getElementById("materiele-heading");
     if (materieleHeading) {
       materieleHeading.hidden = false;
+    }
+    
+    // Update h2 titles with year
+    const preliminaryTitle = document.getElementById("preliminary-title");
+    if (preliminaryTitle) {
+      preliminaryTitle.textContent = `Formele beoordeling ${year}`;
+    }
+    
+    const materieleTitle = document.getElementById("materiele-heading");
+    if (materieleTitle) {
+      materieleTitle.textContent = `Materiële beoordeling ${year}`;
+    }
+    
+    const calculationInputTitle = document.getElementById("calculation-input-title");
+    if (calculationInputTitle) {
+      calculationInputTitle.textContent = `Vermogensgegevens ${year}`;
+    }
+    
+    // Hide the year indicators in the panel-index spans
+    const preliminaryYear = document.getElementById("preliminary-year");
+    if (preliminaryYear) {
+      preliminaryYear.hidden = true;
+    }
+    
+    const calculationYear = document.getElementById("calculation-year");
+    if (calculationYear) {
+      calculationYear.hidden = true;
     }
   }
 });
