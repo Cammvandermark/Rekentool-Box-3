@@ -239,6 +239,36 @@ function updateBackLink() {
 }
 
 updateBackLink();
+
+// Auto-cleanup: migrate old localStorage data (remove pre-populated category rows)
+function cleanupOldAssets() {
+  const years = ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+  for (const year of years) {
+    const key = `${ASSETS_STORAGE_KEY}:${year}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        // If we have more than 12 assets and they have sequential type names from assetTypes,
+        // it's the old seeded data - delete it
+        if (Array.isArray(parsed) && parsed.length >= 12) {
+          const typeSet = new Set(parsed.map(a => a.type));
+          const assetTypeSet = new Set(assetTypes.map(([type]) => type));
+          // If most assets have types from our list, it's probably old seeded data
+          if (parsed.filter(a => assetTypeSet.has(a.type)).length >= 10) {
+            localStorage.removeItem(key);
+            localStorage.removeItem(`${key}:categories-initialized`);
+          }
+        }
+      } catch (error) {
+        // Ignore parse errors
+      }
+    }
+  }
+}
+
+cleanupOldAssets();
+
 yearSelect.addEventListener("change", () => {
   const url = new URL(window.location.href);
   if (yearSelect.value) url.searchParams.set("year", yearSelect.value);
