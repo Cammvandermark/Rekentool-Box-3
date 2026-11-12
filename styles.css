@@ -36,6 +36,7 @@ button, input, select { font: inherit; }
 .topbar-label, .footer { color: var(--muted); font-size: 10px; letter-spacing: .65px; }
 .topbar-label { margin-left: auto; }
 .page-heading { display: flex; justify-content: space-between; align-items: end; margin: 37px 0 20px; }
+.page-heading:has(h1[hidden]) { display: none; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 1px; }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: 25px; font-weight: 600; letter-spacing: -.55px; }
