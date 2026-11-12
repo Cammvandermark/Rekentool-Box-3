@@ -187,6 +187,12 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .assessment-disclosure[open] > summary::after { content: "−"; }
 .assessment-disclosure > summary:focus-visible { outline: 2px solid #739aae; outline-offset: 3px; }
 .assessment-disclosure-content { padding-top: 12px; }
+.asset-disclosure > summary { list-style: none; cursor: pointer; }
+.asset-disclosure > summary::-webkit-details-marker { display: none; }
+.asset-disclosure > summary::after { content: "+"; margin-left: 12px; color: var(--muted); font-size: 18px; font-weight: 400; line-height: 1; }
+.asset-disclosure[open] > summary::after { content: "−"; }
+.asset-disclosure > summary:focus-visible { outline: 2px solid #739aae; outline-offset: 3px; }
+.asset-disclosure-content { padding-top: 12px; }
 .question-group { margin: 0; padding: 15px 0; border: 0; border-bottom: 1px solid #e9edf0; }
 .question-group legend, .question-label { display: block; margin-bottom: 9px; color: var(--ink); font-size: 12px; font-weight: 600; }
 .inline-question { display: flex; align-items: center; gap: 16px; }

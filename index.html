@@ -560,10 +560,12 @@
 
         <section class="calculation-workspace" id="calculation-section" aria-label="Berekening box 3" hidden>
           <section class="panel calculation-input-panel" aria-labelledby="calculation-input-title">
-            <div class="panel-heading">
-              <div><h2 id="calculation-input-title">Vermogensgegevens</h2></div>
-              <span class="panel-index" id="calculation-year"></span>
-            </div>
+            <details class="asset-disclosure">
+              <summary class="panel-heading">
+                <div><h2 id="calculation-input-title">Vermogensgegevens</h2></div>
+                <span class="panel-index" id="calculation-year"></span>
+              </summary>
+              <div class="asset-disclosure-content">
             <div class="calculation-input-grid">
               <a class="calculation-input-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
                 <span><strong>Banktegoeden op 1 januari</strong><small>Beheer rekeningen en saldi</small></span>
@@ -598,6 +600,8 @@
             <p class="form-status calculation-error" id="calculation-error" role="alert" hidden></p>
             <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening op twee decimalen afgerond. Rendementspercentages van de oude methode worden, volgens de presentatie van de Belastingdienst om afrondingsverschillen te beperken, op drie decimalen afgerond en met die percentages berekend. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
             <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
+              </div>
+            </details>
           </section>
 
           <div class="summary-grid calculation-results-grid">
