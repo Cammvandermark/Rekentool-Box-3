@@ -111,10 +111,21 @@ periodBlocks.forEach(block => {
   });
 });
 
-// When year is selected, trigger the normal flow
+// When year is selected, show the main content
 taxYearSelect.addEventListener("change", () => {
   if (taxYearSelect.value) {
     const year = taxYearSelect.value;
+    
+    // SHOW main content panels
+    const preliminaryPanel = document.getElementById("preliminary-panel");
+    if (preliminaryPanel) {
+      preliminaryPanel.hidden = false;
+    }
+    
+    const calculationSection = document.getElementById("calculation-section");
+    if (calculationSection) {
+      calculationSection.hidden = false;
+    }
     
     // Update h2 titles OUTSIDE the panels (with year)
     const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
@@ -150,6 +161,27 @@ taxYearSelect.addEventListener("change", () => {
     const calculationYear = document.getElementById("calculation-year");
     if (calculationYear) {
       calculationYear.hidden = true;
+    }
+  } else {
+    // When year is cleared (selecting "Kies jaar..."), hide content
+    const preliminaryPanel = document.getElementById("preliminary-panel");
+    if (preliminaryPanel) {
+      preliminaryPanel.hidden = true;
+    }
+    
+    const calculationSection = document.getElementById("calculation-section");
+    if (calculationSection) {
+      calculationSection.hidden = true;
+    }
+    
+    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
+    if (preliminaryHeadingWithYear) {
+      preliminaryHeadingWithYear.hidden = true;
+    }
+    
+    const materieleHeading = document.getElementById("materiele-heading");
+    if (materieleHeading) {
+      materieleHeading.hidden = true;
     }
   }
 });
