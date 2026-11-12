@@ -116,10 +116,11 @@ taxYearSelect.addEventListener("change", () => {
   if (taxYearSelect.value) {
     const year = taxYearSelect.value;
     
-    // Show the h1 when a year is selected
-    const heading = document.getElementById("main-heading");
-    if (heading) {
-      heading.hidden = false;
+    // Update h2 titles OUTSIDE the panels (with year)
+    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
+    if (preliminaryHeadingWithYear) {
+      preliminaryHeadingWithYear.hidden = false;
+      preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
     }
     
     // Show and update the materiele beoordeling section heading
@@ -127,13 +128,6 @@ taxYearSelect.addEventListener("change", () => {
     if (materieleHeading) {
       materieleHeading.hidden = false;
       materieleHeading.textContent = `Materiële beoordeling ${year}`;
-    }
-    
-    // Update h2 titles OUTSIDE the panels (with year)
-    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
-    if (preliminaryHeadingWithYear) {
-      preliminaryHeadingWithYear.hidden = false;
-      preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
     }
     
     const calculationInputHeadingWithYear = document.getElementById("calculation-input-heading-with-year");
