@@ -122,26 +122,35 @@ taxYearSelect.addEventListener("change", () => {
       heading.hidden = false;
     }
     
-    // Show the materiele beoordeling section heading
+    // Show and update the materiele beoordeling section heading
     const materieleHeading = document.getElementById("materiele-heading");
     if (materieleHeading) {
       materieleHeading.hidden = false;
+      materieleHeading.textContent = `Materiële beoordeling ${year}`;
     }
     
-    // Update h2 titles with year
+    // Update h2 titles OUTSIDE the panels (with year)
+    const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
+    if (preliminaryHeadingWithYear) {
+      preliminaryHeadingWithYear.hidden = false;
+      preliminaryHeadingWithYear.textContent = `Formele beoordeling ${year}`;
+    }
+    
+    const calculationInputHeadingWithYear = document.getElementById("calculation-input-heading-with-year");
+    if (calculationInputHeadingWithYear) {
+      calculationInputHeadingWithYear.hidden = false;
+      calculationInputHeadingWithYear.textContent = `Vermogensgegevens ${year}`;
+    }
+    
+    // Keep h2 titles INSIDE the panels (without year)
     const preliminaryTitle = document.getElementById("preliminary-title");
     if (preliminaryTitle) {
-      preliminaryTitle.textContent = `Formele beoordeling ${year}`;
-    }
-    
-    const materieleTitle = document.getElementById("materiele-heading");
-    if (materieleTitle) {
-      materieleTitle.textContent = `Materiële beoordeling ${year}`;
+      preliminaryTitle.textContent = "Formele beoordeling";
     }
     
     const calculationInputTitle = document.getElementById("calculation-input-title");
     if (calculationInputTitle) {
-      calculationInputTitle.textContent = `Vermogensgegevens ${year}`;
+      calculationInputTitle.textContent = "Vermogensgegevens";
     }
     
     // Hide the year indicators in the panel-index spans
