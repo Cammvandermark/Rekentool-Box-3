@@ -22,6 +22,17 @@ button, input, select { font: inherit; }
 .brand-divider { margin: 0 4px; color: #a0a9b2; font-weight: 400; }
 .topbar-year-select { display: flex; align-items: center; gap: 10px; margin: 14px 0 0; }
 .topbar-year-select select { min-width: 150px; }
+.period-selector { margin: 20px 0; }
+.period-blocks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.period-block { padding: 16px 12px; border: 2px solid var(--line); border-radius: 6px; background: white; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink); transition: all 0.2s ease; }
+.period-block:hover { border-color: var(--accent); background: #f9fafb; }
+.period-block[aria-expanded="true"] { border-color: var(--accent); background: #e8f0f5; color: var(--accent); }
+.period-block:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.period-years { display: block; font-size: 16px; font-weight: 600; }
+.period-details { padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid var(--line); }
+.period-explanation { margin-bottom: 16px; color: var(--ink); font-size: 13px; line-height: 1.6; }
+.period-explanation ul { margin: 8px 0; padding-left: 20px; }
+.period-explanation li { margin: 4px 0; }
 .topbar-label, .footer { color: var(--muted); font-size: 10px; letter-spacing: .65px; }
 .topbar-label { margin-left: auto; }
 .page-heading { display: flex; justify-content: space-between; align-items: end; margin: 37px 0 20px; }
@@ -271,6 +282,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
   .summary-grid { grid-template-columns: minmax(0, 1fr); }
   .calculation-input-grid { grid-template-columns: minmax(0, 1fr); }
   .calculation-results-grid { grid-template-columns: minmax(0, 1fr); }
+  .period-blocks { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 450px) {
   .app-shell { width: calc(100% - 28px); }
@@ -287,6 +299,7 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
   .asset-row { grid-template-columns: minmax(0, 1fr) 94px 15px; gap: 6px; }
   .money-input { width: 94px; }
   .asset-name { gap: 7px; }
+  .period-blocks { grid-template-columns: 1fr; }
   .asset-name small { font-size: 9px; }
   .inline-question, .inline-date-question { flex-wrap: nowrap; gap: 8px; }
   .inline-question .question-label { font-size: 11px; }

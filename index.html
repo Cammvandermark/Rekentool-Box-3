@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="gedeeld/opslag-sleutels.js" defer></script>
     <script src="gedeeld/jaargegevens.js" defer></script>
+    <script src="gedeeld/period-selector.js" defer></script>
     <script src="gedeeld/dashboard.js" defer></script>
     <script src="formele-beoordeling/beoordeling.js" defer></script>
     <script src="formele-beoordeling/beoordeling-2021-2022.js" defer></script>
@@ -26,21 +27,31 @@
         <span class="topbar-label">STAPPENPLAN</span>
       </header>
 
-      <label class="year-select topbar-year-select" for="tax-year"><span>Belastingjaar</span>
-        <select id="tax-year" aria-label="Belastingjaar">
-            <option value="" selected>Selecteer jaar</option>
-            <option value="2017">2017</option>
-            <option value="2018">2018</option>
-            <option value="2019">2019</option>
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-        </select>
-      </label>
+      <div class="period-selector">
+        <div class="period-blocks">
+          <button class="period-block" data-period="2017-2020" aria-expanded="false">
+            <span class="period-years">2017-2020</span>
+          </button>
+          <button class="period-block" data-period="2021-2022" aria-expanded="false">
+            <span class="period-years">2021-2022</span>
+          </button>
+          <button class="period-block" data-period="2023-2024" aria-expanded="false">
+            <span class="period-years">2023-2024</span>
+          </button>
+          <button class="period-block" data-period="2025-2028" aria-expanded="false">
+            <span class="period-years">2025-2028</span>
+          </button>
+        </div>
+
+        <div class="period-details" id="period-details" hidden>
+          <div class="period-explanation" id="period-explanation"></div>
+          <label class="year-select" for="tax-year"><span>Selecteer specifiek jaar</span>
+            <select id="tax-year" aria-label="Belastingjaar">
+                <option value="" selected>Kies jaar...</option>
+            </select>
+          </label>
+        </div>
+      </div>
 
       <main>
         <div class="page-heading">
