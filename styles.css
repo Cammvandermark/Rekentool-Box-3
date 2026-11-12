@@ -178,6 +178,14 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .comparison-difference { margin: 11px 0 0; color: var(--muted); font-size: 11px; }
 .comparison-difference strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .counterproof-placeholder p { margin: 0; color: var(--muted); font-size: 11px; }
+
+/* Fix C. Tegenbewijsregeling panel heading alignment */
+section.counterproof-placeholder div.panel-heading { 
+  align-items: center !important; 
+  min-height: 40px !important; 
+  padding-bottom: 0 !important; 
+}
+
 .form-status { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e6c6c6; border-radius: 4px; color: #812d2d; background: #fff8f8; font-size: 11px; }
 .preliminary-panel { margin-bottom: 20px; padding: 10px 21px 10px 21px; }
 .preliminary-panel[hidden], [hidden] { display: none !important; }
