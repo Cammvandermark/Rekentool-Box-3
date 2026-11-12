@@ -130,12 +130,6 @@ taxYearSelect.addEventListener("change", () => {
       materieleHeading.textContent = `Materiële beoordeling ${year}`;
     }
     
-    const calculationInputHeadingWithYear = document.getElementById("calculation-input-heading-with-year");
-    if (calculationInputHeadingWithYear) {
-      calculationInputHeadingWithYear.hidden = false;
-      calculationInputHeadingWithYear.textContent = `Vermogensgegevens ${year}`;
-    }
-    
     // Keep h2 titles INSIDE the panels (without year)
     const preliminaryTitle = document.getElementById("preliminary-title");
     if (preliminaryTitle) {
