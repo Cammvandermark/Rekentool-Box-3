@@ -79,15 +79,36 @@ function showPeriodDetails(period) {
   updateYearOptions(period);
   taxYearSelect.value = "";
   
-  // HIDE content panels when switching to a new period (before year is selected)
+  // HIDE all preliminary panels when switching to a new period (before year is selected)
   const preliminaryPanel = document.getElementById("preliminary-panel");
   if (preliminaryPanel) {
     preliminaryPanel.hidden = true;
   }
   
+  const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
+  if (modernPreliminaryPanel) {
+    modernPreliminaryPanel.hidden = true;
+  }
+  
   const calculationSection = document.getElementById("calculation-section");
   if (calculationSection) {
     calculationSection.hidden = true;
+  }
+  
+  // CLOSE any open <details> elements to hide their content
+  const assessmentDetails = document.querySelector(".assessment-disclosure");
+  if (assessmentDetails && assessmentDetails.open) {
+    assessmentDetails.open = false;
+  }
+  
+  const assetDetails = document.querySelector(".asset-disclosure");
+  if (assetDetails && assetDetails.open) {
+    assetDetails.open = false;
+  }
+  
+  const calculationDetails = document.querySelector(".calculation-disclosure");
+  if (calculationDetails && calculationDetails.open) {
+    calculationDetails.open = false;
   }
   
   const preliminaryHeadingWithYear = document.getElementById("preliminary-heading-with-year");
@@ -143,6 +164,11 @@ taxYearSelect.addEventListener("change", () => {
       preliminaryPanel.hidden = false;
     }
     
+    const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
+    if (modernPreliminaryPanel) {
+      modernPreliminaryPanel.hidden = false;
+    }
+    
     const calculationSection = document.getElementById("calculation-section");
     if (calculationSection) {
       calculationSection.hidden = false;
@@ -168,6 +194,11 @@ taxYearSelect.addEventListener("change", () => {
       preliminaryTitle.textContent = "Formele beoordeling";
     }
     
+    const modernPreliminaryTitle = document.getElementById("modern-preliminary-title");
+    if (modernPreliminaryTitle) {
+      modernPreliminaryTitle.textContent = "Formele beoordeling";
+    }
+    
     const calculationInputTitle = document.getElementById("calculation-input-title");
     if (calculationInputTitle) {
       calculationInputTitle.textContent = "Vermogensgegevens";
@@ -179,6 +210,11 @@ taxYearSelect.addEventListener("change", () => {
       preliminaryYear.hidden = true;
     }
     
+    const modernPreliminaryYear = document.getElementById("modern-preliminary-year");
+    if (modernPreliminaryYear) {
+      modernPreliminaryYear.hidden = true;
+    }
+    
     const calculationYear = document.getElementById("calculation-year");
     if (calculationYear) {
       calculationYear.hidden = true;
@@ -188,6 +224,11 @@ taxYearSelect.addEventListener("change", () => {
     const preliminaryPanel = document.getElementById("preliminary-panel");
     if (preliminaryPanel) {
       preliminaryPanel.hidden = true;
+    }
+    
+    const modernPreliminaryPanel = document.getElementById("modern-preliminary-panel");
+    if (modernPreliminaryPanel) {
+      modernPreliminaryPanel.hidden = true;
     }
     
     const calculationSection = document.getElementById("calculation-section");
