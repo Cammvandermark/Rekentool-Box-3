@@ -1,7 +1,7 @@
 "use strict";
 
 function initializeCalculationInputs() {
-  for (const input of [debtsInput, partnerAllocation]) {
+  for (const input of [partnerAllocation]) {
     input.addEventListener("input", updateCalculationInputs);
     input.addEventListener("change", updateCalculationInputs);
   }
@@ -13,7 +13,8 @@ function initializeCalculationInputs() {
 const calculationYear = document.querySelector("#calculation-year");
 const otherAssetsLink = document.querySelector("#other-assets-link");
 const otherAssetsTotal = document.querySelector("#other-assets-total");
-const debtsInput = document.querySelector("#debts");
+const debtsLink = document.querySelector("#debts-link");
+const debtsTotal = document.querySelector("#debts-total");
 const fiscalPartnerQuestion = document.querySelectorAll(
   'input[name="calculation-fiscal-partner"]',
 );
@@ -123,20 +124,6 @@ function showCalculationError(message) {
   document.querySelector("#comparison-relief-tax").classList.remove("is-favorable");
 }
 
-function readNonNegativeAmount(input, label) {
-  if (input.value === "") {
-    if (input.validity.badInput) {
-      throw new Error(`${label}: vul een geldig bedrag van nul of hoger in.`);
-    }
-    return 0;
-  }
-  const value = input.valueAsNumber;
-  if (!Number.isFinite(value) || value < 0) {
-    throw new Error(`${label}: vul een geldig bedrag van nul of hoger in.`);
-  }
-  return roundToTwoDecimals(value);
-}
-
 function getBankTotal(year) {
   const stored = localStorage.getItem(`${STORAGE_KEY}:${year}`);
   const accounts = stored === null ? [] : JSON.parse(stored);
@@ -164,6 +151,32 @@ function getBankCashTotal(year) {
       .filter((account) => account.kind === "cash")
       .reduce((sum, account) => sum + account.balance, 0),
   );
+}
+
+function getDebtsTotal(year) {
+  const stored = localStorage.getItem(`${DEBTS_STORAGE_KEY}:${year}`);
+  if (stored !== null) {
+    const debts = JSON.parse(stored);
+    if (
+      !Array.isArray(debts) ||
+      debts.some((debt) =>
+        typeof debt.value !== "number" ||
+        !Number.isFinite(debt.value) ||
+        debt.value < 0
+      )
+    ) {
+      throw new Error("De opgeslagen schulden zijn ongeldig. Controleer de schulden.");
+    }
+    return roundToTwoDecimals(debts.reduce((sum, debt) => sum + debt.value, 0));
+  }
+  // Eerder ingevoerd totaalbedrag (van vóór de pagina Schulden).
+  const legacyStored = localStorage.getItem(`${CALCULATION_STORAGE_KEY}:${year}`);
+  if (legacyStored === null) return 0;
+  const legacyValue = Number(JSON.parse(legacyStored)?.debts || 0);
+  if (!Number.isFinite(legacyValue) || legacyValue < 0) {
+    throw new Error("De eerder opgeslagen schulden zijn ongeldig.");
+  }
+  return roundToTwoDecimals(legacyValue);
 }
 
 function getOtherAssets(year) {
@@ -232,7 +245,7 @@ function loadCalculationInputs(year) {
   loadedCalculationYear = year;
   calculationStorageError = false;
   otherAssetsTotal.textContent = euro.format(0);
-  debtsInput.value = "";
+  debtsTotal.textContent = euro.format(0);
   partnerAllocation.value = "50";
   restoreAnswer("calculation-fiscal-partner", "no");
   calculationError.hidden = true;
@@ -247,13 +260,11 @@ function loadCalculationInputs(year) {
       parsed === null ||
       Array.isArray(parsed) ||
       typeof parsed.investments !== "string" ||
-      typeof parsed.debts !== "string" ||
       !["yes", "no"].includes(parsed.fiscalPartner) ||
       typeof parsed.partnerAllocation !== "string"
     ) {
       throw new Error("De opgeslagen vermogensgegevens hebben een ongeldig formaat.");
     }
-    debtsInput.value = parsed.debts;
     partnerAllocation.value = parsed.partnerAllocation;
     restoreAnswer("calculation-fiscal-partner", parsed.fiscalPartner);
   } catch (error) {
@@ -270,7 +281,7 @@ function saveCalculationInputs(year, fiscalPartner) {
       `${CALCULATION_STORAGE_KEY}:${year}`,
       JSON.stringify({
         investments: String(investments),
-        debts: debtsInput.value,
+        debts: String(getDebtsTotal(year)),
         fiscalPartner,
         partnerAllocation: partnerAllocation.value,
       }),
@@ -317,6 +328,7 @@ function renderCalculation() {
     `Box 3-belasting ${yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet"} (${data.taxRate}%)`;
   otherAssetsLink.href =
     `overige-bezittingen.html?year=${encodeURIComponent(year)}`;
+  debtsLink.href = `schulden.html?year=${encodeURIComponent(year)}`;
   updatePartnerAllocation();
 
   try {
@@ -328,7 +340,8 @@ function renderCalculation() {
       cashTotal: otherAssets.cash,
       year,
     });
-    const debts = readNonNegativeAmount(debtsInput, "Schulden");
+    const debts = getDebtsTotal(year);
+    debtsTotal.textContent = euro.format(debts);
     const fiscalPartner = selectedAnswer("calculation-fiscal-partner") === "yes";
     const allocationPercent = fiscalPartner
       ? Number(partnerAllocation.value)
@@ -347,7 +360,6 @@ function renderCalculation() {
     }
 
     calculationError.hidden = true;
-    debtsInput.setAttribute("aria-invalid", "false");
     partnerAllocation.setAttribute(
       "aria-invalid",
       String(fiscalPartner && (partnerAllocation.value === "" ||
@@ -487,12 +499,7 @@ function renderCalculation() {
     saveCalculationInputs(year, fiscalPartner ? "yes" : "no");
   } catch (error) {
     otherAssetsTotal.textContent = "—";
-    debtsInput.setAttribute(
-      "aria-invalid",
-      String(debtsInput.value !== "" &&
-        (!Number.isFinite(debtsInput.valueAsNumber) ||
-          debtsInput.valueAsNumber < 0)),
-    );
+    debtsTotal.textContent = "—";
     const allocation = Number(partnerAllocation.value);
     partnerAllocation.setAttribute(
       "aria-invalid",
@@ -513,7 +520,7 @@ function updateCalculationInputs() {
   updatePartnerAllocation();
   try {
     getOtherAssets(year);
-    readNonNegativeAmount(debtsInput, "Schulden");
+    getDebtsTotal(year);
     if (fiscalPartner === "yes") {
       const allocation = Number(partnerAllocation.value);
       if (
@@ -527,12 +534,6 @@ function updateCalculationInputs() {
     }
     if (!saveCalculationInputs(year, fiscalPartner || "no")) return;
   } catch (error) {
-    debtsInput.setAttribute(
-      "aria-invalid",
-      String(debtsInput.value !== "" &&
-        (!Number.isFinite(debtsInput.valueAsNumber) ||
-          debtsInput.valueAsNumber < 0)),
-    );
     const allocation = Number(partnerAllocation.value);
     partnerAllocation.setAttribute(
       "aria-invalid",

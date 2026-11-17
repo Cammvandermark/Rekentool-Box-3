@@ -343,3 +343,10 @@ section.counterproof-placeholder div.panel-heading {
 .cash-period p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
 .cash-period a { color: var(--accent); }
 .cash-label { color: var(--muted); font-size: 11px; }
+.debt-exclusions { margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
+.debt-exclusions h3 { margin: 0 0 8px; font-size: 11px; font-weight: 600; }
+.debt-exclusions ul { margin: 0; padding-left: 18px; }
+.debt-exclusions li { padding: 4px 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.debt-exclusions li strong { color: var(--ink); font-weight: 600; }
+.calculation-input-row.asset-link .asset-value { margin-left: auto; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #b9c9d1; }
+.calculation-input-row.asset-link:hover .asset-value { text-decoration-color: var(--accent); }

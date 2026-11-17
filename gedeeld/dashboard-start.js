@@ -28,6 +28,14 @@ otherAssetsLink.addEventListener("click", (event) => {
   }
 });
 
+debtsLink.addEventListener("click", (event) => {
+  if (!yearSelect.value) {
+    event.preventDefault();
+    calculationError.hidden = false;
+    calculationError.textContent = "Selecteer eerst een belastingjaar.";
+  }
+});
+
 renderTotal();
 renderPreliminary();
 
@@ -51,7 +59,8 @@ window.addEventListener("storage", (event) => {
   }
   if (
     event.key === null ||
-    event.key === `${OTHER_ASSETS_STORAGE_KEY}:${yearSelect.value}`
+    event.key === `${OTHER_ASSETS_STORAGE_KEY}:${yearSelect.value}` ||
+    event.key === `${DEBTS_STORAGE_KEY}:${yearSelect.value}`
   ) {
     renderCalculation();
   }
