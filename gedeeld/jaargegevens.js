@@ -13,6 +13,8 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.25,
     reliefInvestmentRate: 5.39,
     reliefDebtRate: 3.43,
+    cashExemption: 520,
+    greenExemption: 57385,
   },
   2018: {
     savingsRate: 0.36,
@@ -26,6 +28,8 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.12,
     reliefInvestmentRate: 5.38,
     reliefDebtRate: 3.2,
+    cashExemption: 527,
+    greenExemption: 57845,
   },
   2019: {
     savingsRate: 0.13,
@@ -39,6 +43,8 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.08,
     reliefInvestmentRate: 5.59,
     reliefDebtRate: 3,
+    cashExemption: 534,
+    greenExemption: 58540,
   },
   2020: {
     savingsRate: 0.07,
@@ -52,6 +58,8 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.04,
     reliefInvestmentRate: 5.28,
     reliefDebtRate: 2.74,
+    cashExemption: 543,
+    greenExemption: 59477,
   },
   2021: {
     savingsRate: 0.03,
@@ -65,6 +73,8 @@ const BOX3_YEAR_DATA = {
     reliefSavingsRate: 0.01,
     reliefInvestmentRate: 5.69,
     reliefDebtRate: 2.46,
+    cashExemption: 552,
+    greenExemption: 60429,
   },
   2022: {
     savingsRate: -0.01,
@@ -79,6 +89,9 @@ const BOX3_YEAR_DATA = {
     reliefInvestmentRate: 5.53,
     reliefDebtRate: 2.28,
     taxableShareDecimals: 2,
+    taxableShareRoundDown: true,
+    cashExemption: 560,
+    greenExemption: 61215,
   },
   2023: {
     taxRate: 32,
@@ -88,6 +101,9 @@ const BOX3_YEAR_DATA = {
     reliefInvestmentRate: 6.17,
     reliefDebtRate: 2.46,
     taxableShareDecimals: 2,
+    taxableShareRoundDown: true,
+    cashExemption: 596,
+    greenExemption: 65072,
   },
   2024: {
     taxRate: 36,
@@ -97,6 +113,9 @@ const BOX3_YEAR_DATA = {
     reliefInvestmentRate: 6.04,
     reliefDebtRate: 2.61,
     taxableShareDecimals: 3,
+    taxableShareRoundDown: true,
+    cashExemption: 653,
+    greenExemption: 71251,
   },
   2025: {
     taxRate: 36,
@@ -106,6 +125,9 @@ const BOX3_YEAR_DATA = {
     reliefInvestmentRate: 5.88,
     reliefDebtRate: 2.70,
     taxableShareDecimals: 2,
+    taxableShareRoundDown: true,
+    cashExemption: 661,
+    greenExemption: 26312,
   },
   2026: {
     taxRate: 36,
@@ -115,5 +137,8 @@ const BOX3_YEAR_DATA = {
     reliefInvestmentRate: 6.00,
     reliefDebtRate: 2.70,
     taxableShareDecimals: 2,
+    taxableShareRoundDown: true,
+    cashExemption: 672,
+    greenExemption: 26715,
   },
 };

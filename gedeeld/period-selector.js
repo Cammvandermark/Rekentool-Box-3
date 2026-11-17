@@ -147,6 +147,19 @@ function showPeriodDetails(period) {
   periodDetails.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+// Opent de periode waar het jaar onder valt en vult de jaarlijst, zodat een
+// link als index.html?year=2025 direct naar dat jaar terugkeert.
+function restorePeriodForYear(year) {
+  const period = Object.keys(periodData).find((key) => periodData[key].years.includes(year));
+  if (!period) return false;
+  periodBlocks.forEach((block) => {
+    block.setAttribute("aria-expanded", String(block.dataset.period === period));
+  });
+  showPeriodDetails(period);
+  taxYearSelect.value = year;
+  return taxYearSelect.value === year;
+}
+
 function hidePeriodDetails() {
   periodDetails.hidden = true;
   taxYearSelect.innerHTML = '<option value="" selected>Kies jaar...</option>';

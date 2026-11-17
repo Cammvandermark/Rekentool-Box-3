@@ -87,6 +87,7 @@ function createTextInput(account, key, label) {
   input.type = "text";
   input.value = account[key];
   input.setAttribute("aria-label", label);
+  input.placeholder = "Optioneel, geen persoonsgegevens";
   input.addEventListener("input", () => {
     account[key] = input.value;
     saveAccounts();

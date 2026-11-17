@@ -78,7 +78,10 @@ function calculateOldMethod({ firstPartnerBase, secondPartnerBase, fiscalPartner
     roundToTwoDecimals(secondPartnerIncome * data.taxRate / 100),
   );
 
-  return { oldTierRates, oldTierReturns, oldTierCalculations, oldIncome, oldTax };
+  return {
+    oldTierRates, oldTierReturns, oldTierCalculations, oldIncome, oldTax,
+    oldFirstPartnerIncome: firstPartnerIncome, oldSecondPartnerIncome: secondPartnerIncome,
+  };
 }
 
 function renderOldTierDetails({ data, oldTierRates, oldTierCalculations, yearUsesOldMethodComparison }) {

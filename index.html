@@ -7,6 +7,7 @@
     <meta name="description" content="Box 3-rekentool — vermogensoverzicht">
     <title>Box 3 | Rekentool</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="gedeeld/opslag-modus.js" defer></script>
     <script src="gedeeld/opslag-sleutels.js" defer></script>
     <script src="gedeeld/jaargegevens.js" defer></script>
     <script src="gedeeld/period-selector.js" defer></script>
@@ -18,6 +19,9 @@
     <script src="berekeningen/overbruggingswet/berekening.js" defer></script>
     <script src="berekeningen/gedeeld/forfaitair-rendement.js" defer></script>
     <script src="berekeningen/gedeeld/dashboard-berekeningen.js" defer></script>
+    <script src="berekeningen/werkelijk-rendement/berekening.js" defer></script>
+    <script src="berekeningen/werkelijk-rendement/dashboard.js" defer></script>
+    <script src="berekeningen/gedeeld/verslag.js" defer></script>
     <script src="gedeeld/dashboard-start.js" defer></script>
   </head>
   <body>
@@ -610,6 +614,10 @@
                 <span class="panel-index" id="calculation-year"></span>
               </summary>
               <div class="asset-disclosure-content">
+                <details class="sub-disclosure" id="assets-start-disclosure">
+                  <summary><h3>A.1 Vermogensgegevens 1 januari</h3></summary>
+                  <div class="sub-disclosure-content">
+                    <p class="calculation-method-note">De standen op 1 januari (peildatum). Deze gegevens zijn nodig voor de forfaitaire berekening (B) en vormen de beginwaarden voor het werkelijke rendement (C).</p>
             <div class="calculation-input-grid">
               <a class="calculation-input-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
                 <span><strong>Banktegoeden</strong></span>
@@ -642,6 +650,32 @@
             <p class="form-status calculation-error" id="calculation-error" role="alert" hidden></p>
             <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening op twee decimalen afgerond. Rendementspercentages van de oude methode worden, volgens de presentatie van de Belastingdienst om afrondingsverschillen te beperken, op drie decimalen afgerond en met die percentages berekend. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
             <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
+                  </div>
+                </details>
+                <details class="sub-disclosure" id="assets-actual-return-disclosure">
+                  <summary><h3>A.2 Aanvullende vermogensgegevens werkelijk rendement</h3></summary>
+                  <div class="sub-disclosure-content">
+                        <p class="calculation-method-note">De bestanddelen en de waarden op 1 januari komen uit A.1. Vul per bestanddeel de gegevens over het belastingjaar aan; deze zijn alleen nodig voor het werkelijke rendement (C).</p>
+                        <div id="actual-return-tables"></div>
+                        <div class="detail-actions"><button class="secondary-button" id="actual-return-add-extra" type="button">+ Bezitting gekocht of gekregen ná 1 januari</button></div>
+                        <div class="actual-return-override">
+                          <h3 class="actual-return-heading">Forfaitair voordeel volgens aangifte of aanslag (optioneel)</h3>
+                          <p class="calculation-method-note">Vul het voordeel uit sparen en beleggen in zoals dat in de aangifte of op de aanslag staat. C vergelijkt dan met dat bedrag in plaats van met de indicatieve berekening van de tool. Leeg laten = berekening van de tool.</p>
+                          <div class="actual-return-override-fields">
+                            <label><span>Belastingplichtige (€)</span><input class="date-input" id="actual-return-override-1" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                            <label id="actual-return-override-partner" hidden><span>Partner (€)</span><input class="date-input" id="actual-return-override-2" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                          </div>
+                          <h3 class="actual-return-heading">Box 3-belasting volgens aanslag (optioneel)</h3>
+                          <p class="calculation-method-note">Is er al een aanslag opgelegd of belasting betaald? Vul de box 3-belasting in die op de aanslag staat. C laat dan zien hoeveel die afwijkt van de berekening en hoeveel vermindering de tegenbewijsregeling mogelijk oplevert.</p>
+                          <div class="actual-return-override-fields">
+                            <label><span>Belastingplichtige (€)</span><input class="date-input" id="actual-return-assessed-1" type="number" min="0" step="1" inputmode="decimal"></label>
+                            <label id="actual-return-assessed-partner" hidden><span>Partner (€)</span><input class="date-input" id="actual-return-assessed-2" type="number" min="0" step="1" inputmode="decimal"></label>
+                          </div>
+                        </div>
+                        <p class="form-status calculation-error" id="actual-return-error" role="alert" hidden></p>
+                  
+                  </div>
+                </details>
               </div>
             </details>
           </section>
@@ -808,11 +842,49 @@
             </details>
           </section>
 
-          <section class="panel counterproof-placeholder" aria-labelledby="counterproof-title">
-            <div class="panel-heading" style="align-items: center; min-height: 40px; padding-bottom: 0;">
-              <div><h2 id="counterproof-title">C. Tegenbewijsregeling — Werkelijk rendement</h2></div>
-              <span class="panel-index">C</span>
-            </div>
+          <section class="panel calculation-disclosure-panel counterproof-panel" aria-labelledby="counterproof-title">
+            <details class="calculation-disclosure">
+              <summary class="panel-heading">
+                <div><h2 id="counterproof-title">C. Tegenbewijsregeling — Werkelijk rendement</h2></div>
+                <span class="panel-index" id="actual-return-year"></span>
+              </summary>
+              <div class="calculation-disclosure-content">
+                <p class="calculation-method-note" id="actual-return-basis"></p>
+                <p class="procedure-notice procedure-notice-warning" id="actual-return-access" hidden></p>
+                <p class="calculation-method-note">De aanvullende gegevens vult u in onder A.2 Aanvullende vermogensgegevens werkelijk rendement.</p>
+                <dl class="calculation-list detailed-calculation-list" id="actual-return-summary"></dl>
+                <h3 class="actual-return-heading">Box 3-belasting in één oogopslag</h3>
+                <p class="calculation-method-note">Bedragen zoals op de aanslag: in hele euro's, naar beneden afgerond.</p>
+                <div class="comparison-table-wrap">
+                  <table class="comparison-table tax-overview-table">
+                    <thead id="actual-return-tax-head"></thead>
+                    <tbody id="actual-return-tax"></tbody>
+                  </table>
+                </div>
+                <h3 class="actual-return-heading">Vergelijking voordeel per persoon</h3>
+                <div class="comparison-table-wrap">
+                  <table class="comparison-table">
+                    <thead id="actual-return-comparison-head"></thead>
+                    <tbody id="actual-return-comparison"></tbody>
+                  </table>
+                </div>
+                <p class="comparison-result" id="actual-return-result" aria-live="polite"></p>
+                <ul class="calculation-method-note actual-return-notes" id="actual-return-notes"></ul>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel calculation-disclosure-panel report-panel" aria-labelledby="report-title">
+            <details class="calculation-disclosure">
+              <summary class="panel-heading">
+                <div><h2 id="report-title">D. Verantwoording en afdrukken</h2></div>
+              </summary>
+              <div class="calculation-disclosure-content">
+                <p class="calculation-method-note">Volledige berekening van het gekozen jaar met alle percentages, bedragen, tussenstappen en bronnen. Het afgedrukte verslag bevat alleen dit onderdeel.</p>
+                <div class="detail-actions"><button class="secondary-button" id="report-print" type="button">Berekening afdrukken</button></div>
+                <div class="report" id="report-content"></div>
+              </div>
+            </details>
           </section>
         </section>
 

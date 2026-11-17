@@ -94,6 +94,24 @@ function formatCalculationEuroWhole(value) {
   }).format(value);
 }
 
+// Weergave zoals op de aanslag: box 3-inkomen per persoon in hele euro's naar
+// beneden, belasting = tarief × afgerond inkomen, ook naar beneden. Alleen voor
+// weergave; de berekening zelf blijft in centen.
+function assessmentIncome(incomes) {
+  return incomes.reduce((sum, income) => sum + Math.floor(Math.max(0, income) + 1e-9), 0);
+}
+
+function assessmentTax(incomes, taxRate) {
+  return incomes.reduce(
+    (sum, income) => sum + Math.floor(Math.floor(Math.max(0, income) + 1e-9) * taxRate / 100 + 1e-9),
+    0,
+  );
+}
+
+function formatWithAssessment(value, wholeValue) {
+  return `${formatCalculationEuro(value)} (aanslag: ${formatCalculationEuroWhole(wholeValue)})`;
+}
+
 function formatCalculationRate(value) {
   return `${percentage.format(value)}%`;
 }
@@ -384,18 +402,24 @@ function renderCalculation() {
       ? roundToTwoDecimals(taxableBase * allocationPercent / 100)
       : taxableBase;
     const secondPartnerBase = taxableBase - firstPartnerBase;
-    const { oldTierRates, oldTierReturns, oldTierCalculations, oldIncome, oldTax } =
+    const {
+      oldTierRates, oldTierReturns, oldTierCalculations, oldIncome, oldTax,
+      oldFirstPartnerIncome, oldSecondPartnerIncome,
+    } =
       calculateOldMethod({ firstPartnerBase, secondPartnerBase, fiscalPartner, yearUsesOldMethodComparison, data });
 
     const {
       roundedReliefSavingsReturn, roundedReliefInvestmentReturn, roundedReliefDebtReturn,
       reliefTotalReturn, usesTaxableBaseShare, formattedYieldRate, yieldRateExplanation,
       reliefIncome, reliefIncomeCalculation, reliefTax,
+      firstPartnerIncome: reliefFirstPartnerIncome, secondPartnerIncome: reliefSecondPartnerIncome,
     } = calculateForfaitaryReturn({
       bank, investments, deductibleDebts, data, year, netAssets,
       firstPartnerBase, secondPartnerBase, fiscalPartner,
     });
 
+    const oldIncomes = fiscalPartner ? [oldFirstPartnerIncome, oldSecondPartnerIncome] : [oldFirstPartnerIncome];
+    const reliefIncomes = fiscalPartner ? [reliefFirstPartnerIncome, reliefSecondPartnerIncome] : [reliefFirstPartnerIncome];
     const values = {
       "old-assets": formatCalculationEuro(assets),
       "old-deductible-debts": formatCalculationEuro(deductibleDebts),
@@ -408,8 +432,8 @@ function renderCalculation() {
       "old-tier-1": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[0])),
       "old-tier-2": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[1])),
       "old-tier-3": formatCalculationEuro(roundToTwoDecimals(oldTierReturns[2])),
-      "old-income": formatCalculationEuro(oldIncome),
-      "old-tax": formatCalculationEuro(oldTax),
+      "old-income": formatWithAssessment(oldIncome, assessmentIncome(oldIncomes)),
+      "old-tax": formatWithAssessment(oldTax, assessmentTax(oldIncomes, data.taxRate)),
       "relief-assets": formatCalculationEuro(assets),
       "relief-bank-assets": formatCalculationEuro(bank),
       "relief-other-assets": formatCalculationEuro(investments),
@@ -425,12 +449,12 @@ function renderCalculation() {
       "relief-debt-return": formatCalculationEuro(roundedReliefDebtReturn),
       "relief-total-return": formatCalculationEuro(roundToTwoDecimals(reliefTotalReturn)),
       "relief-yield-rate": formattedYieldRate,
-      "relief-income": formatCalculationEuro(reliefIncome),
-      "relief-tax": formatCalculationEuro(reliefTax),
-      "comparison-old-income": formatCalculationEuro(oldIncome),
-      "comparison-relief-income": formatCalculationEuro(reliefIncome),
-      "comparison-old-tax": formatCalculationEuro(oldTax),
-      "comparison-relief-tax": formatCalculationEuro(reliefTax),
+      "relief-income": formatWithAssessment(reliefIncome, assessmentIncome(reliefIncomes)),
+      "relief-tax": formatWithAssessment(reliefTax, assessmentTax(reliefIncomes, data.taxRate)),
+      "comparison-old-income": formatWithAssessment(oldIncome, assessmentIncome(oldIncomes)),
+      "comparison-relief-income": formatWithAssessment(reliefIncome, assessmentIncome(reliefIncomes)),
+      "comparison-old-tax": formatWithAssessment(oldTax, assessmentTax(oldIncomes, data.taxRate)),
+      "comparison-relief-tax": formatWithAssessment(reliefTax, assessmentTax(reliefIncomes, data.taxRate)),
       "comparison-difference": formatCalculationEuro(Math.abs(oldTax - reliefTax)),
     };
     for (const [id, value] of Object.entries(values)) {
@@ -496,6 +520,31 @@ function renderCalculation() {
       document.querySelector("#comparison-relief-tax").classList.add("is-favorable");
     }
     comparisonDifference.textContent = formatCalculationEuro(Math.abs(oldTax - reliefTax));
+    // Voor 2017-2022 geldt het voordeel volgens de Wet rechtsherstel: de laagste
+    // uitkomst van de oude methode en de rechtsherstelberekening.
+    const oldMethodApplies = yearUsesOldMethodComparison && oldTax < reliefTax;
+    calculationReport = {
+      year, data, fiscalPartner, allocationPercent,
+      bank, investments, debts, assets, debtThreshold, deductibleDebts, netAssets, exemption, taxableBase,
+      firstPartnerBase, secondPartnerBase,
+      savingsExplanation: `${formatCalculationEuro(bank)} × ${formatCalculationRate(data.reliefSavingsRate)} = ${formatCalculationEuro(roundedReliefSavingsReturn)}`,
+      investmentExplanation: `${formatCalculationEuro(investments)} × ${formatCalculationRate(data.reliefInvestmentRate)} = ${formatCalculationEuro(roundedReliefInvestmentReturn)}`,
+      debtExplanation: `${formatCalculationEuro(deductibleDebts)} × ${formatCalculationRate(data.reliefDebtRate)} = ${formatCalculationEuro(roundedReliefDebtReturn)}`,
+      reliefTotalReturn, usesTaxableBaseShare, yieldRateExplanation, reliefIncomeCalculation,
+      reliefIncome, reliefTax, reliefFirstPartnerIncome, reliefSecondPartnerIncome,
+      oldTierCalculations, oldIncome, oldTax, oldFirstPartnerIncome, oldSecondPartnerIncome,
+    };
+    renderActualReturn({
+      year, data, fiscalPartner, allocationPercent,
+      forfaitaryIncomes: oldMethodApplies
+        ? [oldFirstPartnerIncome, oldSecondPartnerIncome]
+        : [reliefFirstPartnerIncome, reliefSecondPartnerIncome],
+      basisLabel: oldMethodApplies ? "oude methode is lager" : "berekening B is lager of gelijk",
+      forfaitaryMethod: oldMethodApplies
+        ? "oude methode"
+        : yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet",
+    });
+    renderReport();
     saveCalculationInputs(year, fiscalPartner ? "yes" : "no");
   } catch (error) {
     otherAssetsTotal.textContent = "—";
@@ -510,6 +559,8 @@ function renderCalculation() {
           allocation > 100)),
     );
     showCalculationError(error.message);
+    clearActualReturn("Controleer de vermogensgegevens onder A.");
+    clearReport();
   }
 }
 

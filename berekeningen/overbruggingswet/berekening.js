@@ -4,15 +4,21 @@ function calculateTaxableShareReturn({
   reliefTotalReturn, netAssets, firstPartnerBase, secondPartnerBase, fiscalPartner, data,
 }) {
   const shareDecimals = data.taxableShareDecimals ?? 2;
+  // Het aandeel wordt naar beneden afgerond (afgekapt): in het voordeel van de
+  // belastingplichtige en zoals in de rekenvoorbeelden van de Belastingdienst
+  // voor 2023-2026. Ingesteld per jaar in jaargegevens (2022-2026).
+  const roundShare = (value) => data.taxableShareRoundDown
+    ? Math.floor(value * 10 ** shareDecimals + 1e-9) / 10 ** shareDecimals
+    : roundToDecimals(value, shareDecimals);
   const formatPercentage = (value) => new Intl.NumberFormat("nl-NL", {
     minimumFractionDigits: shareDecimals,
     maximumFractionDigits: shareDecimals,
   }).format(value);
   const firstPartnerShare = netAssets > 0
-    ? roundToDecimals(firstPartnerBase / netAssets * 100, shareDecimals)
+    ? roundShare(firstPartnerBase / netAssets * 100)
     : 0;
   const secondPartnerShare = netAssets > 0
-    ? roundToDecimals(secondPartnerBase / netAssets * 100, shareDecimals)
+    ? roundShare(secondPartnerBase / netAssets * 100)
     : 0;
   const formattedYieldRate = fiscalPartner
     ? `${formatPercentage(firstPartnerShare)}% / ${formatPercentage(secondPartnerShare)}%`

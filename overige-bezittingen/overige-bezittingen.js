@@ -146,6 +146,7 @@ function render() {
     name.type = "text";
     name.value = asset.name;
     name.setAttribute("aria-label", "Omschrijving bezitting");
+    name.placeholder = "Optioneel, geen persoonsgegevens";
     name.addEventListener("input", () => {
       asset.name = name.value;
       saveAssets();

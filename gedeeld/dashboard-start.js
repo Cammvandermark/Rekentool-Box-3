@@ -1,6 +1,8 @@
 "use strict";
 
-yearSelect.value = new URLSearchParams(window.location.search).get("year") || "";
+const initialYear = new URLSearchParams(window.location.search).get("year") || "";
+const initialYearRestored = initialYear !== "" && restorePeriodForYear(initialYear);
+if (!initialYearRestored) yearSelect.value = "";
 loadPreliminaryAnswers();
 yearSelect.addEventListener("change", () => {
   const url = new URL(window.location.href);
@@ -65,3 +67,13 @@ window.addEventListener("storage", (event) => {
     renderCalculation();
   }
 });
+
+// Terug van een detailpagina: toon het gekozen jaar met de vermogensgegevens open.
+if (initialYearRestored) {
+  yearSelect.dispatchEvent(new Event("change"));
+  const assetDisclosure = document.querySelector(".asset-disclosure");
+  if (assetDisclosure) assetDisclosure.open = true;
+  const startDisclosure = document.querySelector("#assets-start-disclosure");
+  if (startDisclosure) startDisclosure.open = true;
+  document.querySelector("#calculation-section")?.scrollIntoView({ block: "start" });
+}

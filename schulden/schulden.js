@@ -126,6 +126,7 @@ function render() {
     name.type = "text";
     name.value = debt.name;
     name.setAttribute("aria-label", "Omschrijving schuld");
+    name.placeholder = "Optioneel, geen persoonsgegevens";
     name.addEventListener("input", () => {
       debt.name = name.value;
       saveDebts();
@@ -193,9 +194,11 @@ function render() {
 }
 
 function updateBackLink() {
-  backLink.href = yearSelect.value
-    ? `index.html?year=${encodeURIComponent(yearSelect.value)}`
-    : "index.html";
+  const query = yearSelect.value ? `?year=${encodeURIComponent(yearSelect.value)}` : "";
+  backLink.href = `index.html${query}`;
+  for (const link of document.querySelectorAll("[data-year-link]")) {
+    link.href = `${link.getAttribute("href").split("?")[0]}${query}`;
+  }
 }
 
 function updatePageTitle() {
