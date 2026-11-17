@@ -155,7 +155,18 @@ function getBankTotal(year) {
   );
 }
 
-function getOtherAssetsTotal(year) {
+function getBankCashTotal(year) {
+  const stored = localStorage.getItem(`${STORAGE_KEY}:${year}`);
+  const accounts = stored === null ? [] : JSON.parse(stored);
+  if (!Array.isArray(accounts)) return 0;
+  return roundToTwoDecimals(
+    accounts
+      .filter((account) => account.kind === "cash")
+      .reduce((sum, account) => sum + account.balance, 0),
+  );
+}
+
+function getOtherAssets(year) {
   const storedAssets = localStorage.getItem(`${OTHER_ASSETS_STORAGE_KEY}:${year}`);
   if (storedAssets !== null) {
     const assets = JSON.parse(storedAssets);
@@ -167,6 +178,7 @@ function getOtherAssetsTotal(year) {
         ![
           "securities",
           "claims",
+          "cash",
           "second-home",
           "real-estate",
           "capital-insurance",
@@ -185,13 +197,20 @@ function getOtherAssetsTotal(year) {
     ) {
       throw new Error("De opgeslagen overige bezittingen zijn ongeldig. Controleer de bezittingen.");
     }
-    return roundToTwoDecimals(
-      assets.reduce((sum, asset) => sum + asset.value, 0),
-    );
+    return {
+      total: roundToTwoDecimals(
+        assets.reduce((sum, asset) => sum + asset.value, 0),
+      ),
+      cash: roundToTwoDecimals(
+        assets
+          .filter((asset) => asset.type === "cash")
+          .reduce((sum, asset) => sum + asset.value, 0),
+      ),
+    };
   }
 
   const legacyStored = localStorage.getItem(`${CALCULATION_STORAGE_KEY}:${year}`);
-  if (legacyStored === null) return 0;
+  if (legacyStored === null) return { total: 0, cash: 0 };
   const legacyInputs = JSON.parse(legacyStored);
   if (
     typeof legacyInputs !== "object" ||
@@ -205,7 +224,7 @@ function getOtherAssetsTotal(year) {
   if (!Number.isFinite(legacyValue) || legacyValue < 0) {
     throw new Error("De opgeslagen overige bezittingen zijn ongeldig.");
   }
-  return roundToTwoDecimals(legacyValue);
+  return { total: roundToTwoDecimals(legacyValue), cash: 0 };
 }
 
 function loadCalculationInputs(year) {
@@ -246,7 +265,7 @@ function loadCalculationInputs(year) {
 
 function saveCalculationInputs(year, fiscalPartner) {
   try {
-    const investments = getOtherAssetsTotal(year);
+    const investments = getOtherAssets(year).total;
     localStorage.setItem(
       `${CALCULATION_STORAGE_KEY}:${year}`,
       JSON.stringify({
@@ -301,9 +320,14 @@ function renderCalculation() {
   updatePartnerAllocation();
 
   try {
-    const bank = getBankTotal(year);
-    const investments = getOtherAssetsTotal(year);
-    otherAssetsTotal.textContent = euro.format(investments);
+    const otherAssets = getOtherAssets(year);
+    otherAssetsTotal.textContent = euro.format(otherAssets.total);
+    const { bank, investments, cashInBank } = splitAssetCategories({
+      bankTotal: getBankTotal(year),
+      otherAssetsTotal: otherAssets.total,
+      cashTotal: otherAssets.cash,
+      year,
+    });
     const debts = readNonNegativeAmount(debtsInput, "Schulden");
     const fiscalPartner = selectedAnswer("calculation-fiscal-partner") === "yes";
     const allocationPercent = fiscalPartner
@@ -400,6 +424,10 @@ function renderCalculation() {
     for (const [id, value] of Object.entries(values)) {
       setCalculationText(id, value);
     }
+    const totalCashInBank = roundToTwoDecimals(cashInBank + getBankCashTotal(year));
+    document.querySelector("#relief-bank-assets-label").textContent = totalCashInBank > 0
+      ? `Banktegoeden (incl. ${formatCalculationEuro(totalCashInBank)} contant geld)`
+      : "Banktegoeden";
     document.querySelector("#old-allocation-row").hidden = !fiscalPartner;
     document.querySelector("#relief-allocation-row").hidden = !fiscalPartner;
     renderOldTierDetails({ data, oldTierRates, oldTierCalculations, yearUsesOldMethodComparison });
@@ -484,7 +512,7 @@ function updateCalculationInputs() {
   const fiscalPartner = selectedAnswer("calculation-fiscal-partner");
   updatePartnerAllocation();
   try {
-    getOtherAssetsTotal(year);
+    getOtherAssets(year);
     readNonNegativeAmount(debtsInput, "Schulden");
     if (fiscalPartner === "yes") {
       const allocation = Number(partnerAllocation.value);

@@ -69,23 +69,15 @@ h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .secondary-button { min-height: 32px; padding: 0 11px; border: 1px solid #b9c9d1; border-radius: 4px; color: var(--accent); background: white; cursor: pointer; font-size: 11px; }
 .secondary-button:hover { background: var(--accent-soft); }
 .secondary-button:disabled { color: #98a2aa; background: #f3f5f7; cursor: not-allowed; }
-.asset-category-guide { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
-.asset-category-guide h3 { margin: 0 0 12px; font-size: 12px; font-weight: 600; }
-.asset-category-guide ul { margin: 0; padding-left: 18px; list-style: disc; }
-.asset-category-guide li { padding: 9px 0; border-top: 1px solid #edf0f2; }
-.asset-category-guide li strong { font-size: 11px; font-weight: 600; }
-.asset-category-guide li span { color: var(--muted); font-size: 10px; line-height: 1.5; }
-.asset-valuation-guide { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
-.asset-valuation-guide h3 { margin: 0 0 10px; font-size: 12px; font-weight: 600; }
-.asset-valuation-guide p { color: var(--muted); font-size: 10px; line-height: 1.6; }
-.asset-valuation-guide .valuation-intro { margin-bottom: 12px; }
-.valuation-table { width: 100%; border-collapse: collapse; text-align: left; }
-.valuation-table th, .valuation-table td { padding: 9px; border-top: 1px solid #e9edf0; vertical-align: top; }
-.valuation-table thead th { color: var(--muted); font-size: 9px; font-weight: 600; }
-.valuation-table tbody th { width: 230px; font-size: 10px; font-weight: 600; }
-.valuation-table tbody td { color: var(--muted); font-size: 10px; line-height: 1.6; }
-.valuation-table a { color: var(--accent); }
-.asset-valuation-guide .valuation-warning { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid #c9a35a; background: #faf8f2; }
+.asset-guide { margin-top: 20px; padding-top: 17px; border-top: 1px solid var(--line); }
+.asset-guide p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.asset-guide a { color: var(--accent); }
+.asset-guide-intro { margin-bottom: 12px !important; }
+.asset-guide-list { margin: 0; padding: 0; list-style: none; }
+.asset-guide-list li { padding: 12px 0; border-top: 1px solid #edf0f2; }
+.asset-guide-list h3 { margin: 0 0 4px; font-size: 11px; font-weight: 600; }
+.asset-guide-list .asset-guide-summary { margin-bottom: 6px; color: var(--ink); }
+.asset-guide-warning { margin-top: 12px !important; padding: 10px 12px; border-left: 3px solid #c9a35a; background: #faf8f2; }
 .save-status { color: var(--muted); font-size: 10px; }
 .explanation-panel { margin-top: 14px; padding: 17px 21px; }
 .explanation-panel .panel-heading { padding-bottom: 10px; }
@@ -344,3 +336,10 @@ section.counterproof-placeholder div.panel-heading {
   .detail-controls { flex-wrap: wrap; }
   .inline-question, .inline-date-question { flex-wrap: wrap; }
 }
+.cash-periods { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 8px 0; }
+.cash-periods > h3 { grid-column: 1 / -1; margin: 12px 0 0; font-size: 11px; font-weight: 600; }
+.cash-period { padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--accent-soft); }
+.cash-period h4 { margin: 0 0 4px; color: var(--ink); font-size: 10px; font-weight: 700; letter-spacing: .02em; }
+.cash-period p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.cash-period a { color: var(--accent); }
+.cash-label { color: var(--muted); font-size: 11px; }

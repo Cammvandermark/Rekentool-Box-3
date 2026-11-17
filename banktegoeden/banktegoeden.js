@@ -7,6 +7,7 @@ const saveStatus = document.querySelector("#save-status");
 const errorStatus = document.querySelector("#form-status");
 const yearSelect = document.querySelector("#tax-year");
 const addAccountButton = document.querySelector("#add-account");
+const addCashButton = document.querySelector("#add-cash");
 const backLink = document.querySelector(".back-link");
 const euro = new Intl.NumberFormat("nl-NL", {
   style: "currency",
@@ -32,8 +33,11 @@ function readAccounts() {
   accounts = [];
   nextId = 1;
   addAccountButton.disabled = !key;
+  // Contant geld telt pas vanaf 2023 (Overbruggingswet box 3) als banktegoed.
+  addCashButton.hidden = !(Number(yearSelect.value) >= 2023);
   if (!key) {
     saveStatus.textContent = "";
+    showError("Er is geen belastingjaar gekozen. Ga terug naar het overzicht en kies eerst een jaar.");
     return;
   }
 
@@ -45,7 +49,8 @@ function readAccounts() {
       typeof account.name !== "string" ||
       typeof account.bank !== "string" ||
       typeof account.balance !== "number" ||
-      !Number.isFinite(account.balance)
+      !Number.isFinite(account.balance) ||
+      (account.kind !== undefined && account.kind !== "cash")
     )) {
       throw new Error("De opgeslagen rekeninggegevens hebben een ongeldig formaat.");
     }
@@ -99,8 +104,16 @@ function render() {
     const balanceCell = document.createElement("td");
     const actionCell = document.createElement("td");
 
-    nameCell.append(createTextInput(account, "name", "Naam rekening"));
-    bankCell.append(createTextInput(account, "bank", "Bank"));
+    if (account.kind === "cash") {
+      nameCell.append(createTextInput(account, "name", "Omschrijving contant geld"));
+      const cashLabel = document.createElement("span");
+      cashLabel.className = "cash-label";
+      cashLabel.textContent = "Contant geld";
+      bankCell.append(cashLabel);
+    } else {
+      nameCell.append(createTextInput(account, "name", "Naam rekening"));
+      bankCell.append(createTextInput(account, "bank", "Bank"));
+    }
 
     const balance = document.createElement("input");
     balance.type = "number";
@@ -108,7 +121,10 @@ function render() {
     balance.step = "0.01";
     balance.inputMode = "decimal";
     balance.value = String(account.balance);
-    balance.setAttribute("aria-label", "Saldo op 1 januari in euro");
+    balance.setAttribute(
+      "aria-label",
+      account.kind === "cash" ? "Contant geld op 1 januari in euro" : "Saldo op 1 januari in euro",
+    );
     balance.addEventListener("input", () => {
       if (balance.value === "") {
         account.balance = 0;
@@ -130,7 +146,12 @@ function render() {
     remove.type = "button";
     remove.className = "remove-button";
     remove.textContent = "Verwijderen";
-    remove.setAttribute("aria-label", `Rekening ${account.name || "zonder naam"} verwijderen`);
+    remove.setAttribute(
+      "aria-label",
+      account.kind === "cash"
+        ? `Contant geld ${account.name || "zonder omschrijving"} verwijderen`
+        : `Rekening ${account.name || "zonder naam"} verwijderen`,
+    );
     remove.addEventListener("click", () => {
       accounts = accounts.filter((item) => item.id !== account.id);
       render();
@@ -156,6 +177,19 @@ addAccountButton.addEventListener("click", () => {
   rows.querySelector("tr:last-child input")?.focus();
 });
 
+addCashButton.addEventListener("click", () => {
+  accounts.push({
+    id: `rekening-${nextId++}`,
+    kind: "cash",
+    name: "Contant geld in huis",
+    bank: "",
+    balance: 0,
+  });
+  render();
+  saveAccounts();
+  rows.querySelector("tr:last-child input[type=number]")?.focus();
+});
+
 window.addEventListener("storage", (event) => {
   if (event.key === storageKey() || event.key === null) {
     readAccounts();
@@ -165,18 +199,28 @@ window.addEventListener("storage", (event) => {
 
 yearSelect.value = new URLSearchParams(window.location.search).get("year") || "";
 function updateBackLink() {
-  backLink.href = yearSelect.value
-    ? `index.html?year=${encodeURIComponent(yearSelect.value)}`
-    : "index.html";
+  const query = yearSelect.value ? `?year=${encodeURIComponent(yearSelect.value)}` : "";
+  backLink.href = `index.html${query}`;
+  for (const link of document.querySelectorAll("[data-year-link]")) {
+    link.href = `${link.getAttribute("href").split("?")[0]}${query}`;
+  }
 }
 
 updateBackLink();
+
+function updatePageTitle() {
+  const h1 = document.querySelector("h1");
+  if (h1) h1.textContent = yearSelect.value ? `Banktegoeden ${yearSelect.value}` : "Banktegoeden";
+}
+
+updatePageTitle();
 yearSelect.addEventListener("change", () => {
   const url = new URL(window.location.href);
   if (yearSelect.value) url.searchParams.set("year", yearSelect.value);
   else url.searchParams.delete("year");
   window.history.replaceState({}, "", url);
   updateBackLink();
+  updatePageTitle();
   errorStatus.hidden = true;
   readAccounts();
   render();

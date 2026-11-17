@@ -51,6 +51,18 @@ const emptyExample = calculateForfaitaryReturn({
 assertEqual("Geen vermogen: belasting", emptyExample.reliefTax, 0);
 assertEqual("Geen vermogen: uitleg", emptyExample.yieldRateExplanation, "Geen rendementsgrondslag; aandeel 0%");
 
+const cashRecovery = splitAssetCategories({
+  bankTotal: 10000, otherAssetsTotal: 5000, cashTotal: 2000, year: "2022",
+});
+assertEqual("2022 contant geld: banktegoeden", cashRecovery.bank, 10000);
+assertEqual("2022 contant geld: overige bezittingen", cashRecovery.investments, 5000);
+const cashBridging = splitAssetCategories({
+  bankTotal: 10000, otherAssetsTotal: 5000, cashTotal: 2000, year: "2023",
+});
+assertEqual("2023 contant geld: banktegoeden", cashBridging.bank, 12000);
+assertEqual("2023 contant geld: overige bezittingen", cashBridging.investments, 3000);
+assertEqual("2023 contant geld: aandeel bank", cashBridging.cashInBank, 2000);
+
 const result = document.querySelector("#resultaat");
 result.textContent = failures.length ? failures.join("\n") : "Alle berekeningstests geslaagd.";
 result.dataset.status = failures.length ? "failed" : "passed";

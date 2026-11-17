@@ -17,7 +17,8 @@ const euro = new Intl.NumberFormat("nl-NL", {
 });
 const assetTypes = [
   ["securities", "Aandelen, obligaties, winstbewijzen en opties"],
-  ["claims", "Vorderingen, uitgeleend geld of contant geld"],
+  ["claims", "Vorderingen of uitgeleend geld"],
+  ["cash", "Contant geld"],
   ["second-home", "2e woning, zoals een vakantiewoning"],
   ["real-estate", "Overige onroerende zaken"],
   ["capital-insurance", "Niet-vrijgesteld deel kapitaalverzekeringen"],
@@ -31,6 +32,10 @@ const assetTypes = [
 ];
 
 let assets = [];
+
+function cashBelongsToBank() {
+  return Number(yearSelect.value) >= 2023;
+}
 let nextId = 1;
 
 function storageKey() {
@@ -55,6 +60,7 @@ function readAssets() {
   errorStatus.hidden = true;
   if (!key) {
     saveStatus.textContent = "";
+    showError("Er is geen belastingjaar gekozen. Ga terug naar het overzicht en kies eerst een jaar.");
     return;
   }
 
@@ -156,6 +162,8 @@ function render() {
     type.append(defaultOption);
     
     for (const [value, label] of assetTypes) {
+      // Vanaf 2023 telt contant geld als banktegoed en vult u het in bij Banktegoeden.
+      if (value === "cash" && cashBelongsToBank() && asset.type !== "cash") continue;
       const option = document.createElement("option");
       option.value = value;
       option.textContent = label;
@@ -233,9 +241,11 @@ window.addEventListener("storage", (event) => {
 
 yearSelect.value = new URLSearchParams(window.location.search).get("year") || "";
 function updateBackLink() {
-  backLink.href = yearSelect.value
-    ? `index.html?year=${encodeURIComponent(yearSelect.value)}`
-    : "index.html";
+  const query = yearSelect.value ? `?year=${encodeURIComponent(yearSelect.value)}` : "";
+  backLink.href = `index.html${query}`;
+  for (const link of document.querySelectorAll("[data-year-link]")) {
+    link.href = `${link.getAttribute("href").split("?")[0]}${query}`;
+  }
 }
 
 updateBackLink();
@@ -251,6 +261,21 @@ function updatePageTitle() {
 }
 
 updatePageTitle();
+
+function updateYearTexts() {
+  const year = Number(yearSelect.value);
+  const texts = year
+    ? {
+        peildatum: ` (voor ${year}: 1 januari ${year})`,
+        woz: ` (voor ${year}: 1 januari ${year - 1})`,
+      }
+    : { peildatum: "", woz: "" };
+  for (const element of document.querySelectorAll("[data-year-text]")) {
+    element.textContent = texts[element.dataset.yearText] ?? "";
+  }
+}
+
+updateYearTexts();
 
 // Auto-cleanup: migrate old localStorage data (remove pre-populated category rows)
 function cleanupOldAssets() {
@@ -288,6 +313,7 @@ yearSelect.addEventListener("change", () => {
   window.history.replaceState({}, "", url);
   updateBackLink();
   updatePageTitle();
+  updateYearTexts();
   readAssets();
   render();
 });
