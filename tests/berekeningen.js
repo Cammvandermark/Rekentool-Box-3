@@ -533,6 +533,45 @@ assertEqual("Snelcontrole meerdere jaren: totaal verschil", multiYear.totals.dif
 assertEqual("Snelcontrole meerdere jaren: totaal te betalen",
   multiYear.totals.appliedTax, multiYear.results[0].result.appliedTax + 4226);
 
+// --- Vergelijking met berekenhet.nl (box 3 t/m 2022), 19 november 2026 ---
+// Gecontroleerd tegen https://www.berekenhet.nl/sparen-en-beleggen/belasting-box3-tm-2022.html.
+// berekenhet rekent in hele euro's, met naar beneden afgerond rendementspercentage
+// en schijfpercentages op 2 decimalen; deze tool rekent in centen, met het
+// rendementspercentage op 2 decimalen afgerond en de wettelijke schijfpercentages
+// (3 decimalen). Verschillen van enkele euro's zijn daardoor verklaard. De bedragen
+// hieronder zijn de uitkomsten van deze tool; ze leggen de vergelijking vast.
+// Partners: verdeling 50/50.
+const berekenhetCases = [
+  // [jaar, partner, bank, overig, schulden, inkomen oud, inkomen rechtsherstel, belasting, methode, berekenhet]
+  [2017, false, 100000, 200000, 10000, 11031.25, 9862.40, 2958.72, "Wet rechtsherstel", 2959],
+  [2017, true, 120000, 80000, 0, 4306.50, 3465.00, 1039.50, "Wet rechtsherstel", 1035],
+  [2017, true, 300000, 900000, 50000, 48282.50, 45677.80, 13703.34, "Wet rechtsherstel", 13703],
+  [2018, false, 100000, 200000, 10000, 9742.61, 9573.20, 2871.96, "Wet rechtsherstel", 2864],
+  [2018, true, 300000, 900000, 50000, 44143.42, 44936.00, 13243.02, "oude methode", 13241],
+  [2019, false, 100000, 200000, 10000, 9873.69, 9905.30, 2962.11, "oude methode", 2962],
+  [2019, true, 300000, 900000, 50000, 45072.48, 46667.44, 13521.74, "oude methode", 13523],
+  [2020, false, 100000, 200000, 10000, 9231.12, 9310.02, 2769.34, "oude methode", 2770],
+  [2020, true, 300000, 900000, 50000, 42316.74, 43999.22, 12695.02, "oude methode", 12697],
+  [2021, false, 100000, 200000, 10000, 9644.93, 9314.56, 2887.51, "Wet rechtsherstel", 2880],
+  [2021, true, 300000, 900000, 50000, 44945.56, 45847.76, 13933.12, "oude methode", 13933],
+  [2022, false, 100000, 200000, 10000, 9299.17, 9020.58, 2796.38, "Wet rechtsherstel", 2796],
+  [2022, false, 1500000, 0, 0, 67656.74, 0, 0, "Wet rechtsherstel", 0],
+  [2022, true, 300000, 900000, 50000, 43484.54, 44503.14, 13480.20, "oude methode", 13481],
+];
+for (const [year, fiscalPartner, bankTotal, otherAssetsTotal, debts, oldIncome, reliefIncome, tax, method, berekenhet] of berekenhetCases) {
+  const label = `berekenhet ${year} ${fiscalPartner ? "partners" : "alleenstaand"} ${bankTotal}/${otherAssetsTotal}/${debts}`;
+  const viaYear = calculateBox3Year({
+    year: String(year), bankTotal, otherAssetsTotal, debts,
+    fiscalPartner, allocationPercent: fiscalPartner ? 50 : 100,
+  });
+  assertEqual(`${label}: inkomen oude methode`, viaYear.old.oldIncome, oldIncome);
+  assertEqual(`${label}: inkomen rechtsherstel`, viaYear.relief.reliefIncome, reliefIncome);
+  assertEqual(`${label}: belasting`, viaYear.forfaitaryTax, tax);
+  assertEqual(`${label}: methode`, viaYear.forfaitaryMethod, method);
+  // Ruime marge ten opzichte van berekenhet (hele euro's, andere afronding).
+  assertEqual(`${label}: binnen € 10 van berekenhet`, Math.abs(viaYear.forfaitaryTax - berekenhet) < 10, true);
+}
+
 const result = document.querySelector("#resultaat");
 result.textContent = failures.length ? failures.join("\n") : "Alle berekeningstests geslaagd.";
 result.dataset.status = failures.length ? "failed" : "passed";
