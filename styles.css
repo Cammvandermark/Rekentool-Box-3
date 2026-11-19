@@ -405,6 +405,10 @@ html[data-control-mode="aan"] .topbar { box-shadow: inset 0 -3px 0 #e0a43a; }
 .report-table td { font-variant-numeric: tabular-nums; }
 .report-table tr.report-total th, .report-table tr.report-total td { font-weight: 700; color: var(--ink); }
 .report-note { margin: 4px 0; color: var(--muted); }
+.report-conclusion { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 10px; padding: 10px 14px; border: 2px solid var(--accent); border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 800; break-inside: avoid; }
+.report-conclusion-label { flex: 0 0 38%; }
+.report-conclusion-text { flex: 1 1 220px; }
+.report-conclusion.is-positive { border-color: #1f7a3a; background: #eaf5ee; color: #1f7a3a; }
 .report-notes, .report-sources { margin: 6px 0 0; padding-left: 16px; }
 .report-url { word-break: break-all; }
 .report-result { margin-top: 14px; border: 2px solid var(--accent); border-radius: 6px; overflow: hidden; break-inside: avoid; }
@@ -432,7 +436,9 @@ html[data-control-mode="aan"] .topbar { box-shadow: inset 0 -3px 0 #e0a43a; }
   #print-root .report { font-size: 10pt; color: black; }
   #print-root .report-table th, #print-root .report-table td { font-size: 9pt; border-top: 1px solid #ccc; color: black; }
   #print-root .report-table tr { break-inside: avoid; }
-  #print-root .report-section h3 { break-after: avoid; }
+  #print-root .report-conclusion { background: none; border-color: black; color: black; font-size: 11pt; }
+  #print-root .report-conclusion.is-positive { border-color: #1f7a3a; color: #1f7a3a; }
+  #print-root   #print-root   #print-root   #print-root .report-section h3 { break-after: avoid; }
   #print-root .report-result { border-color: black; }
   #print-root .report-result-title { background: none; color: black; border-bottom: 2px solid black; font-size: 10pt; }
   #print-root .report-result-row.is-tax { background: none; }

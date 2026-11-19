@@ -886,7 +886,8 @@ function updateActualReturnResults() {
     ...continuityNotes(rows, year),
     submissionNote(year, fiscalPartner),
     "Over het werkelijke rendement geldt geen heffingsvrij vermogen; het forfaitaire voordeel is al ná het heffingsvrije vermogen berekend.",
-    "Niet verwerkt: persoonsgebonden aftrek, minderjarige kinderen, fiscaal partnerschap voor een deel van het jaar, immigratie of emigratie (binnenlandse en buitenlandse periode), voorkoming van dubbele belasting en onzakelijke voorwaarden.",
+    "Niet verwerkt: persoonsgebonden aftrek, minderjarige kinderen, fiscaal partnerschap voor een deel van het jaar, immigratie of emigratie (binnenlandse en buitenlandse periode), voorkoming van dubbele belasting, onzakelijke voorwaarden en polisvrijstellingen.",
+    "Controleer bijzondere situaties aan de wet en de uitvoeringspraktijk van het betreffende jaar.",
   ];
   for (const note of notes) {
     const li = document.createElement("li");
