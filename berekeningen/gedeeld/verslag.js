@@ -1,6 +1,6 @@
 "use strict";
 
-// D. Verantwoording en afdrukken: een volledig, afdrukbaar verslag van de
+// B. Verantwoording en afdrukken: een volledig, afdrukbaar verslag van de
 // berekening van het gekozen jaar, met alle jaargegevens, tussenstappen en
 // bronnen. Bevat geen persoonsgegevens: regels zonder omschrijving krijgen een
 // genummerde naam.
@@ -78,26 +78,36 @@ function yearDataSection(report) {
     { cells: ["Tarief box 3", reportPercent(data.taxRate, 0)] },
     { cells: ["Heffingsvrij vermogen", `${reportWhole(data.exemption)} per persoon${fiscalPartner ? ` (samen ${reportWhole(data.exemption * 2)})` : ""}`] },
     { cells: ["Schuldendrempel", `${reportWhole(data.debtThreshold)} per persoon${fiscalPartner ? ` (samen ${reportWhole(data.debtThreshold * 2)})` : ""}`] },
-    { cells: ["Forfait banktegoeden", reportPercent(data.reliefSavingsRate) + (year === "2026" ? " (voorlopig)" : "")] },
-    { cells: ["Forfait overige bezittingen", reportPercent(data.reliefInvestmentRate)] },
-    { cells: ["Forfait schulden", reportPercent(data.reliefDebtRate) + (year === "2026" ? " (voorlopig)" : "")] },
+    { relief: true, cells: ["Forfait banktegoeden", reportPercent(data.reliefSavingsRate) + (year === "2026" ? " (voorlopig)" : "")] },
+    { relief: true, cells: ["Forfait overige bezittingen", reportPercent(data.reliefInvestmentRate)] },
+    { relief: true, cells: ["Forfait schulden", reportPercent(data.reliefDebtRate) + (year === "2026" ? " (voorlopig)" : "")] },
   ];
   if (numericYear <= 2021) {
-    rows.push({ cells: ["Rendementspercentage (rechtsherstel)", "totaal rendement ÷ rendementsgrondslag, op 2 decimalen"] });
+    rows.push({ relief: true, cells: ["Rendementspercentage (rechtsherstel)", "totaal rendement ÷ rendementsgrondslag, op 2 decimalen"] });
   } else {
-    rows.push({ cells: ["Aandeel in de rendementsgrondslag", `grondslag sparen en beleggen per persoon ÷ rendementsgrondslag, op ${data.taxableShareDecimals ?? 2} decimalen${data.taxableShareRoundDown ? ", naar beneden afgerond" : ""}`] });
+    rows.push({ relief: true, cells: ["Aandeel in de rendementsgrondslag", `grondslag sparen en beleggen per persoon ÷ rendementsgrondslag, op ${data.taxableShareDecimals ?? 2} decimalen${data.taxableShareRoundDown ? ", naar beneden afgerond" : ""}`] });
   }
-  rows.push({ cells: ["Contant geld valt onder", numericYear >= 2023 ? "banktegoeden" : "overige bezittingen"] });
+  rows.push({ relief: true, cells: ["Contant geld valt onder", numericYear >= 2023 ? "banktegoeden" : "overige bezittingen"] });
   if (numericYear <= 2022) {
     rows.push({ cells: ["Oude methode: forfait sparen / beleggen", `${reportPercent(data.savingsRate)} / ${reportPercent(data.investmentRate)}`] });
     rows.push({ cells: [`Schijf 1 (tot ${reportWhole(data.tier1)}): 67% sparen / 33% beleggen`, reportPercent(data.oldTierRates[0], 3)] });
     rows.push({ cells: [`Schijf 2 (${reportWhole(data.tier1)} – ${reportWhole(data.tier2)}): 21% / 79%`, reportPercent(data.oldTierRates[1], 3)] });
     rows.push({ cells: [`Schijf 3 (vanaf ${reportWhole(data.tier2)}): 0% / 100%`, reportPercent(data.oldTierRates[2], 3)] });
   }
-  rows.push({ cells: ["Werkelijk rendement: vrijstelling contant geld", `${reportWhole(data.cashExemption)} per persoon${count === 2 ? ` (samen ${reportWhole(data.cashExemption * 2)})` : ""}`] });
-  rows.push({ cells: ["Werkelijk rendement: vrijstelling groene beleggingen", `${reportWhole(data.greenExemption)} per persoon${count === 2 ? ` (samen ${reportWhole(data.greenExemption * 2)})` : ""}`] });
-  rows.push({ cells: ["Werkelijk rendement: voordeel eigen gebruik woning", numericYear >= 2026 ? "telt mee (art. 5.27a Wet IB 2001)" : "nihil (telt pas vanaf 2026)"] });
-  return reportSection(`1. Jaargegevens ${year}`, [reportTable(["Onderdeel", "Waarde"], rows)]);
+  rows.push({ relief: true, cells: ["Werkelijk rendement: vrijstelling contant geld", `${reportWhole(data.cashExemption)} per persoon${count === 2 ? ` (samen ${reportWhole(data.cashExemption * 2)})` : ""}`] });
+  rows.push({ relief: true, cells: ["Werkelijk rendement: vrijstelling groene beleggingen", `${reportWhole(data.greenExemption)} per persoon${count === 2 ? ` (samen ${reportWhole(data.greenExemption * 2)})` : ""}`] });
+  rows.push({ relief: true, cells: ["Werkelijk rendement: voordeel eigen gebruik woning", numericYear >= 2026 ? "telt mee (art. 5.27a Wet IB 2001)" : "nihil (telt pas vanaf 2026)"] });
+  // 2017-2022: de gegevens van de oude methode eerst, direct na de algemene
+  // gegevens (tarief, heffingsvrij vermogen, schuldendrempel).
+  if (numericYear <= 2022) {
+    const isOld = (row) => /^(Oude methode|Schijf )/.test(row.cells[0]);
+    const oldRows = rows.filter(isOld);
+    const otherRows = rows.filter((row) => !isOld(row));
+    rows.splice(0, rows.length, ...otherRows.slice(0, 3), ...oldRows, ...otherRows.slice(3));
+  }
+  // Geen toegang tot de Wet rechtsherstel (2017-2020): alleen de gegevens van de oude methode.
+  const shownRows = report.accessDenied ? rows.filter((row) => !row.relief) : rows;
+  return reportSection(`1. Jaargegevens ${year}`, [reportTable(["Onderdeel", "Waarde"], shownRows)]);
 }
 
 function assetsSection(report) {
@@ -127,6 +137,25 @@ function assetsSection(report) {
   return reportSection(`2. Vermogen op 1 januari ${year} (A.1)`, children);
 }
 
+// 2017-2020 zonder toegang tot de Wet rechtsherstel box 3: alleen de oude
+// methode (schijven); geen vergelijking met de Wet rechtsherstel.
+function oldMethodOnlySection(report, steps) {
+  const { year, data, fiscalPartner } = report;
+  const oldIncomes = fiscalPartner ? [report.oldFirstPartnerIncome, report.oldSecondPartnerIncome] : [report.oldFirstPartnerIncome];
+  const rows = [
+    ...steps,
+    ...report.oldTierCalculations.map((calculation, index) => ({
+      cells: [`Schijf ${index + 1} (${reportPercent(data.oldTierRates[index], 3)})`, calculation],
+    })),
+    { cells: ["Box 3-inkomen oude methode", `${reportEuro(report.oldIncome)} (aanslag: ${reportWhole(assessmentIncome(oldIncomes))})`], className: "report-total" },
+    { cells: [`Box 3-belasting oude methode (${data.taxRate}%)`, `${reportEuro(report.oldTax)} (aanslag: ${reportWhole(assessmentTax(oldIncomes, data.taxRate))})`], className: "report-total" },
+  ];
+  return reportSection(`3. Forfaitaire berekening ${year} — oude methode (geen toegang tot Wet rechtsherstel box 3)`, [
+    reportTable(["Stap", "Berekening"], rows),
+    reportResultBlock(report, { title: "Uitkomst oude box 3-berekening (schijven)", incomes: oldIncomes, lowest: true, suffix: "van toepassing" }),
+  ]);
+}
+
 function forfaitarySection(report) {
   const { year, data, fiscalPartner } = report;
   const numericYear = Number(year);
@@ -144,72 +173,95 @@ function forfaitarySection(report) {
   if (fiscalPartner) {
     steps.push({ cells: [`Verdeling (${report.allocationPercent}% / ${100 - report.allocationPercent}%)`, `${reportEuro(report.firstPartnerBase)} / ${reportEuro(report.secondPartnerBase)}`] });
   }
-  steps.push(
+  if (report.accessDenied) return oldMethodOnlySection(report, steps);
+  const reliefSteps = [
     { cells: ["Rendement banktegoeden", report.savingsExplanation] },
     { cells: ["Rendement overige bezittingen", report.investmentExplanation] },
     { cells: ["Af: rendement schulden", report.debtExplanation] },
     { cells: ["Totaal forfaitair rendement", reportEuro(report.reliefTotalReturn)], className: "report-total" },
     { cells: [report.usesTaxableBaseShare ? "Aandeel in de rendementsgrondslag" : "Rendementspercentage", report.yieldRateExplanation] },
     { cells: ["Voordeel uit sparen en beleggen", report.reliefIncomeCalculation] },
-  );
+  ];
   persons.forEach((person, index) => {
     const income = incomes[index];
     const tax = roundToTwoDecimals(income * data.taxRate / 100);
-    steps.push({
+    reliefSteps.push({
       cells: [`${person}: box 3-inkomen en belasting (${data.taxRate}%)`,
         `${reportEuro(income)} × ${data.taxRate}% = ${reportEuro(tax)} · aanslag: ${reportWhole(assessmentIncome([income]))} × ${data.taxRate}% = ${reportWhole(assessmentTax([income], data.taxRate))}`],
       className: "report-total",
     });
   });
-  const title = numericYear <= 2022
-    ? `3. Forfaitaire berekening ${year} — Wet rechtsherstel box 3`
-    : `3. Forfaitaire berekening ${year} — Overbruggingswet box 3`;
-  const children = [
-    reportTable(["Stap", "Berekening"], steps),
-    reportResultBlock(report, {
-      title: numericYear <= 2022 ? "Uitkomst Wet rechtsherstel box 3" : "Uitkomst forfaitaire berekening — Overbruggingswet box 3",
-      incomes,
-      lowest: numericYear <= 2022 ? !(report.oldTax < report.reliefTax) : forfaitaryLowerThanActual(),
-    }),
-  ];
 
-  if (numericYear <= 2022) {
-    const oldIncomes = fiscalPartner ? [report.oldFirstPartnerIncome, report.oldSecondPartnerIncome] : [report.oldFirstPartnerIncome];
-    const oldRows = report.oldTierCalculations.map((calculation, index) => ({
-      cells: [`Schijf ${index + 1} (${reportPercent(data.oldTierRates[index], 3)})`, calculation],
-    }));
-    oldRows.push({ cells: ["Box 3-inkomen oude methode", `${reportEuro(report.oldIncome)} (aanslag: ${reportWhole(assessmentIncome(oldIncomes))})`], className: "report-total" });
-    oldRows.push({ cells: [`Box 3-belasting oude methode (${data.taxRate}%)`, `${reportEuro(report.oldTax)} (aanslag: ${reportWhole(assessmentTax(oldIncomes, data.taxRate))})`], className: "report-total" });
-    oldRows.push({ cells: ["Box 3-belasting Wet rechtsherstel", `${reportEuro(report.reliefTax)} (aanslag: ${reportWhole(assessmentTax(incomes, data.taxRate))})`] });
-    oldRows.push({
+  // Vanaf 2023: alleen de Overbruggingswet.
+  if (numericYear > 2022) {
+    return reportSection(`3. Forfaitaire berekening ${year} — Overbruggingswet box 3`, [
+      reportTable(["Stap", "Berekening"], [...steps, ...reliefSteps]),
+      reportResultBlock(report, {
+        title: "Uitkomst forfaitaire berekening — Overbruggingswet box 3",
+        incomes,
+        lowest: isReportWinner(report, "relief"),
+      }),
+    ]);
+  }
+
+  // 2017-2022: eerst de oude methode, dan de Wet rechtsherstel, dan de vergelijking.
+  const oldIncomes = fiscalPartner ? [report.oldFirstPartnerIncome, report.oldSecondPartnerIncome] : [report.oldFirstPartnerIncome];
+  const oldRows = report.oldTierCalculations.map((calculation, index) => ({
+    cells: [`Schijf ${index + 1} (${reportPercent(data.oldTierRates[index], 3)})`, calculation],
+  }));
+  oldRows.push({ cells: ["Box 3-inkomen oude methode", `${reportEuro(report.oldIncome)} (aanslag: ${reportWhole(assessmentIncome(oldIncomes))})`], className: "report-total" });
+  oldRows.push({ cells: [`Box 3-belasting oude methode (${data.taxRate}%)`, `${reportEuro(report.oldTax)} (aanslag: ${reportWhole(assessmentTax(oldIncomes, data.taxRate))})`], className: "report-total" });
+  const comparisonRows = [
+    { cells: [`Box 3-belasting oude methode (${data.taxRate}%)`, `${reportEuro(report.oldTax)} (aanslag: ${reportWhole(assessmentTax(oldIncomes, data.taxRate))})`] },
+    { cells: [`Box 3-belasting Wet rechtsherstel (${data.taxRate}%)`, `${reportEuro(report.reliefTax)} (aanslag: ${reportWhole(assessmentTax(incomes, data.taxRate))})`] },
+    {
       cells: ["Van toepassing (laagste uitkomst, art. 1 Wet rechtsherstel)", report.oldTax < report.reliefTax ? "oude methode" : "Wet rechtsherstel box 3"],
       className: "report-total",
-    });
-    children.push(
-      el("h4", { text: "Vergelijking met de oude box 3-berekening (schijven)" }),
-      reportTable(["Stap", "Berekening"], oldRows),
-      reportResultBlock(report, { title: "Uitkomst oude box 3-berekening (schijven)", incomes: oldIncomes, lowest: report.oldTax < report.reliefTax }),
-    );
-  }
+    },
+  ];
+  const title = `3. Forfaitaire berekening ${year} — oude methode en Wet rechtsherstel box 3`;
+  const children = [
+    el("h4", { text: "Grondslag" }),
+    reportTable(["Stap", "Berekening"], steps),
+    el("h4", { text: "Oude box 3-berekening (schijven)" }),
+    reportTable(["Stap", "Berekening"], oldRows),
+    reportResultBlock(report, { title: "Uitkomst oude box 3-berekening (schijven)", incomes: oldIncomes, lowest: isReportWinner(report, "old") }),
+    el("h4", { text: "Wet rechtsherstel box 3" }),
+    reportTable(["Stap", "Berekening"], reliefSteps),
+    reportResultBlock(report, { title: "Uitkomst Wet rechtsherstel box 3", incomes, lowest: isReportWinner(report, "relief") }),
+    el("h4", { text: "Vergelijking oude methode en Wet rechtsherstel" }),
+    reportTable(null, comparisonRows),
+  ];
   return reportSection(title, children);
 }
 
-// Vanaf 2023: is het forfaitaire voordeel lager dan (of gelijk aan) het werkelijk
-// rendement? true/false voor alle personen gelijk; undefined als het per persoon
-// verschilt of het werkelijk rendement niet is berekend.
-function forfaitaryLowerThanActual() {
+// Precies één uitkomst is de laagste (groen):
+//   2017-2020 zonder toegang: alleen de oude methode;
+//   2017-2022: de laagste van oude methode en Wet rechtsherstel;
+//   vanaf 2023: de Overbruggingswet;
+//   is het werkelijk rendement berekend en voor iedereen lager, dan dat.
+// Bij partners met een verschillende uitkomst per persoon is geen blok groen.
+function reportWinner(report) {
+  if (report.accessDenied) return "old";
+  const forfaitary = Number(report.year) <= 2022 && report.oldTax < report.reliefTax ? "old" : "relief";
   const persons = actualReturnReport?.result ? actualReturnReport.comparison?.persons : null;
-  if (!persons?.length) return undefined;
-  if (persons.every((person) => !person.usesActual)) return true;
-  if (persons.every((person) => person.usesActual)) return false;
-  return undefined;
+  if (!persons?.length) return forfaitary;
+  if (persons.every((person) => person.usesActual)) return "actual";
+  if (persons.some((person) => person.usesActual)) return null;
+  return forfaitary;
+}
+
+// true = groen (laagste), false = niet de laagste, undefined = geen eenduidige uitkomst.
+function isReportWinner(report, name) {
+  const winner = reportWinner(report);
+  return winner === null ? undefined : winner === name;
 }
 
 // Omlijnd uitkomstblok: voordeel uit sparen en beleggen en de verschuldigde
 // belasting voor de opgegeven inkomens, per persoon en (bij partners) totaal.
 // `lowest`: true = laagste uitkomst (groen en vet), false = de hoogste,
 // undefined = geen eenduidige vergelijking.
-function reportResultBlock(report, { title, incomes, lowest }) {
+function reportResultBlock(report, { title, incomes, lowest, suffix = "laagste uitkomst" }) {
   const { data, fiscalPartner } = report;
   const persons = fiscalPartner ? ["Belastingplichtige", "Partner"] : [null];
   const columns = persons.map((person, index) => ({
@@ -241,7 +293,7 @@ function reportResultBlock(report, { title, incomes, lowest }) {
 
   const compareClass = lowest === true ? " is-lowest" : lowest === false ? " is-higher" : "";
   return el("div", { className: `report-result${fiscalPartner ? " has-partner" : ""}${compareClass}` }, [
-    el("div", { className: "report-result-title", text: lowest === true ? `${title} — laagste uitkomst` : title }),
+    el("div", { className: "report-result-title", text: lowest === true ? `${title} — ${suffix}` : title }),
     row("is-income", "Voordeel uit sparen en beleggen (box 3-inkomen)",
       (c) => reportWhole(c.assessedIncome),
       (c) => `in centen: ${reportEuro(c.income)}`),
@@ -318,9 +370,7 @@ function actualReturnSection(report) {
     reportResultBlock(report, {
       title: "Uitkomst werkelijk rendement",
       incomes: comparison.persons.map((person) => person.actual),
-      lowest: comparison.persons.every((person) => person.usesActual)
-        ? true
-        : comparison.persons.some((person) => person.usesActual) ? undefined : false,
+      lowest: isReportWinner(report, "actual"),
     }),
     el("h4", { text: `Box 3-belasting in één oogopslag (hele euro's${fiscalPartner ? "; belastingplichtige / partner / totaal" : ""})` }),
     reportTable(null, taxRows),
@@ -328,6 +378,23 @@ function actualReturnSection(report) {
     reportTable(null, comparisonRows),
     noteList,
   ]);
+}
+
+// 2017-2020: de tegenbewijsregeling geldt alleen bij formele toegang tot de Wet
+// rechtsherstel box 3. Uitkomst van de formele beoordeling bovenaan het verslag.
+function reportAccessNote(year) {
+  if (Number(year) > 2020) return null;
+  const root = document.documentElement;
+  const complete = root.dataset.reliefAccessComplete !== "nee";
+  const status = root.dataset.reliefAccessStatus;
+  const [text, className] = !complete
+    ? [`Formele toegang ${year}: nog niet beoordeeld. De tegenbewijsregeling geldt alleen bij toegang tot de Wet rechtsherstel box 3; de uitkomsten zijn tot die tijd indicatief.`, "is-open"]
+    : status === "TOEGANG_RECHTSHERSTEL"
+      ? [`Formele toegang ${year}: wel toegang tot de Wet rechtsherstel box 3.`, "is-ok"]
+      : status === "GEEN_TOEGANG_RECHTSHERSTEL"
+        ? [`Formele toegang ${year}: geen toegang tot de Wet rechtsherstel box 3. De tegenbewijsregeling (art. 6a Wet rechtsherstel) is niet van toepassing; de uitkomsten zijn alleen indicatief.`, "is-denied"]
+        : [`Formele toegang ${year}: nader juridisch onderzoek noodzakelijk. Toepassing van de tegenbewijsregeling hangt daarvan af.`, "is-open"];
+  return el("p", { className: `report-access ${className}`, text });
 }
 
 function renderReport() {
@@ -346,6 +413,7 @@ function renderReport() {
       el("h2", { text: `Box 3-berekening belastingjaar ${report.year}` }),
       reportNote(`Gemaakt op ${printedOn} met de Box 3-rekentool${document.documentElement.dataset.controlMode === "aan" ? " (controlemodus, niets opgeslagen)" : ""}. Indicatieve berekening; bedragen in centen, met tussen haakjes het bedrag in hele euro's naar beneden zoals op de aanslag. Bevat geen persoonsgegevens.`),
     ]),
+    ...[reportAccessNote(report.year)].filter(Boolean),
     yearDataSection(report),
     assetsSection(report),
     forfaitarySection(report),

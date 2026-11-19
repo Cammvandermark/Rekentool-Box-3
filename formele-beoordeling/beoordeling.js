@@ -151,10 +151,21 @@ const questionNames = [
   "legal-exception",
 ];
 let preliminaryByYear = {};
-function setReliefAccessStatus(statusValue) {
+// `complete`: is de formele beoordeling 2017-2020 volledig ingevuld? Een
+// onvolledige beoordeling heeft ook status NADER_ONDERZOEK; C toont dan dat de
+// toegang nog niet is beoordeeld.
+function setReliefAccessStatus(statusValue, complete = true) {
+  // Snelle keuze 2017-2020 (snelle-toegang.js) gaat voor de uitgebreide beoordeling.
+  const quickAccess = typeof getQuickAccess === "function" ? getQuickAccess(yearSelect.value) : "";
+  if (quickAccess) {
+    statusValue = quickAccess === "yes" ? RELIEF_ACCESS_STATUS.positive : RELIEF_ACCESS_STATUS.negative;
+    complete = true;
+  }
   const root = document.documentElement;
-  if (root.dataset.reliefAccessStatus === statusValue) return;
+  const completeValue = complete ? "ja" : "nee";
+  if (root.dataset.reliefAccessStatus === statusValue && root.dataset.reliefAccessComplete === completeValue) return;
   root.dataset.reliefAccessStatus = statusValue;
+  root.dataset.reliefAccessComplete = completeValue;
   root.dispatchEvent(
     new CustomEvent("box3:relief-access-status", {
       detail: { status: statusValue },
@@ -254,6 +265,9 @@ function renderPreliminary() {
   }
 
   preliminaryYear.textContent = year;
+  // Uitgangspunt per jaar: nog niet beoordeeld. De beoordeling hieronder (of de
+  // snelle keuze) stelt de definitieve status in.
+  setReliefAccessStatus(RELIEF_ACCESS_STATUS.review, false);
   for (const name of questionNames) restoreAnswer(name, answers[name]);
   restoreAnswer("objection-submitted", answers["objection-submitted"]);
   restoreAnswer("objection-timely", answers["objection-timely"]);
@@ -765,6 +779,7 @@ function renderFinality(answers, issued, objectionSubmitted, validAssessmentDate
   const outcome = getLegalOutcome(answers);
   setReliefAccessStatus(
     RELIEF_ACCESS_STATUS[outcome?.status || "review"],
+    Boolean(outcome),
   );
   accessResult.hidden = !outcome;
   accessResult.className = `access-result${outcome ? ` access-result-${outcome.status}` : ""}`;

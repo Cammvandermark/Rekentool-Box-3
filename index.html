@@ -11,17 +11,22 @@
     <script src="gedeeld/opslag-sleutels.js" defer></script>
     <script src="gedeeld/jaargegevens.js" defer></script>
     <script src="gedeeld/period-selector.js" defer></script>
+    <script src="gedeeld/info-knop.js" defer></script>
     <script src="gedeeld/dashboard.js" defer></script>
     <script src="formele-beoordeling/beoordeling.js" defer></script>
     <script src="formele-beoordeling/beoordeling-2021-2022.js" defer></script>
+    <script src="formele-beoordeling/snelle-toegang.js" defer></script>
     <script src="berekeningen/oude-methode/berekening.js" defer></script>
     <script src="berekeningen/rechtsherstel/berekening.js" defer></script>
     <script src="berekeningen/overbruggingswet/berekening.js" defer></script>
     <script src="berekeningen/gedeeld/forfaitair-rendement.js" defer></script>
     <script src="berekeningen/gedeeld/dashboard-berekeningen.js" defer></script>
+    <script src="berekeningen/gedeeld/jaarberekening.js" defer></script>
     <script src="berekeningen/werkelijk-rendement/berekening.js" defer></script>
     <script src="berekeningen/werkelijk-rendement/dashboard.js" defer></script>
     <script src="berekeningen/gedeeld/verslag.js" defer></script>
+    <script src="gedeeld/bedrag.js" defer></script>
+    <script src="gedeeld/vermogen-invoer.js" defer></script>
     <script src="gedeeld/dashboard-start.js" defer></script>
   </head>
   <body>
@@ -49,11 +54,11 @@
 
         <div class="period-details" id="period-details" hidden>
           <div class="period-explanation" id="period-explanation"></div>
-          <label class="year-select" for="tax-year"><span>Selecteer specifiek jaar</span>
-            <select id="tax-year" aria-label="Belastingjaar">
-                <option value="" selected>Kies jaar...</option>
-            </select>
-          </label>
+          <div class="year-buttons" id="year-buttons" role="group" aria-label="Belastingjaar"></div>
+          <!-- Onzichtbare jaarlijst: de rest van de tool luistert naar deze waarde. -->
+          <select id="tax-year" aria-label="Belastingjaar" hidden>
+            <option value="" selected>Kies jaar...</option>
+          </select>
         </div>
       </div>
 
@@ -61,11 +66,21 @@
         <div class="page-heading">
           <div>
           </div>
+          <a class="quick-check-link" href="snelcontrole.html">Snelcontrole OWR (meerdere jaren) →</a>
         </div>
 
         <h2 class="section-heading" id="preliminary-heading-with-year" hidden></h2>
 
         <section class="panel preliminary-panel" id="preliminary-panel" aria-labelledby="preliminary-title" hidden>
+          <div class="quick-access" role="group" aria-labelledby="quick-access-label">
+            <p class="question-label" id="quick-access-label">Toegang tot Wet rechtsherstel box 3 <button class="info-button" type="button" aria-controls="quick-access-info" aria-expanded="false" aria-label="Toelichting toegang tot Wet rechtsherstel box 3" title="Toelichting toegang tot Wet rechtsherstel box 3">i</button></p>
+            <div class="choice-list">
+              <label class="choice"><input type="radio" name="quick-access" value="yes"><span>Wel toegang</span></label>
+              <label class="choice"><input type="radio" name="quick-access" value="no"><span>Geen toegang</span></label>
+              <button class="link-button" id="quick-access-clear" type="button" hidden>Keuze wissen</button>
+            </div>
+            <p class="law-explanation info-panel" id="quick-access-info" hidden><strong>Wel toegang:</strong> oude methode en Wet rechtsherstel worden vergeleken (laagste geldt) en de tegenbewijsregeling is van toepassing. <strong>Geen toegang:</strong> alleen de oude methode; geen Wet rechtsherstel en geen tegenbewijsregeling. Geen keuze gemaakt? Dan bepaalt de uitgebreide beoordeling hieronder de toegang.</p>
+          </div>
           <details class="assessment-disclosure">
             <summary class="panel-heading">
               <div><h2 id="preliminary-title">Formele beoordeling</h2></div>
@@ -607,6 +622,15 @@
 
 
         <section class="calculation-workspace" id="calculation-section" aria-label="Berekening box 3" hidden>
+          <section class="quick-check-totals result-bar" id="result-bar" aria-label="Uitkomst box 3-belasting" aria-live="polite">
+            <div><span>Forfaitair</span><strong id="result-bar-forfaitary">—</strong></div>
+            <div><span>Bij werkelijk rendement</span><strong id="result-bar-actual">—</strong></div>
+            <div class="is-main"><span>Te betalen (laagste)</span><strong id="result-bar-applied">—</strong></div>
+            <div><span>Volgens aanslag</span><strong id="result-bar-assessed">—</strong></div>
+            <div class="is-main"><span>Verschil met aanslag</span><strong id="result-bar-difference">—</strong></div>
+            <p class="result-bar-access" id="result-bar-access" hidden></p>
+          </section>
+
           <section class="panel calculation-input-panel" aria-labelledby="calculation-input-title">
             <details class="asset-disclosure">
               <summary class="panel-heading">
@@ -614,24 +638,21 @@
                 <span class="panel-index" id="calculation-year"></span>
               </summary>
               <div class="asset-disclosure-content">
+                <div class="assessment-first">
+                          <h3 class="actual-return-heading">Box 3-belasting volgens aanslag</h3>
+                          <p class="calculation-method-note">Is er al een aanslag opgelegd of belasting betaald? Vul de box 3-belasting in die op de aanslag staat. De uitkomstbalk en het verslag (B) laten dan zien hoeveel die afwijkt van de berekening en hoeveel vermindering de tegenbewijsregeling mogelijk oplevert. Leeg laten als er nog geen aanslag is.</p>
+                          <div class="actual-return-override-fields">
+                            <label><span>Belastingplichtige (€)</span><input class="date-input" id="actual-return-assessed-1" type="number" min="0" step="1" inputmode="decimal"></label>
+                            <label id="actual-return-assessed-partner" hidden><span>Partner (€)</span><input class="date-input" id="actual-return-assessed-2" type="number" min="0" step="1" inputmode="decimal"></label>
+                          </div>
+                </div>
                 <details class="sub-disclosure" id="assets-start-disclosure">
-                  <summary><h3>A.1 Vermogensgegevens 1 januari</h3></summary>
+                  <summary><h3>A.1 Vermogensgegevens 1 januari <button class="info-button" type="button" aria-controls="assets-start-info" aria-expanded="false" aria-label="Toelichting A.1" title="Toelichting A.1">i</button></h3></summary>
                   <div class="sub-disclosure-content">
-                    <p class="calculation-method-note">De standen op 1 januari (peildatum). Deze gegevens zijn nodig voor de forfaitaire berekening (B) en vormen de beginwaarden voor het werkelijke rendement (C).</p>
-            <div class="calculation-input-grid">
-              <a class="calculation-input-row asset-link" id="bank-accounts-link" href="banktegoeden.html">
-                <span><strong>Banktegoeden</strong></span>
-                <strong class="asset-value" id="savings-total">€ 0,00</strong>
-              </a>
-              <a class="calculation-input-row asset-link" id="other-assets-link" href="overige-bezittingen.html">
-                <span><strong>Overige bezittingen</strong></span>
-                <strong class="asset-value" id="other-assets-total">€ 0,00</strong>
-              </a>
-              <a class="calculation-input-row asset-link" id="debts-link" href="schulden.html">
-                <span><strong>Schulden</strong></span>
-                <strong class="asset-value" id="debts-total">€ 0,00</strong>
-              </a>
-            </div>
+                    <div class="info-panel" id="assets-start-info" hidden>
+              <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening op twee decimalen afgerond. Rendementspercentages van de oude methode worden, volgens de presentatie van de Belastingdienst om afrondingsverschillen te beperken, op drie decimalen afgerond en met die percentages berekend. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
+              <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
+                    </div>
             <fieldset class="question-group calculation-partner-question">
               <legend>Fiscale partner?</legend>
               <div class="choice-list">
@@ -647,29 +668,216 @@
               </div>
               <p class="law-explanation">Het resterende deel wordt aan de fiscale partner toegerekend. De invoer is het aandeel in de gezamenlijke grondslag sparen en beleggen ná toepassing van het gezamenlijke heffingsvrije vermogen.</p>
             </div>
+            <section class="asset-input" aria-labelledby="bank-input-title">
+              <div class="asset-input-heading">
+                <h4 id="bank-input-title">Banktegoeden</h4>
+              </div>
+              <div class="account-table-wrap">
+                <table class="account-table asset-input-table" data-asset-input="bank">
+                  <thead></thead>
+                  <tbody></tbody>
+                  <tfoot><tr><th scope="row">Totaal banktegoeden</th><td id="savings-total">€ 0,00</td><td></td></tr></tfoot>
+                </table>
+              </div>
+            </section>
+            <section class="asset-input" aria-labelledby="other-input-title">
+              <div class="asset-input-heading">
+                <h4 id="other-input-title">Overige bezittingen <button class="info-button" type="button" aria-controls="other-input-info" aria-expanded="false" aria-label="Toelichting overige bezittingen" title="Toelichting overige bezittingen">i</button></h4>
+              </div>
+              <div class="info-panel asset-guide asset-input-info" id="other-input-info" hidden>
+<p class="asset-guide-intro">De peildatum is 1 januari van het belastingjaar<span data-year-text="peildatum"></span>. Voor Nederlands onroerend goed gebruikt u de WOZ-waarde met waardepeildatum 1 januari van het voorafgaande jaar<span data-year-text="woz"></span>.</p>
+            <ul class="asset-guide-list">
+              <li>
+                <h3>Aandelen, obligaties, winstbewijzen en opties</h3>
+                <p class="asset-guide-summary">Beleggingen die niet bij een aanmerkelijk belang horen, waaronder het niet-vrijgestelde deel van groene en maatschappelijke beleggingen.</p>
+                <p>Gebruik voor aan Euronext Amsterdam genoteerde effecten de slotwaarde uit de Officiële Prijscourant; op 1 januari is dat de slotwaarde van het voorafgaande jaar. Voor niet-genoteerde effecten gebruikt u de waarde in het economisch verkeer op de peildatum. Voor groene beleggingen kunnen aparte vrijstellingen gelden. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/aandelen_obligaties_winstbewijzen_en_dergelijke" target="_blank" rel="noopener noreferrer">Belastingdienst: aandelen en dergelijke</a>.</p>
+              </li>
+              <li>
+                <h3>Vorderingen of uitgeleend geld</h3>
+                <p class="asset-guide-summary">Geld dat u aan iemand hebt uitgeleend en andere vorderingen. Bank- en spaartegoeden vult u apart in bij Banktegoeden; contant geld kiest u als aparte soort.</p>
+                <p>Waardeer een vordering op de peildatum; houd rekening met de voorwaarden en de waardeerbaarheid/inbaarheid.</p>
+              </li>
+              <li>
+                <h3>Contant geld</h3>
+                <p class="asset-guide-summary">Contant geld dat u op de peildatum in huis of in een kluis had. Het telt mee tegen de nominale waarde. Waar u het invult, hangt af van het belastingjaar.</p>
+                <div class="cash-periods">
+                  <div class="cash-period">
+                    <h4>2017–2022 · Wet rechtsherstel box 3</h4>
+                    <p>Contant geld valt onder de <strong>overige bezittingen</strong>, met het forfait voor overige bezittingen. Vul het op deze pagina in met de soort <em>Contant geld</em>.</p>
+                  </div>
+                  <div class="cash-period">
+                    <h4>2023 en verder · Overbruggingswet box 3</h4>
+                    <p>Contant geld telt als <strong>banktegoed</strong>, met het lagere forfait voor banktegoeden (art. 5.2, derde lid, onderdeel c, Wet IB 2001). Vul het in bij <strong>Banktegoeden</strong> hierboven, met soort ‘Contant geld’.</p>
+                  </div>
+                </div>
+                <p>Voor contant geld geldt daarnaast een afzonderlijke vrijstelling, bijvoorbeeld € 552 in 2021, € 596 in 2023, € 653 in 2024 en € 661 in 2025 (het dubbele met een fiscale partner). Die vrijstelling wordt in deze rekentool niet apart toegepast.</p>
+              </li>
+              <li>
+                <h3>2e woning, zoals een vakantiewoning</h3>
+                <p class="asset-guide-summary">De waarde van een tweede woning op 1 januari.</p>
+                <p>Voor een woning in Nederland gebruikt u de WOZ-waarde met waardepeildatum 1 januari van het voorafgaande jaar<span data-year-text="woz"></span>. Een verhuurde woning hoort niet zonder meer in deze categorie: zie <em>Overige onroerende zaken</em>. Voor een woning buiten Nederland geldt in beginsel de waarde in het economisch verkeer in onbewoonde staat op de voorgeschreven peildatum. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/2e_woning" target="_blank" rel="noopener noreferrer">Belastingdienst: 2e woning</a>.</p>
+              </li>
+              <li>
+                <h3>Overige onroerende zaken</h3>
+                <p class="asset-guide-summary">Bijvoorbeeld een verhuurde woning of een garage die niet direct naast uw woning ligt.</p>
+                <p>Voor een Nederlandse woning gebruikt u in beginsel de WOZ-waarde met peildatum 1 januari van het voorafgaande jaar. Is de woning verhuurd en heeft de huurder huurbescherming, dan kan voor langdurige verhuur de leegwaarderatio gelden: een percentage van de WOZ-waarde, bepaald aan de hand van de jaarhuur en de tabel die voor het betreffende belastingjaar geldt. Voor verhuur aan een gelieerde partij onder niet-zakelijke voorwaarden gold tot en met 2022 een bijzondere waardering van 62%. Zonder toepasselijke vermindering kan de volle WOZ-waarde gelden. Verhuur, tijdelijke verhuur, erfpacht, pacht en verhuur van een deel van een woning kennen voorwaarden en uitzonderingen; gebruik niet de huidige tabel zonder te controleren of deze voor het historische jaar geldt. Andere onroerende zaken, zoals grond, waardeert u doorgaans op de waarde in het economisch verkeer op de toepasselijke peildatum. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/overige_onroerende_zaken/overige_onroerende_zaken" target="_blank" rel="noopener noreferrer">Belastingdienst: overige onroerende zaken</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/overige_onroerende_zaken/waarde_verhuurde_woning_als_overige_onroerende_zaak/waarde-verhuurde-woning-als-overige-onroerende-zaak" target="_blank" rel="noopener noreferrer">waardering verhuurde woning</a>.</p>
+              </li>
+              <li>
+                <h3>Niet-vrijgesteld deel kapitaalverzekeringen</h3>
+                <p class="asset-guide-summary">Het deel van een kapitaalverzekering dat niet is vrijgesteld.</p>
+                <p>Vraag de verzekeraar om de waarde op de peildatum en controleer eerst of de polis geheel of gedeeltelijk is vrijgesteld of onder box 1 valt. De rekentool berekent polisvrijstellingen niet.</p>
+              </li>
+              <li>
+                <h3>Rechten op periodieke uitkeringen</h3>
+                <p class="asset-guide-summary">Rechten die niet in box 1 worden belast en volgens de regels in box 3 horen.</p>
+                <p>De waarde hangt af van onder meer de soort uitkering, looptijd, hoogte en voorwaarden. Hiervoor gelden wettelijke waarderingsregels en tabellen; neem niet zonder meer de totale toekomstige uitkeringen als waarde. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/rechten_op_periodieke_uitkeringen" target="_blank" rel="noopener noreferrer">Belastingdienst: periodieke uitkeringen</a>.</p>
+              </li>
+              <li>
+                <h3>Vruchtgebruik of blote eigendom</h3>
+                <p class="asset-guide-summary">De waarde van uw recht op vruchtgebruik of uw blote eigendom van vermogen.</p>
+                <p>Waardeer volgens de wettelijke tabellen en regels, aan de hand van onder andere de volle waarde van het vermogen, de aard/duur van het recht en de toepasselijke leeftijds- of rentegegevens. Een eigen schatting of vast percentage is niet altijd juist. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/berekening_waarde_periodieke_uitkeringen_vruchtgebruik_of_blote_eigendom/waarde-periodieke-uitkeringen-vruchtgebruik-blote-eigendom" target="_blank" rel="noopener noreferrer">Belastingdienst: waardering periodieke uitkeringen, vruchtgebruik en blote eigendom</a>.</p>
+              </li>
+              <li>
+                <h3>Roerende zaken als belegging of verhuurd</h3>
+                <p class="asset-guide-summary">Bijvoorbeeld waardevolle spullen die u verhuurt of als belegging aanhoudt, en rechten daarop.</p>
+                <p>Neem de waarde in het economisch verkeer op de peildatum. Roerende zaken voor eigen gebruik of gezinsgebruik, zoals de gewone inboedel, vallen doorgaans niet in box 3; voor kunst en andere bijzondere bezittingen kunnen uitzonderingen gelden. Bewaar zo nodig een taxatie of onderbouwing van de verkoopwaarde.</p>
+              </li>
+              <li>
+                <h3>Cryptovaluta</h3>
+                <p class="asset-guide-summary">Zoals bitcoins en andere virtuele betaalmiddelen.</p>
+                <p>Gebruik de waarde in het economisch verkeer op 1 januari, doorgaans de koers van het platform dat u gebruikt. Leg platform, tijdstip/koers en eventuele omrekening naar euro's vast.</p>
+              </li>
+              <li>
+                <h3>Vorderingen uit crowdfunding</h3>
+                <p class="asset-guide-summary">Bedragen die u via crowdfunding hebt uitgeleend.</p>
+                <p>Is het geld op de peildatum nog beschikbaar op een rekening, waardeer het dan als banktegoed. Is het uitgeleend, waardeer de vordering op de peildatum. Aandelen die u in ruil kreeg, vallen onder effecten. Voorkom dat hetzelfde bedrag dubbel wordt ingevoerd. <a href="https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/crowdfunding-ontvangen-en-uitlenen" target="_blank" rel="noopener noreferrer">Belastingdienst: crowdfunding</a>.</p>
+              </li>
+              <li>
+                <h3>Nabetalingen van toeslagen</h3>
+                <p class="asset-guide-summary">Deze geeft u aan als overige vordering.</p>
+                <p>Neem de vordering op die op de peildatum bestaat en onderbouw het bedrag met de beschikking of correspondentie van de uitvoerder.</p>
+              </li>
+              <li>
+                <h3>Overige bezittingen of rechten</h3>
+                <p class="asset-guide-summary">Bezittingen die niet onder een van de andere categorieën vallen.</p>
+                <p>Waardeer op de peildatum volgens de regels die bij het specifieke bezit of recht horen. Bijvoorbeeld: bij een lot waarop een prijs is gevallen, geldt de waarde van de prijs. Bij een complex of onzeker recht kan specialistisch advies nodig zijn.</p>
+              </li>
+            </ul>
+            <p class="asset-guide-warning">Dit overzicht is een praktische samenvatting, geen individuele fiscale beoordeling. De regels kunnen afhangen van de exacte feiten en van het gekozen belastingjaar. De invoerpagina registreert de opgegeven bedragen, maar past geen leegwaarderatio, vrijstelling voor contant geld of andere bijzondere waarderingsregel automatisch toe. Controleer bij verhuur en bijzondere rechten altijd de officiële regels voor het juiste jaar.</p>
+              </div>
+              <div class="account-table-wrap">
+                <table class="account-table asset-input-table" data-asset-input="other">
+                  <thead></thead>
+                  <tbody></tbody>
+                  <tfoot><tr><th scope="row">Totaal overige bezittingen</th><td id="other-assets-total">€ 0,00</td><td></td></tr></tfoot>
+                </table>
+              </div>
+            </section>
+            <section class="asset-input" aria-labelledby="debts-input-title">
+              <div class="asset-input-heading">
+                <h4 id="debts-input-title">Schulden <button class="info-button" type="button" aria-controls="debts-input-info" aria-expanded="false" aria-label="Toelichting schulden" title="Toelichting schulden">i</button></h4>
+              </div>
+              <div class="info-panel asset-guide asset-input-info" id="debts-input-info" hidden>
+<p class="asset-guide-intro">U geeft uw schulden op met de waarde op 1 januari van het belastingjaar. Schulden in vreemde valuta rekent u om tegen de koers van die dag. Alleen het deel van uw schulden boven de drempel telt mee<span data-year-text="threshold"></span>. Vul hieronder het volledige bedrag in: de rekentool trekt de drempel automatisch af en rekent over het restant met het forfait voor schulden<span data-year-text="rate"></span>.</p>
+            <ul class="asset-guide-list">
+              <li>
+                <h3>Consumptief krediet of persoonlijke lening</h3>
+                <p class="asset-guide-summary">Schulden voor consumptieve doelen, zoals een lening voor een auto of vakantie, een doorlopend krediet of een creditcardschuld.</p>
+                <p>Neem het openstaande bedrag op 1 januari over uit het jaaroverzicht van de kredietverstrekker.</p>
+              </li>
+              <li>
+                <h3>Negatief saldo op een bankrekening</h3>
+                <p class="asset-guide-summary">Een bankrekening die op 1 januari rood stond.</p>
+                <p>Vul het negatieve saldo hier in als positief bedrag. Bij Banktegoeden vult u alleen positieve saldi in.</p>
+              </li>
+              <li>
+                <h3>Lening voor beleggingen</h3>
+                <p class="asset-guide-summary">Schulden waarmee u aandelen, obligaties of rechten op periodieke uitkeringen hebt gefinancierd.</p>
+                <p>Een schuld voor aandelen die bij een aanmerkelijk belang horen, valt in box 2 en hoort hier niet.</p>
+              </li>
+              <li>
+                <h3>Hypotheek of lening voor 2e woning of overige onroerende zaken</h3>
+                <p class="asset-guide-summary">Bijvoorbeeld de hypotheek op een vakantiehuis of een verhuurde woning.</p>
+                <p>Neem de openstaande hoofdsom op 1 januari. De hypotheek op uw eigen woning (eigenwoningschuld) valt in box 1 en hoort hier niet.</p>
+              </li>
+              <li>
+                <h3>Studieschuld (DUO)</h3>
+                <p class="asset-guide-summary">Schulden volgens de Wet studiefinanciering.</p>
+                <p>Neem de openstaande schuld op 1 januari over uit Mijn DUO. De studieschuld telt mee in box 3, net als andere schulden; de rente is niet apart aftrekbaar.</p>
+              </li>
+              <li>
+                <h3>Lening van familie of vrienden</h3>
+                <p class="asset-guide-summary">Een onderhandse lening, bijvoorbeeld van uw ouders.</p>
+                <p>Betaalt u een rente die past bij de markt, dan geldt de nominale waarde. Betaalt u geen of een lagere rente, dan geldt de contante waarde. Leg de afspraken vast in een schriftelijke overeenkomst. De geldverstrekker geeft dezelfde lening op als bezitting.</p>
+              </li>
+              <li>
+                <h3>Schenking op papier (u bent de schenker)</h3>
+                <p class="asset-guide-summary">Een schenking die u hebt gedaan zonder het geld direct over te maken. U hebt dan een schuld aan de ontvanger.</p>
+                <p>Waardeer de schuld op de waarde in het economisch verkeer. De ontvanger geeft dezelfde schenking op als vordering bij de overige bezittingen.</p>
+              </li>
+              <li>
+                <h3>Nog te betalen erfbelasting</h3>
+                <p class="asset-guide-summary">Erfbelasting over een erfenis die u op 1 januari nog moest betalen.</p>
+                <p>Neem het bedrag van de (verwachte) aanslag erfbelasting. Dit is de enige belastingschuld die u in box 3 meestal wel mag opgeven.</p>
+              </li>
+              <li>
+                <h3>Terug te betalen toeslagen</h3>
+                <p class="asset-guide-summary">Toeslagen die u op 1 januari moest terugbetalen.</p>
+                <p>Onderbouw het bedrag met de beschikking of terugvorderingsbrief van Dienst Toeslagen.</p>
+              </li>
+              <li>
+                <h3>Terug te betalen pgb</h3>
+                <p class="asset-guide-summary">Een restant persoonsgebonden budget dat u moet terugbetalen of dat wordt verrekend met het pgb van het volgende jaar.</p>
+                <p>Neem het bedrag dat volgens de zorgverzekeraar, het zorgkantoor of de gemeente op 1 januari openstond.</p>
+              </li>
+              <li>
+                <h3>Schuld aan de VvE</h3>
+                <p class="asset-guide-summary">Een schuld voor een storting in het vermogen van de Vereniging van Eigenaren, of een betalingsachterstand.</p>
+                <p>Deze schuld is geen eigenwoningschuld en telt daarom mee in box 3.</p>
+              </li>
+              <li>
+                <h3>Overige schulden</h3>
+                <p class="asset-guide-summary">Schulden die niet onder een van de andere soorten vallen.</p>
+                <p>Waardeer op 1 januari volgens de voorwaarden van de schuld. Controleer eerst of de schuld niet in box 1 of box 2 hoort (zie hieronder).</p>
+              </li>
+            </ul>
+
+            <div class="debt-exclusions">
+              <h3>Deze schulden horen niet in box 3</h3>
+              <ul>
+                <li><strong>Eigenwoningschuld:</strong> de hypotheek op uw eigen woning valt in box 1.</li>
+                <li><strong>Restschuld van een vroegere eigen woning</strong> die is ontstaan na 28 oktober 2012 en vóór 1 januari 2018: deze valt in box 1.</li>
+                <li><strong>Belasting- en premieschulden:</strong> zoals inkomstenbelasting, premie volksverzekeringen, heffingsrente en invorderingsrente. Uitzondering: u vroeg vóór 1 oktober van het voorgaande jaar een voorlopige aanslag aan, en die werd niet of te laat opgelegd om vóór 1 januari te betalen. Erfbelasting mag u wel opgeven.</li>
+                <li><strong>Ondernemingsschulden</strong> en schulden voor een aanmerkelijk belang, voor vermogen dat u ter beschikking stelt of voor overig werk.</li>
+                <li><strong>Verplichtingen zoals alimentatie</strong>, als u de betalingen als persoonsgebonden aftrek mag aftrekken.</li>
+                <li><strong>Niet-opeisbare schulden van de langstlevende echtgenoot</strong> aan de kinderen, na het overlijden van de andere ouder.</li>
+              </ul>
+            </div>
+
+            <p class="asset-guide-warning">Dit overzicht is een praktische samenvatting, geen individuele fiscale beoordeling. De regels kunnen afhangen van de exacte feiten en van het gekozen belastingjaar. De rekentool past alleen de drempel en het forfait voor schulden toe; of een schuld in box 3 thuishoort, beoordeelt u zelf. Bron: <a href="https://www.belastingdienst.nl/wps/wcm/connect/fisin/fisin2023/bezittingen_en_schulden_box_3_" target="_blank" rel="noopener noreferrer">Belastingdienst: bezittingen en schulden box 3</a>.</p>
+              </div>
+              <div class="account-table-wrap">
+                <table class="account-table asset-input-table" data-asset-input="debts">
+                  <thead></thead>
+                  <tbody></tbody>
+                  <tfoot><tr><th scope="row">Totaal schulden</th><td id="debts-total">€ 0,00</td><td></td></tr></tfoot>
+                </table>
+              </div>
+            </section>
             <p class="form-status calculation-error" id="calculation-error" role="alert" hidden></p>
-            <p class="calculation-rounding-note" id="calculation-rounding-note">Bedragen worden voor deze indicatieve berekening op twee decimalen afgerond. Rendementspercentages van de oude methode worden, volgens de presentatie van de Belastingdienst om afrondingsverschillen te beperken, op drie decimalen afgerond en met die percentages berekend. De Wet rechtsherstel geldt voor 2017–2022 alleen voor zover deze een lager voordeel oplevert dan de oorspronkelijke wettelijke berekening; de forfaitaire vergelijking is geen berekening van werkelijk rendement. De Wet rechtsherstel berekent het voordeel per partner met de gezamenlijke rendementsgrondslag en het aan die partner toegerekende deel van de gezamenlijke grondslag sparen en beleggen. Zie <a href="https://zoek.officielebekendmakingen.nl/stb-2022-533.html" target="_blank" rel="noopener">artikel 1–3 Wet rechtsherstel box 3</a> en <a href="https://wetten.overheid.nl/BWBR0011353/2022-01-01" target="_blank" rel="noopener">Wet inkomstenbelasting 2001 (historische versie 2022)</a>. Controleer bijzondere vermogensbestanddelen en de definitieve aanslag.</p>
-            <p class="calculation-rounding-note" id="overbruggingswet-note" hidden>Indicatieve berekening volgens de Overbruggingswet box 3. De werkelijke verdeling van banktegoeden, overige bezittingen en schulden wordt gebruikt. Dit is geen berekening van werkelijk rendement; mogelijk is de tegenbewijsregeling van toepassing. Zie de officiële uitleg voor <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2023" target="_blank" rel="noopener">2023</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2024" target="_blank" rel="noopener">2024</a>, <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025" target="_blank" rel="noopener">2025</a> en <a href="https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2026" target="_blank" rel="noopener">2026</a>. Controleer de toepasselijke definitieve percentages en bijzondere situaties.</p>
                   </div>
                 </details>
                 <details class="sub-disclosure" id="assets-actual-return-disclosure">
                   <summary><h3>A.2 Aanvullende vermogensgegevens werkelijk rendement</h3></summary>
                   <div class="sub-disclosure-content">
-                        <p class="calculation-method-note">De bestanddelen en de waarden op 1 januari komen uit A.1. Vul per bestanddeel de gegevens over het belastingjaar aan; deze zijn alleen nodig voor het werkelijke rendement (C).</p>
                         <div id="actual-return-tables"></div>
                         <div class="detail-actions"><button class="secondary-button" id="actual-return-add-extra" type="button">+ Bezitting gekocht of gekregen ná 1 januari</button></div>
                         <div class="actual-return-override">
                           <h3 class="actual-return-heading">Forfaitair voordeel volgens aangifte of aanslag (optioneel)</h3>
-                          <p class="calculation-method-note">Vul het voordeel uit sparen en beleggen in zoals dat in de aangifte of op de aanslag staat. C vergelijkt dan met dat bedrag in plaats van met de indicatieve berekening van de tool. Leeg laten = berekening van de tool.</p>
+                          <p class="calculation-method-note">Vul het voordeel uit sparen en beleggen in zoals dat in de aangifte of op de aanslag staat. De tegenbewijsregeling vergelijkt dan met dat bedrag in plaats van met de indicatieve berekening van de tool. Leeg laten = berekening van de tool.</p>
                           <div class="actual-return-override-fields">
                             <label><span>Belastingplichtige (€)</span><input class="date-input" id="actual-return-override-1" type="number" min="0" step="0.01" inputmode="decimal"></label>
                             <label id="actual-return-override-partner" hidden><span>Partner (€)</span><input class="date-input" id="actual-return-override-2" type="number" min="0" step="0.01" inputmode="decimal"></label>
-                          </div>
-                          <h3 class="actual-return-heading">Box 3-belasting volgens aanslag (optioneel)</h3>
-                          <p class="calculation-method-note">Is er al een aanslag opgelegd of belasting betaald? Vul de box 3-belasting in die op de aanslag staat. C laat dan zien hoeveel die afwijkt van de berekening en hoeveel vermindering de tegenbewijsregeling mogelijk oplevert.</p>
-                          <div class="actual-return-override-fields">
-                            <label><span>Belastingplichtige (€)</span><input class="date-input" id="actual-return-assessed-1" type="number" min="0" step="1" inputmode="decimal"></label>
-                            <label id="actual-return-assessed-partner" hidden><span>Partner (€)</span><input class="date-input" id="actual-return-assessed-2" type="number" min="0" step="1" inputmode="decimal"></label>
                           </div>
                         </div>
                         <p class="form-status calculation-error" id="actual-return-error" role="alert" hidden></p>
@@ -680,10 +888,42 @@
             </details>
           </section>
 
-          <section class="panel calculation-disclosure-panel">
+          <section class="panel calculation-disclosure-panel counterproof-panel is-verborgen" aria-labelledby="counterproof-title">
             <details class="calculation-disclosure">
               <summary class="panel-heading">
-                <div><h2>B. Berekening box 3</h2></div>
+                <div><h2 id="counterproof-title">Tegenbewijsregeling — Werkelijk rendement</h2></div>
+                <span class="panel-index" id="actual-return-year"></span>
+              </summary>
+              <div class="calculation-disclosure-content">
+                <p class="calculation-method-note" id="actual-return-basis"></p>
+                <p class="procedure-notice procedure-notice-warning" id="actual-return-access" hidden></p>
+                <p class="calculation-method-note">De aanvullende gegevens vult u in onder A.2 Aanvullende vermogensgegevens werkelijk rendement.</p>
+                <dl class="calculation-list detailed-calculation-list" id="actual-return-summary"></dl>
+                <h3 class="actual-return-heading">Box 3-belasting in één oogopslag</h3>
+                <p class="calculation-method-note">Bedragen zoals op de aanslag: in hele euro's, naar beneden afgerond.</p>
+                <div class="comparison-table-wrap">
+                  <table class="comparison-table tax-overview-table">
+                    <thead id="actual-return-tax-head"></thead>
+                    <tbody id="actual-return-tax"></tbody>
+                  </table>
+                </div>
+                <h3 class="actual-return-heading" id="actual-return-comparison-title">Vergelijking voordeel per persoon</h3>
+                <div class="comparison-table-wrap" id="actual-return-comparison-wrap">
+                  <table class="comparison-table">
+                    <thead id="actual-return-comparison-head"></thead>
+                    <tbody id="actual-return-comparison"></tbody>
+                  </table>
+                </div>
+                <p class="comparison-result" id="actual-return-result" aria-live="polite"></p>
+                <ul class="calculation-method-note actual-return-notes" id="actual-return-notes"></ul>
+              </div>
+            </details>
+          </section>
+
+          <section class="panel calculation-disclosure-panel forfaitary-panel is-verborgen">
+            <details class="calculation-disclosure">
+              <summary class="panel-heading">
+                <div><h2>Berekening box 3</h2></div>
               </summary>
               <div class="calculation-disclosure-content">
             <div class="summary-grid calculation-results-grid">
@@ -842,42 +1082,10 @@
             </details>
           </section>
 
-          <section class="panel calculation-disclosure-panel counterproof-panel" aria-labelledby="counterproof-title">
-            <details class="calculation-disclosure">
-              <summary class="panel-heading">
-                <div><h2 id="counterproof-title">C. Tegenbewijsregeling — Werkelijk rendement</h2></div>
-                <span class="panel-index" id="actual-return-year"></span>
-              </summary>
-              <div class="calculation-disclosure-content">
-                <p class="calculation-method-note" id="actual-return-basis"></p>
-                <p class="procedure-notice procedure-notice-warning" id="actual-return-access" hidden></p>
-                <p class="calculation-method-note">De aanvullende gegevens vult u in onder A.2 Aanvullende vermogensgegevens werkelijk rendement.</p>
-                <dl class="calculation-list detailed-calculation-list" id="actual-return-summary"></dl>
-                <h3 class="actual-return-heading">Box 3-belasting in één oogopslag</h3>
-                <p class="calculation-method-note">Bedragen zoals op de aanslag: in hele euro's, naar beneden afgerond.</p>
-                <div class="comparison-table-wrap">
-                  <table class="comparison-table tax-overview-table">
-                    <thead id="actual-return-tax-head"></thead>
-                    <tbody id="actual-return-tax"></tbody>
-                  </table>
-                </div>
-                <h3 class="actual-return-heading">Vergelijking voordeel per persoon</h3>
-                <div class="comparison-table-wrap">
-                  <table class="comparison-table">
-                    <thead id="actual-return-comparison-head"></thead>
-                    <tbody id="actual-return-comparison"></tbody>
-                  </table>
-                </div>
-                <p class="comparison-result" id="actual-return-result" aria-live="polite"></p>
-                <ul class="calculation-method-note actual-return-notes" id="actual-return-notes"></ul>
-              </div>
-            </details>
-          </section>
-
           <section class="panel calculation-disclosure-panel report-panel" aria-labelledby="report-title">
             <details class="calculation-disclosure">
               <summary class="panel-heading">
-                <div><h2 id="report-title">D. Verantwoording en afdrukken</h2></div>
+                <div><h2 id="report-title">B. Verantwoording en afdrukken</h2></div>
               </summary>
               <div class="calculation-disclosure-content">
                 <p class="calculation-method-note">Volledige berekening van het gekozen jaar met alle percentages, bedragen, tussenstappen en bronnen. Het afgedrukte verslag bevat alleen dit onderdeel.</p>

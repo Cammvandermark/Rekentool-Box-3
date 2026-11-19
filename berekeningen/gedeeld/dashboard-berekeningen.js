@@ -11,9 +11,7 @@ function initializeCalculationInputs() {
 }
 
 const calculationYear = document.querySelector("#calculation-year");
-const otherAssetsLink = document.querySelector("#other-assets-link");
 const otherAssetsTotal = document.querySelector("#other-assets-total");
-const debtsLink = document.querySelector("#debts-link");
 const debtsTotal = document.querySelector("#debts-total");
 const fiscalPartnerQuestion = document.querySelectorAll(
   'input[name="calculation-fiscal-partner"]',
@@ -207,6 +205,7 @@ function getOtherAssets(year) {
         typeof asset.id !== "string" ||
         typeof asset.name !== "string" ||
         ![
+          "", // nog geen soort gekozen: telt als overige bezitting
           "securities",
           "claims",
           "cash",
@@ -344,9 +343,6 @@ function renderCalculation() {
   overbruggingswetNote.hidden = yearUsesOldMethodComparison;
   document.querySelector("#relief-tax-label").textContent =
     `Box 3-belasting ${yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet"} (${data.taxRate}%)`;
-  otherAssetsLink.href =
-    `overige-bezittingen.html?year=${encodeURIComponent(year)}`;
-  debtsLink.href = `schulden.html?year=${encodeURIComponent(year)}`;
   updatePartnerAllocation();
 
   try {
@@ -385,38 +381,26 @@ function renderCalculation() {
         allocationPercent < 0 || allocationPercent > 100)),
     );
 
-    const assets = roundToTwoDecimals(bank + investments);
-    const debtThreshold = data.debtThreshold * householdCount;
-    const deductibleDebts = roundToTwoDecimals(
-      Math.max(0, debts - debtThreshold),
-    );
-    const netAssets = roundToTwoDecimals(
-      Math.max(0, assets - deductibleDebts),
-    );
-    const exemption = roundToTwoDecimals(data.exemption * householdCount);
-    const taxableBase = roundToTwoDecimals(
-      Math.max(0, netAssets - exemption),
-    );
-
-    const firstPartnerBase = fiscalPartner
-      ? roundToTwoDecimals(taxableBase * allocationPercent / 100)
-      : taxableBase;
-    const secondPartnerBase = taxableBase - firstPartnerBase;
+    // De rekenregels staan in calculateBox3Year (jaarberekening.js), die ook de
+    // snelcontrole gebruikt.
+    const yearResult = calculateBox3Year({
+      year, bankTotal: getBankTotal(year), otherAssetsTotal: otherAssets.total,
+      cashTotal: otherAssets.cash, debts, fiscalPartner, allocationPercent,
+    });
+    const {
+      assets, debtThreshold, deductibleDebts, netAssets, exemption, taxableBase,
+      firstPartnerBase, secondPartnerBase,
+    } = yearResult;
     const {
       oldTierRates, oldTierReturns, oldTierCalculations, oldIncome, oldTax,
       oldFirstPartnerIncome, oldSecondPartnerIncome,
-    } =
-      calculateOldMethod({ firstPartnerBase, secondPartnerBase, fiscalPartner, yearUsesOldMethodComparison, data });
-
+    } = yearResult.old;
     const {
       roundedReliefSavingsReturn, roundedReliefInvestmentReturn, roundedReliefDebtReturn,
       reliefTotalReturn, usesTaxableBaseShare, formattedYieldRate, yieldRateExplanation,
       reliefIncome, reliefIncomeCalculation, reliefTax,
       firstPartnerIncome: reliefFirstPartnerIncome, secondPartnerIncome: reliefSecondPartnerIncome,
-    } = calculateForfaitaryReturn({
-      bank, investments, deductibleDebts, data, year, netAssets,
-      firstPartnerBase, secondPartnerBase, fiscalPartner,
-    });
+    } = yearResult.relief;
 
     const oldIncomes = fiscalPartner ? [oldFirstPartnerIncome, oldSecondPartnerIncome] : [oldFirstPartnerIncome];
     const reliefIncomes = fiscalPartner ? [reliefFirstPartnerIncome, reliefSecondPartnerIncome] : [reliefFirstPartnerIncome];
@@ -522,8 +506,14 @@ function renderCalculation() {
     comparisonDifference.textContent = formatCalculationEuro(Math.abs(oldTax - reliefTax));
     // Voor 2017-2022 geldt het voordeel volgens de Wet rechtsherstel: de laagste
     // uitkomst van de oude methode en de rechtsherstelberekening.
-    const oldMethodApplies = yearUsesOldMethodComparison && oldTax < reliefTax;
+    // 2017-2020 zonder toegang tot de Wet rechtsherstel box 3 (formele
+    // beoordeling of snelle keuze): alleen de oude methode, geen tegenbewijsregeling.
+    const accessDenied = Number(year) <= 2020 &&
+      document.documentElement.dataset.reliefAccessStatus === "GEEN_TOEGANG_RECHTSHERSTEL" &&
+      document.documentElement.dataset.reliefAccessComplete !== "nee";
+    const oldMethodApplies = accessDenied || yearResult.oldMethodApplies;
     calculationReport = {
+      accessDenied,
       year, data, fiscalPartner, allocationPercent,
       bank, investments, debts, assets, debtThreshold, deductibleDebts, netAssets, exemption, taxableBase,
       firstPartnerBase, secondPartnerBase,
@@ -539,7 +529,8 @@ function renderCalculation() {
       forfaitaryIncomes: oldMethodApplies
         ? [oldFirstPartnerIncome, oldSecondPartnerIncome]
         : [reliefFirstPartnerIncome, reliefSecondPartnerIncome],
-      basisLabel: oldMethodApplies ? "oude methode is lager" : "berekening B is lager of gelijk",
+      basisLabel: accessDenied ? "geen toegang tot de Wet rechtsherstel" : oldMethodApplies ? "oude methode is lager" : "Wet rechtsherstel is lager of gelijk",
+      accessDenied,
       forfaitaryMethod: oldMethodApplies
         ? "oude methode"
         : yearUsesOldMethodComparison ? "Wet rechtsherstel" : "Overbruggingswet",

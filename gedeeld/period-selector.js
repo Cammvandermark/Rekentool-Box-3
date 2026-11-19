@@ -55,8 +55,39 @@ const periodData = {
   }
 };
 
+// Jaarknoppen: één klik kiest het jaar. Ze zetten de (onzichtbare) jaarlijst en
+// sturen dezelfde 'change' als voorheen, zodat de rest van de tool gelijk werkt.
+const yearButtons = document.getElementById("year-buttons");
+
+function updateYearButtons(years) {
+  if (!yearButtons) return;
+  yearButtons.replaceChildren();
+  for (const year of years) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "year-button";
+    button.textContent = year;
+    button.dataset.year = year;
+    button.setAttribute("aria-pressed", String(taxYearSelect.value === year));
+    button.addEventListener("click", () => {
+      if (taxYearSelect.value === year) return;
+      taxYearSelect.value = year;
+      taxYearSelect.dispatchEvent(new Event("change"));
+    });
+    yearButtons.append(button);
+  }
+}
+
+function markSelectedYearButton() {
+  if (!yearButtons) return;
+  for (const button of yearButtons.querySelectorAll(".year-button")) {
+    button.setAttribute("aria-pressed", String(button.dataset.year === taxYearSelect.value));
+  }
+}
+
 function updateYearOptions(period) {
   const years = periodData[period].years;
+  updateYearButtons(years);
   
   // Clear existing options (keep placeholder)
   taxYearSelect.innerHTML = '<option value="" selected>Kies jaar...</option>';
@@ -157,6 +188,7 @@ function restorePeriodForYear(year) {
   });
   showPeriodDetails(period);
   taxYearSelect.value = year;
+  markSelectedYearButton();
   return taxYearSelect.value === year;
 }
 
@@ -190,6 +222,7 @@ periodBlocks.forEach(block => {
 
 // When year is selected, show the main content
 taxYearSelect.addEventListener("change", () => {
+  markSelectedYearButton();
   if (taxYearSelect.value) {
     const year = taxYearSelect.value;
     

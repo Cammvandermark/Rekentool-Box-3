@@ -2,7 +2,6 @@
 
 const total = document.querySelector("#savings-total");
 const status = document.querySelector("#form-status");
-const bankLink = document.querySelector("#bank-accounts-link");
 const yearSelect = document.querySelector("#tax-year");
 const euro = new Intl.NumberFormat("nl-NL", {
   style: "currency",
@@ -21,9 +20,6 @@ function showError(message) {
 
 function renderTotal() {
   const year = yearSelect.value;
-  bankLink.href = year
-    ? `banktegoeden.html?year=${encodeURIComponent(year)}`
-    : "banktegoeden.html";
 
   try {
     const sum = year ? getBankTotal(year) : 0;

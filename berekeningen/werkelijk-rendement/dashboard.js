@@ -1,7 +1,7 @@
 "use strict";
 
 // Tegenbewijsregeling. A.2 toont de vermogensbestanddelen uit A.1 (standen op
-// 1 januari) en vraagt per bestanddeel de aanvullende gegevens; paneel C toont
+// 1 januari) en vraagt per bestanddeel de aanvullende gegevens; het (verborgen) paneel Tegenbewijsregeling toont
 // de berekening van het werkelijke rendement en de vergelijking.
 
 const actualReturnTables = document.querySelector("#actual-return-tables");
@@ -269,7 +269,9 @@ function nextYearValues(year) {
   const values = new Map();
   if (!BOX3_YEAR_DATA[nextYear]) return values;
   for (const asset of readStoredList(`${OTHER_ASSETS_STORAGE_KEY}:${nextYear}`)) {
-    if (typeof asset.id === "string" && typeof asset.value === "number") {
+    // Een stand van € 0 is geen eindwaarde (vaak een lege regel): niet overnemen,
+    // anders lijkt een bezitting volledig in waarde gedaald.
+    if (typeof asset.id === "string" && typeof asset.value === "number" && asset.value > 0) {
       values.set(`${asset.id}|${asset.name || ""}`, asset.value);
     }
   }
@@ -308,9 +310,19 @@ function numberUnnamedRows(rows) {
 }
 
 // Zet de vermogensbestanddelen uit A.1 om naar regels voor het werkelijke rendement.
+// Een regel uit A.1 telt alleen mee als er iets is ingevuld: een bedrag, een
+// omschrijving of al gegevens in A.2. Een lege regel (bijv. na + in A.1) komt
+// dus niet als "Overige bezitting 1 – € 0,00" in A.2 terecht.
+function hasA1Content(key, name, value) {
+  if (Number(value) > 0 || (name && name.trim())) return true;
+  const entry = actualReturnState.entries[key] || {};
+  return Object.entries(entry).some(([field, value]) => isFilledEntryValue(field, value));
+}
+
 function collectActualReturnRows(year) {
   const rows = [];
   for (const account of readStoredList(`${STORAGE_KEY}:${year}`)) {
+    if (!hasA1Content(`bank:${account.id}`, account.name, account.balance)) continue;
     const cash = account.kind === "cash";
     rows.push({
       key: `bank:${account.id}`,
@@ -321,6 +333,7 @@ function collectActualReturnRows(year) {
   }
   const nextValues = nextYearValues(year);
   for (const asset of readStoredList(`${OTHER_ASSETS_STORAGE_KEY}:${year}`)) {
+    if (!hasA1Content(`asset:${asset.id}`, asset.name, asset.value)) continue;
     let category = "asset";
     if (asset.type === "cash") category = "cash";
     if (asset.type === "second-home" || asset.type === "real-estate") category = "home";
@@ -337,6 +350,7 @@ function collectActualReturnRows(year) {
     });
   }
   for (const debt of readStoredList(`${DEBTS_STORAGE_KEY}:${year}`)) {
+    if (!hasA1Content(`debt:${debt.id}`, debt.name, debt.value)) continue;
     rows.push({
       key: `debt:${debt.id}`,
       category: "debt",
@@ -363,13 +377,22 @@ function isEmptyField(value) {
   return value === undefined || value === null || value === "";
 }
 
+// Is dit een echt ingevulde waarde? Een WOZ-waarde van € 0 bestaat niet en telt
+// als leeg (anders lijkt de woning volledig in waarde gedaald); een niet-aangevinkt
+// vakje telt ook niet.
+function isFilledEntryValue(field, value) {
+  if (value === false || isEmptyField(value)) return false;
+  if (field === "wozNext" && Number(value) === 0) return false;
+  return true;
+}
+
 function buildActualReturnItems(rows) {
   return rows.map((row) => {
     const entry = actualReturnState.entries[row.key] || {};
     const item = { ...entry, id: row.key, name: row.name, category: row.category, assetType: row.assetType };
     if (row.category === "home") {
       if (!row.extra) item.wozCurrent = row.startValue;
-      if (isEmptyField(entry.wozNext)) {
+      if (!isFilledEntryValue("wozNext", entry.wozNext)) {
         // Zonder ingevulde eindwaarde: stand 1 januari volgend jaar, anders geen waardeverandering.
         item.wozNext = row.nextValue ?? (row.extra ? entry.wozCurrent : row.startValue);
       }
@@ -419,7 +442,7 @@ function createActualReturnInput(row, field, label, options, year) {
     input.inputMode = "decimal";
     if (!options.signed) input.min = "0";
     if (field === "nonExemptPercent") input.max = "100";
-    input.value = entry[field] ?? "";
+    input.value = isFilledEntryValue(field, entry[field]) || field !== "wozNext" ? entry[field] ?? "" : "";
     if (field === "endValue" || (field === "wozNext" && !row.extra)) {
       input.placeholder = row.nextValue !== undefined
         ? `${formatActualReturnEuro(row.nextValue)} (1 jan ${Number(year) + 1})`
@@ -450,15 +473,8 @@ function createActualReturnInput(row, field, label, options, year) {
 function createExtraNameCell(row, year) {
   const extra = actualReturnState.extras.find((item) => `extra:${item.id}` === row.key);
   const cell = document.createElement("td");
-  const name = document.createElement("input");
-  name.type = "text";
-  name.value = extra.name;
-  name.placeholder = row.name || "Omschrijving (optioneel)";
-  name.setAttribute("aria-label", "Omschrijving bezitting verkregen tijdens het jaar");
-  name.addEventListener("input", () => {
-    extra.name = name.value;
-    saveActualReturnState(year);
-  });
+  // Geen omschrijvingsveld: de bezitting krijgt automatisch een naam
+  // (bijv. "Roerende zaak 1"); een eerder ingevulde naam blijft behouden.
   const type = document.createElement("select");
   type.setAttribute("aria-label", "Soort bezitting verkregen tijdens het jaar");
   for (const [value, label] of ACTUAL_RETURN_EXTRA_TYPES) {
@@ -485,7 +501,7 @@ function createExtraNameCell(row, year) {
     refreshActualReturn();
   });
   cell.className = "actual-return-extra-cell";
-  cell.append(name, type, remove);
+  cell.append(type, remove);
   return cell;
 }
 
@@ -494,11 +510,11 @@ function renderActualReturnTables(rows, year) {
   if (rows.length === 0) {
     const empty = document.createElement("p");
     empty.className = "calculation-method-note";
-    empty.textContent = "Vul eerst onder A.1 de banktegoeden, overige bezittingen en schulden in.";
+    empty.textContent = "Nog niets ingevuld in A.1. Vul daar de standen op 1 januari in, of voeg hieronder een bezitting toe die ná 1 januari is gekocht of gekregen.";
     actualReturnTables.append(empty);
     return;
   }
-  for (const section of ACTUAL_RETURN_SECTIONS) {
+  for (const [sectionIndex, section] of ACTUAL_RETURN_SECTIONS.entries()) {
     const sectionRows = rows.filter((row) =>
       row.category === section.category &&
       (!section.assetTypes || section.assetTypes.includes(row.assetType)) &&
@@ -506,15 +522,24 @@ function renderActualReturnTables(rows, year) {
     if (sectionRows.length === 0) continue;
     const fields = section.fields.filter(([, , options = {}]) =>
       !options.fromYear || Number(year) >= options.fromYear);
+    // Elk onderdeel in een eigen kader, zoals in A.1.
+    const card = document.createElement("div");
+    card.className = "actual-return-card";
+    actualReturnTables.append(card);
     const heading = document.createElement("h3");
     heading.className = "actual-return-heading";
     heading.textContent = section.title;
-    actualReturnTables.append(heading);
+    card.append(heading);
     if (section.intro) {
       const intro = document.createElement("p");
       intro.className = "calculation-method-note";
       intro.textContent = section.intro;
-      actualReturnTables.append(intro);
+      // Toelichting achter een (i) naast de titel.
+      intro.id = `actual-return-info-${sectionIndex}`;
+      intro.classList.add("info-panel");
+      intro.hidden = true;
+      heading.append(" ", createInfoButton(intro.id, `Toelichting ${section.title}`));
+      card.append(intro);
     }
     const wrap = document.createElement("div");
     wrap.className = "account-table-wrap";
@@ -557,7 +582,7 @@ function renderActualReturnTables(rows, year) {
     }
     table.append(thead, tbody);
     wrap.append(table);
-    actualReturnTables.append(wrap);
+    card.append(wrap);
   }
 }
 
@@ -575,7 +600,118 @@ function setActualReturnSummary(entries) {
   }
 }
 
+// Uitkomstbalk boven de berekening: forfaitair, bij werkelijk rendement, te
+// betalen, volgens aanslag en het verschil. `null` toont een streepje.
+function renderResultBar({ forfaitary = null, actual = null, applied = null, assessed = null, difference = null, actualLabel = "—" } = {}) {
+  const set = (id, text, className = "") => {
+    const element = document.querySelector(`#${id}`);
+    if (!element) return;
+    element.textContent = text;
+    element.className = className;
+  };
+  const whole = (value) => (value === null ? "—" : formatCalculationEuroWhole(value));
+  set("result-bar-forfaitary", whole(forfaitary));
+  set("result-bar-actual", actual === null ? actualLabel : whole(actual), actual === null && actualLabel !== "—" ? "is-pending" : "");
+  set("result-bar-applied", whole(applied));
+  set("result-bar-assessed", assessed === null ? "niet ingevuld" : whole(assessed), assessed === null ? "is-pending" : "");
+  set(
+    "result-bar-difference",
+    difference === null
+      ? "—"
+      : Math.abs(difference) < 1
+        ? "gelijk"
+        : `${difference > 0 ? "+" : "−"}${formatCalculationEuroWhole(Math.abs(difference))}`,
+    difference === null || Math.abs(difference) < 1 ? "" : difference > 0 ? "is-refund" : "is-extra",
+  );
+}
+
+// Is er voor dit jaar iets ingevuld waarmee het werkelijke rendement kan worden
+// berekend? Zonder invoer zou elk bestanddeel € 0 rendement krijgen en lijkt de
+// tegenbewijsregeling ten onrechte de volledige belasting te verminderen.
+// Een eindwaarde uit A.1 van het volgende jaar telt ook als gegeven.
+function showActualReturnComparison(visible) {
+  for (const id of ["actual-return-comparison-title", "actual-return-comparison-wrap"]) {
+    const element = document.querySelector(`#${id}`);
+    if (element) element.hidden = !visible;
+  }
+}
+
+// Is er in A.2 zelf iets nader ingevuld? Alleen dan wordt het werkelijke
+// rendement berekend en vergeleken. Alleen de uit A.1 overgenomen standen (ook
+// de stand op 1 januari van het volgende jaar) tellen niet: dan geldt de oude
+// methode, de Wet rechtsherstel of de Overbruggingswet.
+function hasActualReturnInput(rows) {
+  return rows.some((row) => {
+    const entry = actualReturnState.entries[row.key] || {};
+    return Object.entries(entry).some(([field, value]) => typeof value !== "boolean" && isFilledEntryValue(field, value));
+  });
+}
+
+function assessmentSentence(taxOverview) {
+  if (!taxOverview.allAssessed) return "";
+  const wholeEuro = (value) => formatCalculationEuroWhole(value);
+  const difference = taxOverview.total.differenceWithAssessment;
+  return difference > 0
+    ? ` Ten opzichte van de aanslag (${wholeEuro(taxOverview.total.assessed)}): mogelijk ${wholeEuro(difference)} minder te betalen of terug te ontvangen.`
+    : difference < 0
+      ? ` De aanslag (${wholeEuro(taxOverview.total.assessed)}) is ${wholeEuro(-difference)} lager dan de berekening; controleer de gegevens.`
+      : ` De aanslag (${wholeEuro(taxOverview.total.assessed)}) is gelijk aan de berekening.`;
+}
+
+function buildAssessedOverview(persons, data, fiscalPartner) {
+  try {
+    return buildTaxOverview({
+      persons,
+      taxRate: data.taxRate,
+      assessedTaxes: fiscalPartner ? actualReturnState.assessedTax : [actualReturnState.assessedTax[0]],
+    });
+  } catch (error) {
+    actualReturnError.hidden = false;
+    actualReturnError.textContent = error.message;
+    return buildTaxOverview({ persons, taxRate: data.taxRate });
+  }
+}
+
+// Tegenbewijsregeling zonder gegevens voor het werkelijke rendement: alleen de forfaitaire
+// belasting en de aanslag tonen, geen vermindering.
+function renderActualReturnPending({ year, data, fiscalPartner, forfaitary, rows, forfaitaryMethod, reason = "empty" }) {
+  const denied = reason === "denied";
+  actualReturnSummary.replaceChildren();
+  actualReturnComparisonHead.replaceChildren();
+  actualReturnComparison.replaceChildren();
+  showActualReturnComparison(false);
+  const comparison = compareActualReturn({
+    actualShares: forfaitary.incomes, forfaitaryIncomes: forfaitary.incomes, fiscalPartner, taxRate: data.taxRate,
+  });
+  const taxOverview = buildAssessedOverview(comparison.persons, data, fiscalPartner);
+  for (const row of [...taxOverview.rows, taxOverview.total]) row.actualTax = null;
+  renderTaxOverview(taxOverview, { fiscalPartner, data, forfaitaryMethod });
+  actualReturnResult.className = "comparison-result is-pending";
+  actualReturnResult.textContent = denied
+    ? `Geen toegang tot de Wet rechtsherstel box 3: de tegenbewijsregeling is niet van toepassing. Box 3-belasting volgens de oude methode: ${formatCalculationEuroWhole(taxOverview.total.forfaitaryTax)}.${assessmentSentence(taxOverview)}`
+    : `Nog geen gegevens voor het werkelijke rendement ingevuld (A.2). Zonder die gegevens geldt het forfaitaire voordeel: box 3-belasting ${formatCalculationEuroWhole(taxOverview.total.forfaitaryTax)}.${assessmentSentence(taxOverview)}`;
+  actualReturnNotes.replaceChildren();
+  const li = document.createElement("li");
+  li.textContent = submissionNote(year, fiscalPartner);
+  actualReturnNotes.append(li);
+  renderResultBar({
+    forfaitary: taxOverview.total.forfaitaryTax,
+    applied: taxOverview.total.forfaitaryTax,
+    assessed: taxOverview.total.assessed,
+    difference: taxOverview.allAssessed ? taxOverview.total.assessmentCheck : null,
+    actualLabel: denied ? "n.v.t. (geen toegang)" : "nog niet ingevuld",
+  });
+  actualReturnReport = {
+    error: denied
+      ? "geen toegang tot de Wet rechtsherstel box 3; de tegenbewijsregeling is niet van toepassing."
+      : "er zijn nog geen gegevens voor het werkelijke rendement ingevuld (A.2).",
+    rows,
+  };
+  renderReport();
+}
+
 function clearActualReturn(message) {
+  renderResultBar();
   actualReturnContext = null;
   actualReturnSummary.replaceChildren();
   actualReturnComparisonHead.replaceChildren();
@@ -640,8 +776,18 @@ function updateActualReturnResults() {
     actualReturnComparison.replaceChildren();
     actualReturnResult.textContent = "Controleer de aanvullende vermogensgegevens onder A.2.";
     actualReturnResult.className = "comparison-result";
+    renderResultBar();
     actualReturnReport = { error: error.message, rows };
     renderReport();
+    return;
+  }
+
+  if (context.accessDenied) {
+    renderActualReturnPending({ year, data, fiscalPartner, forfaitary, rows, forfaitaryMethod: context.forfaitaryMethod, reason: "denied" });
+    return;
+  }
+  if (!hasActualReturnInput(rows)) {
+    renderActualReturnPending({ year, data, fiscalPartner, forfaitary, rows, forfaitaryMethod: context.forfaitaryMethod });
     return;
   }
 
@@ -679,18 +825,15 @@ function updateActualReturnResults() {
   const comparison = compareActualReturn({
     actualShares: shares, forfaitaryIncomes: forfaitary.incomes, fiscalPartner, taxRate: data.taxRate,
   });
-  let taxOverview;
-  try {
-    taxOverview = buildTaxOverview({
-      persons: comparison.persons,
-      taxRate: data.taxRate,
-      assessedTaxes: fiscalPartner ? actualReturnState.assessedTax : [actualReturnState.assessedTax[0]],
-    });
-  } catch (error) {
-    actualReturnError.hidden = false;
-    actualReturnError.textContent = error.message;
-    taxOverview = buildTaxOverview({ persons: comparison.persons, taxRate: data.taxRate });
-  }
+  const taxOverview = buildAssessedOverview(comparison.persons, data, fiscalPartner);
+  showActualReturnComparison(true);
+  renderResultBar({
+    forfaitary: taxOverview.total.forfaitaryTax,
+    actual: taxOverview.total.actualTax,
+    applied: taxOverview.total.appliedTax,
+    assessed: taxOverview.total.assessed,
+    difference: taxOverview.total.differenceWithAssessment,
+  });
   renderTaxOverview(taxOverview, { fiscalPartner, data, forfaitaryMethod: context.forfaitaryMethod });
   actualReturnComparisonHead.replaceChildren();
   const head = document.createElement("tr");
@@ -734,14 +877,7 @@ function updateActualReturnResults() {
   } else {
     resultText = `Het werkelijke rendement is niet lager dan het forfaitaire voordeel. De tegenbewijsregeling levert geen vermindering op; de box 3-belasting blijft ${wholeEuro(taxOverview.total.forfaitaryTax)}.`;
   }
-  if (taxOverview.allAssessed) {
-    const difference = taxOverview.total.differenceWithAssessment;
-    resultText += difference > 0
-      ? ` Ten opzichte van de aanslag (${wholeEuro(taxOverview.total.assessed)}): mogelijk ${wholeEuro(difference)} minder te betalen of terug te ontvangen.`
-      : difference < 0
-        ? ` De aanslag (${wholeEuro(taxOverview.total.assessed)}) is ${wholeEuro(-difference)} lager dan de berekening; controleer de gegevens.`
-        : ` De aanslag (${wholeEuro(taxOverview.total.assessed)}) is gelijk aan de berekening.`;
-  }
+  resultText += assessmentSentence(taxOverview);
   actualReturnResult.textContent = resultText;
 
   actualReturnNotes.replaceChildren();
@@ -818,7 +954,11 @@ function renderActualReturnAccess(year) {
   const status = document.documentElement.dataset.reliefAccessStatus;
   const numericYear = Number(year);
   actualReturnAccess.hidden = true;
-  if (numericYear <= 2020 && status === "GEEN_TOEGANG_RECHTSHERSTEL") {
+  if (numericYear <= 2020 && document.documentElement.dataset.reliefAccessComplete === "nee") {
+    actualReturnAccess.hidden = false;
+    actualReturnAccess.textContent =
+      `Formele toegang voor ${year} is nog niet beoordeeld. Voor 2017–2020 is de tegenbewijsregeling alleen van toepassing bij toegang tot de Wet rechtsherstel box 3: vul eerst de formele beoordeling bovenaan in. Tot die tijd is deze uitkomst alleen indicatief.`;
+  } else if (numericYear <= 2020 && status === "GEEN_TOEGANG_RECHTSHERSTEL") {
     actualReturnAccess.hidden = false;
     actualReturnAccess.textContent =
       "Volgens de formele beoordeling is er geen toegang tot de Wet rechtsherstel box 3. De tegenbewijsregeling (art. 6a Wet rechtsherstel) is dan niet van toepassing; deze uitkomst is alleen indicatief.";
@@ -826,6 +966,23 @@ function renderActualReturnAccess(year) {
     actualReturnAccess.hidden = false;
     actualReturnAccess.textContent =
       "De formele toegang tot de Wet rechtsherstel box 3 vraagt nader onderzoek. Toepassing van de tegenbewijsregeling hangt daarvan af.";
+  }
+  // Dezelfde status kort in de uitkomstbalk.
+  const barAccess = document.querySelector("#result-bar-access");
+  if (barAccess) {
+    const complete = document.documentElement.dataset.reliefAccessComplete !== "nee";
+    const label = numericYear > 2020
+      ? ""
+      : !complete
+        ? "Formele toegang nog niet beoordeeld — bedragen zijn indicatief"
+        : status === "TOEGANG_RECHTSHERSTEL"
+          ? "Formele toegang: wel toegang tot Wet rechtsherstel box 3"
+          : status === "GEEN_TOEGANG_RECHTSHERSTEL"
+            ? "Formele toegang: geen toegang — tegenbewijsregeling niet van toepassing"
+            : "Formele toegang: nader onderzoek noodzakelijk";
+    barAccess.hidden = !label;
+    barAccess.textContent = label;
+    barAccess.className = `result-bar-access is-${status === "TOEGANG_RECHTSHERSTEL" && complete ? "ok" : status === "GEEN_TOEGANG_RECHTSHERSTEL" && complete ? "denied" : "open"}`;
   }
 }
 
@@ -843,14 +1000,14 @@ function refreshActualReturn() {
 }
 
 // Wordt aangeroepen vanuit renderCalculation met de forfaitaire uitkomst per persoon.
-function renderActualReturn({ year, data, fiscalPartner, allocationPercent, forfaitaryIncomes, basisLabel, forfaitaryMethod }) {
+function renderActualReturn({ year, data, fiscalPartner, allocationPercent, forfaitaryIncomes, basisLabel, forfaitaryMethod, accessDenied = false }) {
   loadActualReturnState(year);
   document.querySelector("#actual-return-year").textContent = year;
   actualReturnBasis.textContent = Number(year) <= 2022
     ? `Grondslag: art. 6a Wet rechtsherstel box 3. Vergeleken wordt met het voordeel volgens de Wet rechtsherstel (${basisLabel}).`
     : "Grondslag: art. 5.25–5.36 Wet IB 2001 (Wet tegenbewijsregeling box 3). Vergeleken wordt met het forfaitaire voordeel volgens de Overbruggingswet box 3.";
   renderActualReturnAccess(year);
-  actualReturnContext = { year, data, fiscalPartner, allocationPercent, forfaitaryIncomes, forfaitaryMethod, rows: [] };
+  actualReturnContext = { year, data, fiscalPartner, allocationPercent, forfaitaryIncomes, forfaitaryMethod, accessDenied, rows: [] };
   refreshActualReturn();
 }
 
@@ -887,5 +1044,6 @@ actualReturnAssessedInputs.forEach((input, index) => {
 });
 
 document.documentElement.addEventListener("box3:relief-access-status", () => {
-  if (actualReturnContext) renderActualReturnAccess(actualReturnContext.year);
+  // De toegang bepaalt voor 2017-2020 de methode: alles opnieuw berekenen.
+  renderCalculation();
 });

@@ -1,5 +1,14 @@
 "use strict";
 
+// Werkvolgorde: invoer (A, met A.1 en A.2) en het verslag (B) staan open; de
+// formele beoordeling blijft ingeklapt.
+function openWorkingPanels() {
+  for (const selector of [".asset-disclosure", "#assets-start-disclosure", "#assets-actual-return-disclosure", ".report-panel .calculation-disclosure"]) {
+    const details = document.querySelector(selector);
+    if (details) details.open = true;
+  }
+}
+
 const initialYear = new URLSearchParams(window.location.search).get("year") || "";
 const initialYearRestored = initialYear !== "" && restorePeriodForYear(initialYear);
 if (!initialYearRestored) yearSelect.value = "";
@@ -12,30 +21,7 @@ yearSelect.addEventListener("change", () => {
   status.hidden = true;
   renderPreliminary();
   renderTotal();
-});
-
-bankLink.addEventListener("click", (event) => {
-  if (!yearSelect.value) {
-    event.preventDefault();
-    status.hidden = false;
-    status.textContent = "Selecteer eerst een belastingjaar.";
-  }
-});
-
-otherAssetsLink.addEventListener("click", (event) => {
-  if (!yearSelect.value) {
-    event.preventDefault();
-    calculationError.hidden = false;
-    calculationError.textContent = "Selecteer eerst een belastingjaar.";
-  }
-});
-
-debtsLink.addEventListener("click", (event) => {
-  if (!yearSelect.value) {
-    event.preventDefault();
-    calculationError.hidden = false;
-    calculationError.textContent = "Selecteer eerst een belastingjaar.";
-  }
+  openWorkingPanels();
 });
 
 renderTotal();
@@ -71,9 +57,6 @@ window.addEventListener("storage", (event) => {
 // Terug van een detailpagina: toon het gekozen jaar met de vermogensgegevens open.
 if (initialYearRestored) {
   yearSelect.dispatchEvent(new Event("change"));
-  const assetDisclosure = document.querySelector(".asset-disclosure");
-  if (assetDisclosure) assetDisclosure.open = true;
-  const startDisclosure = document.querySelector("#assets-start-disclosure");
-  if (startDisclosure) startDisclosure.open = true;
+  openWorkingPanels();
   document.querySelector("#calculation-section")?.scrollIntoView({ block: "start" });
 }

@@ -14,20 +14,43 @@ Open `index.html` in een moderne browser en selecteer een belastingjaar van 2017
 - `berekeningen/overbruggingswet/`: berekening met het aandeel in de rendementsgrondslag vanaf 2022. Deze methode wordt ook gebruikt voor rechtsherstel in 2022.
 - `berekeningen/gedeeld/`: gezamenlijke invoer, presentatie, vergelijking en het forfaitaire rendement dat beide methoden gebruiken.
 - `berekeningen/werkelijk-rendement/`: tegenbewijsregeling (paneel C). `berekening.js` bevat de rekenregels zonder DOM; `dashboard.js` toont de bestanddelen uit A en vraagt per bestanddeel de aanvullende jaargegevens. Achtergrond en bronnen staan in `ONDERZOEK.md`.
-- `banktegoeden/` en `overige-bezittingen/`: logica voor de bijbehorende invoerpagina's.
+- `gedeeld/vermogen-invoer.js`: invoer van banktegoeden, overige bezittingen en schulden in A.1 (de aparte invoerpagina's zijn vervallen; de gegevens staan onder dezelfde sleutels).
 - `gedeeld/`: jaargegevens, opslagsleutels en het starten van het dashboard.
 - `gedeeld/opslag-modus.js`: controlemodus (niets blijvend opslaan; alle opslag gaat naar een tijdelijke opslag van het tabblad) en de knop ‘Alle gegevens wissen’. Moet op elke pagina als eerste script laden.
-- `berekeningen/gedeeld/verslag.js`: onderdeel D, het afdrukbare verslag met jaargegevens, vermogen op 1 januari, forfaitaire berekening stap voor stap (2017–2022 ook de schijven), werkelijk rendement en bronnen. Inkomen en belasting worden in centen getoond, met tussen haakjes het bedrag in hele euro's naar beneden zoals op de aanslag (alleen weergave).
+- `berekeningen/gedeeld/jaarberekening.js`: `calculateBox3Year`, de volledige forfaitaire berekening van één jaar zonder DOM (grondslag, oude methode, Wet rechtsherstel/Overbruggingswet en de laagste uitkomst). Het dashboard en de snelcontrole gebruiken allebei deze functie.
+- `snelcontrole.html` en `snelcontrole/`: snelcontrole OWR over meerdere jaren (zie hieronder). `snelcontrole-berekening.js` bevat de rekenregels en signalen zonder DOM, `snelcontrole.js` de invoer en weergave.
+- `berekeningen/gedeeld/verslag.js`: onderdeel B (voorheen D), het afdrukbare verslag met jaargegevens, vermogen op 1 januari, forfaitaire berekening stap voor stap (2017–2022 ook de schijven), werkelijk rendement en bronnen. Inkomen en belasting worden in centen getoond, met tussen haakjes het bedrag in hele euro's naar beneden zoals op de aanslag (alleen weergave).
 
-De HTML voor het dashboard en de gezamenlijke vormgeving blijven in `index.html` en `styles.css`. De detailpagina's blijven op hun bestaande adressen staan, zodat bestaande links en lokaal opgeslagen gegevens behouden blijven. De klassieke scripts worden in de volgorde van `index.html` geladen; behoud die volgorde bij wijzigingen. Open `tests/berekeningen.html` rechtstreeks in de browser om de berekeningstests uit te voeren. Deze tests gebruiken geen opgeslagen dossiergegevens.
+De HTML voor het dashboard en de gezamenlijke vormgeving blijven in `index.html` en `styles.css`. De klassieke scripts worden in de volgorde van `index.html` geladen; behoud die volgorde bij wijzigingen. Open `tests/berekeningen.html` rechtstreeks in de browser om de berekeningstests uit te voeren. Deze tests gebruiken geen opgeslagen dossiergegevens.
 
 ## Stappenplan
 
 Het overzicht bevat banktegoeden, overige bezittingen, schulden en werkelijk rendement. Voor belastingjaren 2017–2020 bevat het dashboard de bestaande formele beoordeling. Voor 2021–2022 gebruikt het een afzonderlijke, kortere beoordeling zonder de peildatumvraag van 24 december 2021. De Wet rechtsherstelberekeningen zijn beschikbaar voor 2017–2022, ook voordat de formele beoordeling is afgerond. Voor 2023–2026 is er een afzonderlijke berekening volgens de Overbruggingswet box 3.
 
+**Invoer A.1.** Eerst de vraag ‘Fiscale partner?’, daarna onder elkaar Banktegoeden, Overige bezittingen en Schulden, elk met één regel om mee te beginnen. Rechts voegt **+** een regel toe en verwijdert **×** een regel. Bedragen mogen in Nederlandse notatie worden geplakt (`340.000,00`). De toelichting bij overige bezittingen en schulden staat achter de (i). De gegevens worden onder dezelfde sleutels en in hetzelfde formaat bewaard als op de vroegere invoerpagina’s, zodat eerder ingevoerde dossiers gewoon verschijnen. Vanaf 2023 heeft Banktegoeden een kolom Soort (bankrekening of contant geld). De code staat in `gedeeld/vermogen-invoer.js`; het lezen van bedragen in `gedeeld/bedrag.js`.
+
+**Eén groene uitkomst.** In het verslag is precies één uitkomst groen: de laagste van de methoden die gelden (2017–2020 zonder toegang: alleen de oude methode; 2017–2022: oude methode of Wet rechtsherstel; vanaf 2023: Overbruggingswet), of het werkelijk rendement als dat lager is. Het werkelijk rendement telt alleen mee als er in A.2 zelf iets is ingevuld; alleen de uit A.1 overgenomen standen (ook die van het volgende jaar) tellen niet. Een WOZ-waarde van € 0 als eindwaarde telt als leeg. Bij partners met een verschillende uitkomst per persoon is geen blok groen.
+
+**Snelle keuze toegang (2017–2020).** Bovenaan de formele beoordeling staat ‘Toegang tot Wet rechtsherstel box 3’ met **Wel toegang** of **Geen toegang** (toelichting achter de (i)). Bij geen toegang toont de tool alleen de oude methode (schijven): geen Wet rechtsherstel, geen tegenbewijsregeling, en in het verslag alleen de jaargegevens van de oude methode. Bij wel toegang worden oude methode en Wet rechtsherstel vergeleken (laagste geldt) en is de tegenbewijsregeling van toepassing. Een snelle keuze gaat voor de uitkomst van de uitgebreide beoordeling; met ‘Keuze wissen’ bepaalt de uitgebreide beoordeling weer de toegang. Ook bij ‘geen toegang’ uit de uitgebreide beoordeling geldt alleen de oude methode. De keuze wordt per jaar bewaard onder `box3-snelle-toegang-v1`.
+
+Opbouw van het overzicht per jaar: bovenaan de **formele beoordeling** (voor 2017–2020 een voorwaarde voor de tegenbewijsregeling), daarna de **uitkomstbalk** (forfaitair, bij werkelijk rendement, te betalen, volgens aanslag, verschil; voor 2017–2020 met de toegangsstatus), **A. Vermogensgegevens** met de box 3-belasting volgens de aanslag bovenaan, en **B. Verantwoording en afdrukken**: het volledige verslag, standaard open. Het verslag vermeldt voor 2017–2020 bovenaan de uitkomst van de formele beoordeling. De panelen ‘Berekening box 3’ en ‘Tegenbewijsregeling — Werkelijk rendement’ staan nog in de pagina (klasse `is-verborgen`), omdat zij de bedragen voor het verslag en de uitkomstbalk berekenen, maar worden niet getoond. Zolang onder A.2 niets is ingevuld voor het werkelijk rendement, meldt het verslag ‘Niet berekend’ en geldt in de uitkomstbalk de forfaitaire belasting; er wordt dan geen vermindering berekend.
+
 De formele beoordeling is standaard ingeklapt. Open het onderdeel **Formele beoordeling** om de vragen te bekijken en in te vullen.
 
-Klik op **Banktegoeden** om naar `banktegoeden.html` te gaan. Daar kunnen meerdere bankrekeningen worden geregistreerd met rekeningnaam, bank en saldo op 1 januari. Klik op **Overige bezittingen** om naar `overige-bezittingen.html` te gaan. Daar staat per categorie alvast een invoerregel klaar; extra bezittingen kunnen met **+ Bezitting toevoegen** worden toegevoegd. Elke regel heeft een omschrijving, soort en waarde op 1 januari. De pagina toont ook een waarderingsuitleg per soort, waaronder de WOZ-peildatum voor Nederlandse woningen en de voorwaarden voor de leegwaarderatio bij verhuurde woningen. De categorieën volgen de bezittingenindeling van de [Belastingdienst](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/). De categorie is alleen voor de inventarisatie: bijzondere vrijstellingen en waarderingsregels, zoals de leegwaarderatio, worden niet automatisch in de berekening toegepast. Beide totalen worden op de detailpagina en op het overzicht getoond en per belastingjaar bewaard.
+Kies een periode en klik op een jaarknop (bijv. 2017 · 2018 · 2019 · 2020). Banktegoeden, overige bezittingen en schulden vul je direct in onder A.1 (zie ‘Invoer A.1’). De soorten overige bezittingen volgen de indeling van de [Belastingdienst](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/vermogen_en_aanmerkelijk_belang/vermogen/wat_zijn_uw_bezittingen_en_schulden/uw_bezittingen/); de waarderingsuitleg per soort staat achter de (i). De soort is alleen voor de inventarisatie: bijzondere vrijstellingen en waarderingsregels, zoals de leegwaarderatio, worden niet automatisch in de berekening toegepast.
+
+## Snelcontrole OWR
+
+Via **Snelcontrole OWR** op het overzicht (of `snelcontrole.html`) controleer je een verzoek over meerdere jaren op één pagina. Per jaar (2017–2026) vul je de totalen in zoals op het formulier: banktegoeden, overige bezittingen (waarvan contant geld), schulden, fiscale partner met verdeling, het opgegeven werkelijk rendement (huishouden, na vrijstellingen) en de box 3-belasting volgens de aanslag. Lege jaren worden overgeslagen. Bedragen mogen in Nederlandse of Engelse notatie worden geplakt (`12.345,67`, `€ 12.345`, `12,345.67`).
+
+Per jaar toont de tool de toegepaste methode, het forfaitaire voordeel, de belasting forfaitair en bij werkelijk rendement (hele euro's naar beneden, zoals op de aanslag), de te betalen belasting en het verschil met de aanslag. Een balk bovenaan blijft zichtbaar met de totalen over alle jaren. Aandachtspunten per jaar:
+
+- de route: OWR (2017–2020 alleen bij formele toegang), via de aangifte vanaf 2025, en de voorlopige forfaits van 2026;
+- een aanslag die afwijkt van de forfaitaire berekening, met herkenning van een aanslag die de Wet rechtsherstel volgt terwijl de oude methode lager is (of omgekeerd);
+- een opgegeven rendement dat ongebruikelijk hoog (> 15%) of laag (< −30%) is ten opzichte van de bezittingen, meer dan 5% rendement bij alleen banktegoeden, of rendement zonder bezittingen. Deze grenzen zijn signaaldrempels en geen wettelijke normen;
+- een negatief rendement (op € 0 gesteld) en een werkelijk rendement dat niet lager is dan het forfaitaire voordeel.
+
+De invoer blijft alleen in het huidige tabblad bewaard (`sessionStorage`, sleutel `box3-snelcontrole-v1`) en wordt gewist met **Invoer leegmaken** of **Alle gegevens wissen**. Voor de volledige onderbouwing per jaar (schijven, bestanddelen, verslag) gebruik je de berekening op het overzicht.
 
 ## Voorvragen voor 2017–2020
 
@@ -88,8 +111,6 @@ De antwoorden op de voorvragen worden per belastingjaar bewaard in de browserses
 
 - `index.html` — vermogensoverzicht en voorvragen.
 - `gedeeld/dashboard.js` en `gedeeld/dashboard-start.js` — dashboard en jaarselectie.
-- `banktegoeden.html` en `banktegoeden/banktegoeden.js` — invoer en opslag van bankrekeningen per jaar.
-- `overige-bezittingen.html` en `overige-bezittingen/overige-bezittingen.js` — invoer en opslag van overige bezittingen per jaar.
 - `styles.css` — gedeelde vormgeving.
 
 ## Status berekening

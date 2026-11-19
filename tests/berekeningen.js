@@ -371,6 +371,168 @@ assertEqual("Overzicht zonder aanslag: geen verschil", noAssessment.rows[0].diff
 assertEqual("BD 2025 voorbeeld: belasting € 455 op € 1.264", wholeEuroBox3Tax(1264.65, 36), 455);
 assertEqual("BD 2025 voorbeeld: belasting € 4.638 op € 12.885", wholeEuroBox3Tax(12885.78, 36), 4638);
 
+// --- Rekenvoorbeelden Belastingdienst: berekening box 3-inkomen 2025 ---
+// https://www.belastingdienst.nl/wps/wcm/connect/nl/box-3/content/berekening-box-3-inkomen-2025
+// Belasting, grondslag en aandeel moeten exact gelijk zijn. Het voordeel mag € 1
+// verschillen: de Belastingdienst rondt in de voorbeelden het rendement per
+// onderdeel af op hele euro's (vb. 3: € 15.628 i.p.v. € 15.627,60; vb. 5: € 68 en
+// € 20.425 i.p.v. € 68,50 en € 20.425,71), de tool rekent in centen.
+const bdForfaitary2025 = [
+  { nr: 1, bank: 150000, other: 0, debts: 0, partner: false, allocation: 100, base: 92316, share: "61,54%", income: [1264], tax: [455] },
+  { nr: 2, bank: 150000, other: 0, debts: 0, partner: true, allocation: 50, base: 34632, share: "11,54% / 11,54%", income: [237, 237], tax: [85, 85] },
+  { nr: 3, bank: 150000, other: 275000, debts: 100000, partner: false, allocation: 100, base: 271116, share: "82,45%", income: [12885], tax: [4638] },
+  { nr: 4, bank: 150000, other: 275000, debts: 100000, partner: true, allocation: 50, base: 217232, share: "32,65% / 32,65%", income: [5135, 5135], tax: [1848, 1848] },
+  { nr: 5, bank: 5000, other: 347376, debts: 0, partner: true, allocation: 100, base: 237008, share: "67,25% / 0,00%", income: [13781, 0], tax: [4961, 0] },
+];
+for (const example of bdForfaitary2025) {
+  const label = `BD berekening 2025 voorbeeld ${example.nr}`;
+  const result = calculateBox3Year({
+    year: "2025", bankTotal: example.bank, otherAssetsTotal: example.other, debts: example.debts,
+    fiscalPartner: example.partner, allocationPercent: example.allocation,
+  });
+  const incomes = example.partner
+    ? [result.relief.firstPartnerIncome, result.relief.secondPartnerIncome]
+    : [result.relief.firstPartnerIncome];
+  assertEqual(`${label}: grondslag sparen en beleggen`, result.taxableBase, example.base);
+  assertEqual(`${label}: aandeel in de rendementsgrondslag`, result.relief.formattedYieldRate, example.share);
+  incomes.forEach((income, index) => {
+    assertEqual(`${label}: belasting persoon ${index + 1}`, wholeEuroBox3Tax(income, 36), example.tax[index]);
+    assertEqual(`${label}: voordeel persoon ${index + 1} binnen € 1`, Math.abs(Math.floor(income) - example.income[index]) <= 1, true);
+  });
+}
+
+// --- Jaarberekening (calculateBox3Year) ---
+// Referentie: de berekening zoals die vóór de herstructurering letterlijk in
+// renderCalculation stond. calculateBox3Year moet voor elke invoer exact gelijk zijn.
+function referenceYearCalculation({ year, bankTotal, otherAssetsTotal, cashTotal, debts, fiscalPartner, allocationPercent }) {
+  const data = BOX3_YEAR_DATA[year];
+  const yearUsesOldMethodComparison = Number(year) <= 2022;
+  const { bank, investments } = splitAssetCategories({ bankTotal, otherAssetsTotal, cashTotal, year });
+  const householdCount = fiscalPartner ? 2 : 1;
+  const assets = roundToTwoDecimals(bank + investments);
+  const deductibleDebts = roundToTwoDecimals(Math.max(0, debts - data.debtThreshold * householdCount));
+  const netAssets = roundToTwoDecimals(Math.max(0, assets - deductibleDebts));
+  const taxableBase = roundToTwoDecimals(Math.max(0, netAssets - roundToTwoDecimals(data.exemption * householdCount)));
+  const firstPartnerBase = fiscalPartner ? roundToTwoDecimals(taxableBase * allocationPercent / 100) : taxableBase;
+  const secondPartnerBase = taxableBase - firstPartnerBase;
+  const old = calculateOldMethod({ firstPartnerBase, secondPartnerBase, fiscalPartner, yearUsesOldMethodComparison, data });
+  const relief = calculateForfaitaryReturn({ bank, investments, deductibleDebts, data, year, netAssets, firstPartnerBase, secondPartnerBase, fiscalPartner });
+  const oldMethodApplies = yearUsesOldMethodComparison && old.oldTax < relief.reliefTax;
+  return {
+    taxableBase, oldTax: old.oldTax, reliefTax: relief.reliefTax, oldIncome: old.oldIncome, reliefIncome: relief.reliefIncome,
+    forfaitaryIncomes: oldMethodApplies ? [old.oldFirstPartnerIncome, old.oldSecondPartnerIncome] : [relief.firstPartnerIncome, relief.secondPartnerIncome],
+  };
+}
+const yearScenarios = [];
+const assetMixes = [
+  [0, 0, 0, 0], [10000, 0, 0, 0], [60000, 0, 0, 0], [52500, 340000, 0, 0], [1200000, 20000, 0, 6000],
+  [150000, 250000, 3000, 80000], [25000, 500000, 0, 2000], [0, 2500000, 0, 400000], [80000, 120000, 40000, 3500],
+  [33333.33, 77777.77, 1234.56, 9999.99],
+];
+for (const year of Object.keys(BOX3_YEAR_DATA)) {
+  for (const [bankTotal, otherAssetsTotal, cashTotal, debts] of assetMixes) {
+    yearScenarios.push({ year, bankTotal, otherAssetsTotal, cashTotal, debts, fiscalPartner: false, allocationPercent: 100 });
+    for (const allocationPercent of [0, 33, 50, 100]) {
+      yearScenarios.push({ year, bankTotal, otherAssetsTotal, cashTotal, debts, fiscalPartner: true, allocationPercent });
+    }
+  }
+}
+for (const scenario of yearScenarios) {
+  const label = `Jaarberekening ${scenario.year} ${JSON.stringify(scenario)}`;
+  const expected = referenceYearCalculation(scenario);
+  const actualYear = calculateBox3Year(scenario);
+  assertEqual(`${label}: grondslag`, actualYear.taxableBase, expected.taxableBase);
+  assertEqual(`${label}: oude belasting`, actualYear.old.oldTax, expected.oldTax);
+  assertEqual(`${label}: forfaitaire belasting`, actualYear.relief.reliefTax, expected.reliefTax);
+  assertEqual(`${label}: voordeel persoon 1`, actualYear.forfaitaryIncomes[0], expected.forfaitaryIncomes[0]);
+  assertEqual(`${label}: voordeel persoon 2`, actualYear.forfaitaryIncomes[1], expected.forfaitaryIncomes[1]);
+  assertEqual(`${label}: belasting = laagste`, actualYear.forfaitaryTax,
+    Number(scenario.year) <= 2022 ? Math.min(expected.oldTax, expected.reliefTax) : expected.reliefTax);
+}
+// De bekende verwachte bedragen gelden ook via calculateBox3Year.
+for (const [year, expected] of Object.entries(expectedTaxes)) {
+  const viaYear = calculateBox3Year({ year, bankTotal: 1200000, otherAssetsTotal: 20000, debts: 6000 });
+  if (Number(year) <= 2022) assertEqual(`${year} oude belasting via jaarberekening`, viaYear.old.oldTax, expected[0]);
+  assertEqual(`${year} forfaitaire belasting via jaarberekening`, viaYear.relief.reliefTax, expected[1]);
+}
+let yearError = "";
+try { calculateBox3Year({ year: "2016", bankTotal: 0, otherAssetsTotal: 0, debts: 0 }); } catch (error) { yearError = error.message; }
+assertEqual("Jaarberekening: onbekend jaar geweigerd", yearError, "Voor 2016 zijn geen jaargegevens beschikbaar.");
+
+// --- Snelcontrole: bedragen in Nederlandse en Engelse notatie ---
+const amountCases = [
+  ["12.345,67", 12345.67], ["12345,67", 12345.67], ["€ 12.345", 12345], ["12,345.67", 12345.67],
+  ["12345.67", 12345.67], ["1.234.567", 1234567], ["1,234,567", 1234567], ["1234,5", 1234.5],
+  ["1234.5", 1234.5], ["0", 0], ["", null], ["  ", null], ["€ 1.000,00", 1000], ["1.000", 1000],
+];
+for (const [input, expected] of amountCases) {
+  assertEqual(`Bedrag "${input}"`, parseDutchAmount(input), expected);
+}
+assertEqual("Bedrag negatief toegestaan", parseDutchAmount("-1.200,50", { signed: true }), -1200.5);
+for (const invalid of ["abc", "12.34.5", "1,23,4", "12a"]) {
+  let message = "";
+  try { parseDutchAmount(invalid); } catch (error) { message = error.message; }
+  assertEqual(`Bedrag "${invalid}" geweigerd`, message !== "", true);
+}
+let negativeMessage = "";
+try { parseDutchAmount("-5", { label: "Schulden" }); } catch (error) { negativeMessage = error.message; }
+assertEqual("Negatieve schuld geweigerd", negativeMessage, "Schulden mag niet negatief zijn.");
+
+// --- Snelcontrole: uitkomsten gelijk aan dashboard en voorbeelden ---
+const arnhemQuick = calculateQuickCheckYear({ year: 2022, bank: "52.500", other: "340.000", actualReturn: "34.750", assessedTax: "5.076" });
+assertEqual("Snelcontrole Arnhem 2022: forfaitaire belasting", arnhemQuick.forfaitaryTax, 4226);
+assertEqual("Snelcontrole Arnhem 2022: methode", arnhemQuick.forfaitaryMethod, "oude methode");
+assertEqual("Snelcontrole Arnhem 2022: belasting bij werkelijk rendement", arnhemQuick.actualTax, 10772);
+assertEqual("Snelcontrole Arnhem 2022: te betalen", arnhemQuick.appliedTax, 4226);
+assertEqual("Snelcontrole Arnhem 2022: verschil met aanslag", arnhemQuick.difference, 850);
+assertEqual("Snelcontrole Arnhem 2022: aanslag volgt Wet rechtsherstel herkend", arnhemQuick.signals.some((signal) => /^Aanslag volgt de Wet rechtsherstel \(€\s5\.075\), maar de oude methode is lager \(€\s4\.226\)/.test(signal.text)), true);
+const otherDeviation = calculateQuickCheckYear({ year: 2022, bank: "52.500", other: "340.000", assessedTax: "6.000" });
+assertEqual("Snelcontrole: onverklaarde afwijking gemeld", otherDeviation.signals.some((signal) => /^Aanslag wijkt €\s1\.774 omhoog/.test(signal.text)), true);
+const matchingAssessment = calculateQuickCheckYear({ year: 2022, bank: "52.500", other: "340.000", assessedTax: "4.226" });
+assertEqual("Snelcontrole: kloppende aanslag geeft geen signaal", matchingAssessment.signals.some((signal) => signal.text.startsWith("Aanslag")), false);
+assertEqual("Snelcontrole: kloppende aanslag verschil nul", matchingAssessment.difference, 0);
+
+const quick2025 = calculateQuickCheckYear({ year: 2025, bank: "100.000", other: "150.000", actualReturn: "13.500", fiscalPartner: true, allocationPercent: "60" });
+const dashboard2025 = calculateBox3Year({ year: "2025", bankTotal: 100000, otherAssetsTotal: 150000, debts: 0, fiscalPartner: true, allocationPercent: 60 });
+const dashboardComparison2025 = compareActualReturn({
+  actualShares: allocateActualReturn({ total: 13500, fiscalPartner: true, allocationPercent: 60 }),
+  forfaitaryIncomes: dashboard2025.forfaitaryIncomes, fiscalPartner: true, taxRate: 36,
+});
+const dashboardOverview2025 = buildTaxOverview({ persons: dashboardComparison2025.persons, taxRate: 36 });
+assertEqual("Snelcontrole 2025 partners = dashboard: forfaitair", quick2025.forfaitaryTax, dashboardOverview2025.total.forfaitaryTax);
+assertEqual("Snelcontrole 2025 partners = dashboard: te betalen", quick2025.appliedTax, dashboardOverview2025.total.appliedTax);
+assertEqual("Snelcontrole 2025: route aangifte gemeld", quick2025.route.label, "Via aangifte, niet via OWR");
+
+const noActual = calculateQuickCheckYear({ year: 2024, bank: "200000" });
+assertEqual("Snelcontrole zonder werkelijk rendement: te betalen = forfaitair", noActual.appliedTax, noActual.forfaitaryTax);
+assertEqual("Snelcontrole zonder werkelijk rendement: geen belasting bij WR", noActual.actualTax, null);
+const negativeActual = calculateQuickCheckYear({ year: 2023, bank: "20.000", other: "200.000", actualReturn: "-15.000" });
+assertEqual("Snelcontrole negatief rendement: op nul", negativeActual.actualTotal, 0);
+assertEqual("Snelcontrole negatief rendement: geen belasting", negativeActual.appliedTax, 0);
+const highReturn = calculateQuickCheckYear({ year: 2023, bank: "100.000", actualReturn: "8.000" });
+assertEqual("Snelcontrole: signaal hoog rendement op alleen bank", highReturn.signals.some((signal) => signal.text.startsWith("Alleen banktegoeden")), true);
+const belowExemption = calculateQuickCheckYear({ year: 2024, bank: "40.000" });
+assertEqual("Snelcontrole onder heffingsvrij vermogen: nihil", belowExemption.forfaitaryTax, 0);
+
+let cashError = "";
+try { calculateQuickCheckYear({ year: 2023, other: "1.000", cash: "2.000" }); } catch (error) { cashError = error.message; }
+assertEqual("Snelcontrole: contant hoger dan overige geweigerd", cashError.startsWith("Contant geld"), true);
+let allocationError = "";
+try { calculateQuickCheckYear({ year: 2023, bank: "100000", fiscalPartner: true, allocationPercent: "" }); } catch (error) { allocationError = error.message; }
+assertEqual("Snelcontrole: lege partnerverdeling geweigerd", allocationError, "Vul voor de verdeling een heel percentage van 0 tot en met 100 in.");
+
+const multiYear = calculateQuickCheck([
+  { year: 2021, bank: "300.000", assessedTax: "" },
+  { year: 2022, bank: "52.500", other: "340.000", actualReturn: "34.750", assessedTax: "5.076" },
+  { year: 2023 },
+  { year: 2024, bank: "abc" },
+]);
+assertEqual("Snelcontrole meerdere jaren: lege jaren overgeslagen", multiYear.results.length, 3);
+assertEqual("Snelcontrole meerdere jaren: fout in één jaar", multiYear.totals.errors, 1);
+assertEqual("Snelcontrole meerdere jaren: totaal verschil", multiYear.totals.difference, 850);
+assertEqual("Snelcontrole meerdere jaren: totaal te betalen",
+  multiYear.totals.appliedTax, multiYear.results[0].result.appliedTax + 4226);
+
 const result = document.querySelector("#resultaat");
 result.textContent = failures.length ? failures.join("\n") : "Alle berekeningstests geslaagd.";
 result.dataset.status = failures.length ? "failed" : "passed";

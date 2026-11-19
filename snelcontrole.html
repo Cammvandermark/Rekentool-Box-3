@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f5f7">
+    <meta name="description" content="Box 3-rekentool — snelcontrole OWR over meerdere jaren">
+    <title>Box 3 | Snelcontrole OWR</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="gedeeld/opslag-modus.js" defer></script>
+    <script src="gedeeld/jaargegevens.js" defer></script>
+    <script src="gedeeld/dashboard.js" defer></script>
+    <script src="berekeningen/oude-methode/berekening.js" defer></script>
+    <script src="berekeningen/rechtsherstel/berekening.js" defer></script>
+    <script src="berekeningen/overbruggingswet/berekening.js" defer></script>
+    <script src="berekeningen/gedeeld/forfaitair-rendement.js" defer></script>
+    <script src="berekeningen/gedeeld/dashboard-berekeningen.js" defer></script>
+    <script src="berekeningen/gedeeld/jaarberekening.js" defer></script>
+    <script src="berekeningen/werkelijk-rendement/berekening.js" defer></script>
+    <script src="gedeeld/bedrag.js" defer></script>
+    <script src="snelcontrole/snelcontrole-berekening.js" defer></script>
+    <script src="snelcontrole/snelcontrole.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell quick-check">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span>BOX 3 <span class="brand-divider">/</span> REKENTOOL</span></a>
+        <span class="topbar-label">SNELCONTROLE OWR</span>
+      </header>
+
+      <main>
+        <nav class="breadcrumb" aria-label="Navigatiepad"><a href="index.html">Stappenplan</a><span aria-hidden="true">/</span><span>Snelcontrole OWR</span></nav>
+        <div class="page-heading detail-heading">
+          <div>
+            <a class="back-link" href="index.html">← Overzicht</a>
+            <p class="eyebrow">MEERDERE JAREN IN ÉÉN OVERZICHT</p><h1>Snelcontrole OWR</h1>
+          </div>
+        </div>
+
+        <section class="quick-check-totals" aria-label="Totaal over de ingevulde jaren" aria-live="polite">
+          <div><span>Forfaitaire belasting</span><strong id="qc-total-forfaitary">—</strong></div>
+          <div><span>Te betalen na tegenbewijs</span><strong id="qc-total-applied">—</strong></div>
+          <div><span>Volgens aanslagen</span><strong id="qc-total-assessed">—</strong></div>
+          <div class="quick-check-total-main"><span>Verschil met aanslagen</span><strong id="qc-total-difference">—</strong></div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">INVOER</p><h2>Gegevens per jaar, zoals op het formulier</h2></div>
+          </div>
+          <p class="calculation-method-note">Vul alleen de jaren in die in het verzoek staan; lege jaren worden overgeslagen. Bedragen mogen met punten en komma's worden geplakt (bijv. <code>12.345,67</code>). Bezittingen en schulden zijn de standen op 1 januari, voor beide partners samen. Werkelijk rendement is het totaal van het huishouden na eventuele vrijstellingen (groen, contant geld), zoals opgegeven. De belasting volgens de aanslag is het box 3-bedrag van beide partners samen.</p>
+          <div class="comparison-table-wrap">
+            <table class="account-table quick-check-input">
+              <thead>
+                <tr>
+                  <th scope="col">Jaar</th>
+                  <th scope="col">Banktegoeden</th>
+                  <th scope="col">Overige bezittingen</th>
+                  <th scope="col">waarvan contant</th>
+                  <th scope="col">Schulden</th>
+                  <th scope="col">Partner</th>
+                  <th scope="col">% bp</th>
+                  <th scope="col">Werkelijk rendement</th>
+                  <th scope="col">Belasting aanslag</th>
+                </tr>
+              </thead>
+              <tbody id="qc-input-rows"></tbody>
+            </table>
+          </div>
+          <div class="detail-actions">
+            <button class="secondary-button" id="qc-print" type="button">Overzicht afdrukken</button>
+            <button class="secondary-button" id="qc-clear" type="button">Invoer leegmaken</button>
+            <span class="save-status">De invoer blijft alleen in dit tabblad bewaard.</span>
+          </div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">RESULTAAT</p><h2>Box 3-belasting per jaar</h2></div>
+          </div>
+          <p class="calculation-method-note">Belasting in hele euro's naar beneden, zoals op de aanslag. 2017–2022: de laagste van de oude methode en de Wet rechtsherstel; vanaf 2023: de Overbruggingswet. Een positief verschil betekent dat de aanslag hoger is dan de belasting na tegenbewijs.</p>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table quick-check-result">
+              <thead>
+                <tr>
+                  <th scope="col">Jaar</th>
+                  <th scope="col">Methode</th>
+                  <th scope="col">Forfaitair voordeel</th>
+                  <th scope="col">Belasting forfaitair</th>
+                  <th scope="col">Belasting werkelijk</th>
+                  <th scope="col">Te betalen</th>
+                  <th scope="col">Aanslag</th>
+                  <th scope="col">Verschil</th>
+                  <th scope="col">Aandachtspunten</th>
+                </tr>
+              </thead>
+              <tbody id="qc-result-rows"><tr><td colspan="9">Nog geen jaren ingevuld.</td></tr></tbody>
+            </table>
+          </div>
+          <p class="calculation-method-note">Indicatief hulpmiddel. Bijzondere regels (vrijstellingen, buitenlandse bezittingen, voorkoming dubbele belasting) worden niet automatisch toegepast. Voor de volledige onderbouwing per jaar gebruikt u de berekening op het <a href="index.html">overzicht</a>.</p>
+        </section>
+      </main>
+      <footer class="footer"><span>BOX 3 REKENTOOL</span><span>Belastingjaar 2017–2026</span></footer>
+    </div>
+  </body>
+</html>

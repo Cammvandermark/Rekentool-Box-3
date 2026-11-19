@@ -447,3 +447,142 @@ html[data-control-mode="aan"] .topbar { box-shadow: inset 0 -3px 0 #e0a43a; }
 }
 .tax-overview-table td { font-variant-numeric: tabular-nums; }
 .tax-overview-table tr.tax-overview-strong th, .tax-overview-table tr.tax-overview-strong td { font-weight: 700; color: var(--ink); }
+
+/* Snelcontrole OWR */
+.quick-check { width: min(1280px, calc(100% - 64px)); }
+.quick-check-totals { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: var(--line); }
+.quick-check-totals > div { display: grid; gap: 4px; padding: 12px 14px; background: var(--white); }
+.quick-check-totals span { color: var(--muted); font-size: 10px; }
+.quick-check-totals strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.quick-check-total-main { background: var(--accent-soft) !important; }
+.quick-check-input td { padding: 6px 5px; }
+.quick-check-input tbody td { height: auto; }
+.quick-check-input td input.quick-check-amount { min-width: 105px; text-align: right; font-variant-numeric: tabular-nums; }
+.quick-check-input td input.quick-check-percent { min-width: 48px; width: 56px; text-align: right; }
+.quick-check-input td input[type="checkbox"] { width: auto; min-width: 0; height: auto; }
+.quick-check-input td input:disabled { color: #98a2aa; background: #f3f5f7; }
+.quick-check-input td input[aria-invalid="true"] { border-color: #b54a4a; background: #fff8f8; }
+.quick-check-input tbody th { white-space: nowrap; }
+.quick-check-year { display: block; font-size: 12px; }
+.quick-check-route { display: block; font-size: 9px; font-weight: 400; color: var(--muted); }
+.quick-check-route.is-warning { color: #8a6418; }
+.quick-check-result td.quick-check-applied { font-weight: 700; }
+.quick-check-refund { color: #285d3d; font-weight: 700; }
+.quick-check-extra { color: #812d2d; font-weight: 700; }
+.quick-check-error-row td { color: #812d2d; background: #fff8f8; }
+.quick-check-signals { min-width: 220px; }
+.quick-check-signals ul { margin: 0; padding-left: 14px; }
+.quick-check-signals li { margin: 2px 0; line-height: 1.4; }
+.quick-check-signals li.is-warning { color: #8a6418; }
+.quick-check-signals li.is-info { color: var(--muted); }
+.quick-check-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #b9c9d1; border-radius: 4px; color: var(--accent); background: white; font-size: 11px; font-weight: 600; text-decoration: none; }
+.quick-check-link:hover { background: var(--accent-soft); }
+@media (max-width: 720px) {
+  .quick-check { width: calc(100% - 32px); }
+  .quick-check-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media print {
+  .quick-check .storage-controls, .quick-check .control-mode-banner, .quick-check .breadcrumb, .quick-check .back-link, .quick-check .detail-actions { display: none !important; }
+  .quick-check { width: 100%; }
+  .quick-check-totals { position: static; }
+  body:has(.quick-check) { background: white; }
+}
+
+/* Dashboard: uitkomstbalk, aanslag bovenaan, onderbouwing */
+.result-bar { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.result-bar .is-main { background: var(--accent-soft); }
+.result-bar strong.is-pending { color: var(--muted); font-size: 13px; font-weight: 600; }
+.result-bar strong.is-refund, .quick-check-totals strong.is-refund { color: #285d3d; }
+.result-bar strong.is-extra { color: #812d2d; }
+.assessment-first { margin: 0 0 18px; padding: 14px 16px; border: 1px solid #b9c9d1; border-radius: 5px; background: var(--accent-soft); }
+.assessment-first .actual-return-heading { margin-top: 0; }
+.onderbouwing-heading { margin-top: 28px; margin-bottom: 4px; color: var(--muted); font-size: 16px; }
+.comparison-result.is-pending { border-color: #e0cf9f; color: #6b5214; background: #faf8f2; }
+@media (max-width: 720px) {
+  .result-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media print {
+  .result-bar { position: static; }
+}
+.result-bar-access { grid-column: 1 / -1; margin: 0; padding: 7px 14px; font-size: 11px; font-weight: 700; background: var(--white); }
+.result-bar-access.is-ok { color: #285d3d; background: #f0f7f2; }
+.result-bar-access.is-denied { color: #812d2d; background: #fff8f8; }
+.result-bar-access.is-open { color: #6b5214; background: #faf8f2; }
+
+/* Informatieknopje (i) met toelichting */
+.info-button { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; margin-left: 6px; padding: 0; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); background: var(--white); font: italic 700 10px/1 Georgia, "Times New Roman", serif; vertical-align: middle; cursor: pointer; }
+.info-button:hover, .info-button[aria-expanded="true"] { color: var(--white); background: var(--accent); }
+.info-button:focus-visible { outline: 2px solid #739aae; outline-offset: 2px; }
+.info-panel { margin: 6px 0 10px; padding: 8px 12px; border-left: 3px solid #b9c9d1; background: var(--accent-soft); }
+.info-panel > p { margin: 0; }
+.info-panel > p + p { margin-top: 6px; }
+/* Geen eigen onderrand onder 'Fiscale partner?': A.2 heeft al een bovenrand. */
+.question-group.calculation-partner-question { border-bottom: 0; }
+
+/* Berekening en tegenbewijsregeling niet tonen: het verslag (B) bevat dezelfde
+   berekening. De panelen blijven in de pagina, omdat zij de bedragen leveren. */
+.is-verborgen { display: none !important; }
+.report-access { margin: 10px 0 14px; padding: 9px 12px; border-left: 3px solid; font-weight: 700; }
+.report-access.is-ok { border-color: #3a8057; color: #285d3d; background: #f0f7f2; }
+.report-access.is-denied { border-color: #b54a4a; color: #812d2d; background: #fff8f8; }
+.report-access.is-open { border-color: #c9a35a; color: #6b5214; background: #faf8f2; }
+@media print {
+  #print-root .report-access { color: black; background: none; }
+}
+
+/* Snelle keuze toegang Wet rechtsherstel (2017-2020) */
+/* Zelfde inspringing als de titel 'Formele beoordeling' (het paneel heeft al 21px). */
+.quick-access { padding: 10px 0 14px; border-bottom: 1px solid var(--line); }
+.quick-access .question-label { margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+.quick-access .choice-list { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.quick-access .law-explanation { margin: 10px 0 0; }
+.quick-access .law-explanation[hidden] { display: none; }
+.link-button { padding: 0; border: 0; color: var(--accent); background: none; font-size: 11px; text-decoration: underline; cursor: pointer; }
+
+/* A.1: banktegoeden, overige bezittingen en schulden direct invullen */
+.asset-input { margin-top: 14px; }
+.asset-input + .asset-input { margin-top: 18px; }
+.asset-input-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.asset-input-heading h4 { display: flex; align-items: center; margin: 0; font-size: 13px; font-weight: 700; }
+.asset-input-table th, .asset-input-table td { padding: 6px 8px; }
+.asset-input-table tbody td { height: auto; }
+.asset-input-table td input.asset-input-amount { text-align: right; font-variant-numeric: tabular-nums; }
+.asset-input-table td input[aria-invalid="true"] { border-color: #b54a4a; background: #fff8f8; }
+.asset-input-table thead th:last-child, .asset-input-table td.asset-input-actions, .asset-input-table tbody td:last-child { width: 72px; text-align: right; white-space: nowrap; }
+.asset-input-table tfoot td { text-align: right; }
+.row-button { width: 26px; height: 26px; margin-left: 4px; padding: 0; border: 1px solid #b9c9d1; border-radius: 50%; color: var(--accent); background: var(--white); font-size: 15px; line-height: 1; cursor: pointer; }
+.row-button:hover { background: var(--accent-soft); }
+.row-button.row-remove { color: #7b4545; border-color: #e0c4c4; }
+.row-button:focus-visible { outline: 2px solid #739aae; outline-offset: 2px; }
+.asset-input-info { margin-top: 8px; }
+.asset-input-table { table-layout: fixed; }
+.asset-input-table th:nth-last-child(2), .asset-input-table td:nth-last-child(2) { width: 170px; }
+.asset-input-table tfoot td:nth-last-child(2) { padding-right: 8px; }
+/* A.1-tabellen zonder kolomkoppen: geen lijn boven de eerste regel. */
+.asset-input-table tbody tr:first-child td { border-top: 0; }
+.asset-input-heading { margin-bottom: 4px; }
+/* A.1: geen lijnen tussen de regels; alleen een lijn boven het totaal. */
+.asset-input-table tbody td { border-top: 0; }
+/* × staat op elke regel op dezelfde plek, ook als er geen + naast staat. */
+.asset-input-table .row-remove:only-child { margin-right: 30px; }
+/* A.1: banktegoeden, overige bezittingen en schulden als drie aparte, rustige kaders. */
+.asset-input { margin-top: 12px; padding: 10px 12px 4px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 5px; background: #fafcfd; }
+.asset-input + .asset-input { margin-top: 10px; }
+.asset-input-heading { margin-bottom: 2px; }
+.asset-input-heading h4 { color: var(--accent); }
+.asset-input-table tfoot th, .asset-input-table tfoot td { border-top-color: #e3e9ee; }
+
+/* A.2: elk onderdeel in een eigen kader, gelijk aan A.1. */
+.actual-return-card { margin-top: 12px; padding: 10px 12px 4px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 5px; background: #fafcfd; }
+.actual-return-card + .actual-return-card { margin-top: 10px; }
+#actual-return-tables .actual-return-card .actual-return-heading { display: flex; align-items: center; margin: 0 0 4px; color: var(--accent); font-size: 13px; font-weight: 700; }
+.actual-return-card .actual-return-table th, .actual-return-card .actual-return-table td { padding: 6px 8px; }
+.actual-return-card .actual-return-table tbody td { height: auto; border-top: 0; }
+.actual-return-card .actual-return-table thead th { border-top: 0; border-bottom: 1px solid #e3e9ee; }
+
+/* Jaarknoppen per periode (in plaats van een keuzelijst) */
+.year-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.year-button { min-width: 72px; padding: 8px 14px; border: 1px solid #b9c9d1; border-radius: 5px; color: var(--accent); background: var(--white); font-size: 13px; font-weight: 600; cursor: pointer; }
+.year-button:hover { background: var(--accent-soft); }
+.year-button[aria-pressed="true"] { border-color: var(--accent); color: var(--white); background: var(--accent); }
+.year-button:focus-visible { outline: 2px solid #739aae; outline-offset: 2px; }
