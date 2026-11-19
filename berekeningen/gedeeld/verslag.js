@@ -164,7 +164,14 @@ function forfaitarySection(report) {
   const title = numericYear <= 2022
     ? `3. Forfaitaire berekening ${year} — Wet rechtsherstel box 3`
     : `3. Forfaitaire berekening ${year} — Overbruggingswet box 3`;
-  const children = [reportTable(["Stap", "Berekening"], steps)];
+  const children = [
+    reportTable(["Stap", "Berekening"], steps),
+    reportResultBlock(report, {
+      title: numericYear <= 2022 ? "Uitkomst Wet rechtsherstel box 3" : "Uitkomst forfaitaire berekening — Overbruggingswet box 3",
+      incomes,
+      lowest: numericYear <= 2022 ? !(report.oldTax < report.reliefTax) : forfaitaryLowerThanActual(),
+    }),
+  ];
 
   if (numericYear <= 2022) {
     const oldIncomes = fiscalPartner ? [report.oldFirstPartnerIncome, report.oldSecondPartnerIncome] : [report.oldFirstPartnerIncome];
@@ -178,9 +185,70 @@ function forfaitarySection(report) {
       cells: ["Van toepassing (laagste uitkomst, art. 1 Wet rechtsherstel)", report.oldTax < report.reliefTax ? "oude methode" : "Wet rechtsherstel box 3"],
       className: "report-total",
     });
-    children.push(el("h4", { text: "Vergelijking met de oude box 3-berekening (schijven)" }), reportTable(["Stap", "Berekening"], oldRows));
+    children.push(
+      el("h4", { text: "Vergelijking met de oude box 3-berekening (schijven)" }),
+      reportTable(["Stap", "Berekening"], oldRows),
+      reportResultBlock(report, { title: "Uitkomst oude box 3-berekening (schijven)", incomes: oldIncomes, lowest: report.oldTax < report.reliefTax }),
+    );
   }
   return reportSection(title, children);
+}
+
+// Vanaf 2023: is het forfaitaire voordeel lager dan (of gelijk aan) het werkelijk
+// rendement? true/false voor alle personen gelijk; undefined als het per persoon
+// verschilt of het werkelijk rendement niet is berekend.
+function forfaitaryLowerThanActual() {
+  const persons = actualReturnReport?.result ? actualReturnReport.comparison?.persons : null;
+  if (!persons?.length) return undefined;
+  if (persons.every((person) => !person.usesActual)) return true;
+  if (persons.every((person) => person.usesActual)) return false;
+  return undefined;
+}
+
+// Omlijnd uitkomstblok: voordeel uit sparen en beleggen en de verschuldigde
+// belasting voor de opgegeven inkomens, per persoon en (bij partners) totaal.
+// `lowest`: true = laagste uitkomst (groen en vet), false = de hoogste,
+// undefined = geen eenduidige vergelijking.
+function reportResultBlock(report, { title, incomes, lowest }) {
+  const { data, fiscalPartner } = report;
+  const persons = fiscalPartner ? ["Belastingplichtige", "Partner"] : [null];
+  const columns = persons.map((person, index) => ({
+    label: person,
+    income: incomes[index],
+    tax: roundToTwoDecimals(incomes[index] * data.taxRate / 100),
+    assessedIncome: assessmentIncome([incomes[index]]),
+    assessedTax: assessmentTax([incomes[index]], data.taxRate),
+  }));
+  if (fiscalPartner) {
+    columns.push({
+      label: "Samen",
+      income: roundToTwoDecimals(incomes[0] + incomes[1]),
+      tax: roundToTwoDecimals(columns[0].tax + columns[1].tax),
+      assessedIncome: assessmentIncome(incomes),
+      assessedTax: assessmentTax(incomes, data.taxRate),
+      total: true,
+    });
+  }
+
+  const row = (className, label, valueOf, detailOf) => el("div", { className: `report-result-row ${className}` }, [
+    el("div", { className: "report-result-label", text: label }),
+    ...columns.map((column) => el("div", { className: `report-result-value${column.total ? " is-total" : ""}` }, [
+      column.label ? el("span", { className: "report-result-person", text: column.label }) : null,
+      el("strong", { text: valueOf(column) }),
+      el("span", { className: "report-result-detail", text: detailOf(column) }),
+    ])),
+  ]);
+
+  const compareClass = lowest === true ? " is-lowest" : lowest === false ? " is-higher" : "";
+  return el("div", { className: `report-result${fiscalPartner ? " has-partner" : ""}${compareClass}` }, [
+    el("div", { className: "report-result-title", text: lowest === true ? `${title} — laagste uitkomst` : title }),
+    row("is-income", "Voordeel uit sparen en beleggen (box 3-inkomen)",
+      (c) => reportWhole(c.assessedIncome),
+      (c) => `in centen: ${reportEuro(c.income)}`),
+    row("is-tax", `Verschuldigde box 3-belasting (${data.taxRate}%)`,
+      (c) => reportWhole(c.assessedTax),
+      (c) => `${reportWhole(c.assessedIncome)} × ${data.taxRate}% · in centen: ${reportEuro(c.tax)}`),
+  ]);
 }
 
 function actualReturnSection(report) {
@@ -247,6 +315,13 @@ function actualReturnSection(report) {
     lineRows.length ? reportTable(["Bestanddeel", "Berekening"], lineRows) : reportNote("Geen bestanddelen."),
     el("h4", { text: "Totaal" }),
     reportTable(null, totals),
+    reportResultBlock(report, {
+      title: "Uitkomst werkelijk rendement",
+      incomes: comparison.persons.map((person) => person.actual),
+      lowest: comparison.persons.every((person) => person.usesActual)
+        ? true
+        : comparison.persons.some((person) => person.usesActual) ? undefined : false,
+    }),
     el("h4", { text: `Box 3-belasting in één oogopslag (hele euro's${fiscalPartner ? "; belastingplichtige / partner / totaal" : ""})` }),
     reportTable(null, taxRows),
     el("h4", { text: "Vergelijking per persoon" }),

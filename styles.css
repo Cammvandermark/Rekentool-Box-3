@@ -407,6 +407,23 @@ html[data-control-mode="aan"] .topbar { box-shadow: inset 0 -3px 0 #e0a43a; }
 .report-note { margin: 4px 0; color: var(--muted); }
 .report-notes, .report-sources { margin: 6px 0 0; padding-left: 16px; }
 .report-url { word-break: break-all; }
+.report-result { margin-top: 14px; border: 2px solid var(--accent); border-radius: 6px; overflow: hidden; break-inside: avoid; }
+.report-result-title { padding: 7px 12px; background: var(--accent); color: white; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+.report-result-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 12px; }
+.report-result-row + .report-result-row { border-top: 1px solid var(--line); }
+.report-result-row.is-tax { background: var(--accent-soft); }
+.report-result-label { flex: 1 1 220px; color: var(--ink); font-weight: 600; }
+.report-result-value { flex: 0 1 auto; min-width: 120px; display: flex; flex-direction: column; align-items: flex-end; text-align: right; font-variant-numeric: tabular-nums; }
+.report-result-value.is-total { padding-left: 14px; border-left: 1px solid var(--line); }
+.report-result-person { color: var(--muted); font-size: 10px; }
+.report-result-detail { color: var(--muted); font-size: 10px; }
+.report-result-row.is-income strong { font-size: 14px; color: var(--ink); }
+.report-result-row.is-tax strong { font-size: 18px; color: var(--accent); }
+.report-result.is-higher .report-result-row strong { font-weight: 400; }
+.report-result.is-lowest { border-color: #1f7a3a; }
+.report-result.is-lowest .report-result-title { background: #1f7a3a; }
+.report-result.is-lowest .report-result-row.is-tax { background: #eaf5ee; }
+.report-result.is-lowest .report-result-row strong { color: #1f7a3a; font-weight: 800; }
 #print-root { display: none; }
 @media print {
   html.is-printing .app-shell, html.is-printing .control-mode-banner { display: none !important; }
@@ -416,6 +433,16 @@ html[data-control-mode="aan"] .topbar { box-shadow: inset 0 -3px 0 #e0a43a; }
   #print-root .report-table th, #print-root .report-table td { font-size: 9pt; border-top: 1px solid #ccc; color: black; }
   #print-root .report-table tr { break-inside: avoid; }
   #print-root .report-section h3 { break-after: avoid; }
+  #print-root .report-result { border-color: black; }
+  #print-root .report-result-title { background: none; color: black; border-bottom: 2px solid black; font-size: 10pt; }
+  #print-root .report-result-row.is-tax { background: none; }
+  #print-root .report-result-row.is-income strong { font-size: 12pt; color: black; }
+  #print-root .report-result-row.is-tax strong { font-size: 15pt; color: black; }
+  #print-root .report-result-detail, #print-root .report-result-person { color: #444; font-size: 8pt; }
+  #print-root .report-result.is-lowest { border-color: #1f7a3a; border-width: 3px; }
+  #print-root .report-result.is-lowest .report-result-title { color: #1f7a3a; border-bottom-color: #1f7a3a; }
+  #print-root .report-result.is-lowest .report-result-row strong { color: #1f7a3a; font-weight: 800; }
+  #print-root .report-result.is-higher .report-result-row strong { font-weight: 400; }
   @page { margin: 15mm; }
 }
 .tax-overview-table td { font-variant-numeric: tabular-nums; }
